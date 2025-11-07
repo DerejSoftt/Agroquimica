@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>Entrada de Productos - AgroInventario</title>
+    <style>
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2d5016;
+            --color-primary-dark: #1a3009;
+            --color-primary-medium: #3d6b1f;
+            --color-primary-light: #f0f9f0;
+            --color-secondary: #fff8e1;
+            --color-accent: #ffd700;
+            --color-accent-dark: #ffb300;
+            --color-lime: #a3d977;
+            --color-bright-green: #03ff31e6;
+            --color-text: #1a1a1a;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-white: #ffffff;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            color: var(--color-white);
+            padding: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Updated sidebar header structure to match estadodecuenta */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header i {
+            font-size: 2.5rem;
+            color: var(--color-accent);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-white);
+            margin: 0;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--color-lime);
+            margin: 0;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin: 0.25rem 1rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: #3d6b1f;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        /* Updated icon styles for Boxicons */
+        .sidebar-menu i {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        /* Updated sidebar footer to simple copyright */
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: #1a3009;
+            text-align: center;
+        }
+
+        .sidebar-footer p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Updated header with gradient background */
+        .header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 24px 0;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .page-title {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: center;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-white);
+        }
+
+        .page-title p {
+            font-size: 14px;
+            color: var(--color-lime);
+        }
+
+        .entry-form-section {
+            background-color: var(--color-white);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .entry-header {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .entry-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .entry-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .entry-field input,
+        .entry-field select {
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--color-text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .entry-field input:focus,
+        .entry-field select:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .product-search-section {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .search-select-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-select {
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--color-text);
+            outline: none;
+            transition: all 0.2s;
+            background-color: var(--color-white);
+        }
+
+        .search-select:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .btn-add-new {
+            padding: 10px 20px;
+            background-color: var(--color-accent);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-add-new:hover {
+            background-color: var(--color-accent-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-details-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .itbis-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0f9f0, #fff8e1);
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .itbis-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .itbis-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .itbis-field input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .calculated-prices {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 16px;
+            background-color: var(--color-primary-light);
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .calc-price-item {
+            text-align: center;
+        }
+
+        .calc-price-item label {
+            display: block;
+            font-size: 12px;
+            color: var(--color-text-light);
+            margin-bottom: 4px;
+        }
+
+        .calc-price-item .price-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .entry-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-save-entry {
+            padding: 12px 32px;
+            background-color: var(--color-bright-green);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save-entry:hover {
+            background-color: var(--color-primary-medium);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-clear {
+            padding: 12px 32px;
+            background-color: var(--color-white);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear:hover {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            border-radius: var(--radius-lg);
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid var(--color-border);
+            background: linear-gradient(135deg, #f0f9f0, #fff8e1);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--color-text-light);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--color-text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: var(--color-bright-green);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-medium);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background-color: var(--color-white);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background-color: var(--color-success);
+        }
+
+        .toast.error {
+            background-color: var(--color-danger);
+        }
+
+        @media (max-width: 1024px) {
+            .entry-header {
+                grid-template-columns: 1fr;
+            }
+
+            .product-details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .price-grid,
+            .calculated-prices {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-details-grid,
+            .price-grid,
+            .calculated-prices {
+                grid-template-columns: 1fr;
+            }
+
+            .product-search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+     <aside class="sidebar">
+        <!-- Updated sidebar header structure with Boxicons -->
+        <div class="sidebar-header">
+            <i class='bx bxs-leaf'></i>
+            <div>
+                <h2>AgroInventario</h2>
+                <p>Fertilizantes de Arroz</p>
+            </div>
+        </div>
+        <nav>
+            <!-- Updated menu items with Boxicons to match estadodecuenta -->
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class='bx bx-home'></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="facturacion.html">
+                        <i class='bx bx-receipt'></i>
+                        Facturación
+                    </a>
+                </li>
+                <li>
+                    <a href="registro-clientes.html">
+                        <i class='bx bx-user-plus'></i>
+                        Registro de Clientes
+                    </a>
+                </li>
+                <li>
+                    <a href="gestion-clientes.html">
+                        <i class='bx bx-group'></i>
+                        Gestión de Clientes
+                    </a>
+                </li>
+                 <li>
+                <a href="entrada-productos.html">
+                    <i class='bx bx-package'></i>
+                    <span>Entrada de Productos</span>
+                </a>
+            </li>
+                <li>
+                    <a href="financiamiento.html">
+                        <i class='bx bx-dollar-circle'></i>
+                        Financiamiento
+                    </a>
+                </li>
+                <li>
+                    <a href="estado-cuenta.html">
+                        <i class='bx bx-file'></i>
+                        Estado de Cuenta
+                    </a>
+                </li>
+                <li>
+                    <a href="modificacion-factura.html">
+                        <i class='bx bx-edit'></i>
+                        Modificación de Factura
+                    </a>
+                </li>
+                <li>
+                    <a href="anulacion-factura.html" class="active">
+                        <i class='bx bx-x-circle'></i>
+                        Anulación de Factura
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Updated footer to simple copyright -->
+        <div class="sidebar-footer">
+            <p>&copy; 2025 AgroInventario. Todos los derechos reservados.</p>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <header class="header">
+                <div class="header-content">
+                    <div class="page-title">
+                        <h1>Entrada de Productos</h1>
+                        <p>Registro de compras y entrada de inventario</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <section class="entry-form-section">
+                    <div class="entry-header">
+                        <!-- <div class="entry-field">
+                            <label for="invoiceNumber">Número de Factura *</label>
+                            <input type="text" id="invoiceNumber" placeholder="Ej: FAC-2025-001" >
+                        </div> -->
+                        <div class="entry-field">
+                            <label for="entryDate">Fecha *</label>
+                            <input type="date" id="entryDate" required>
+                        </div>
+                        <div class="entry-field">
+    <label for="supplier">Suplidor *</label>
+    <select id="supplier" required>
+        <option value="">Seleccione un proveedor...</option>
+        {% for proveedor in proveedores %}
+        <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+                    </div>
+
+                    <div class="product-search-section">
+                        <div class="search-select-wrapper">
+                            <label for="productSelect">Buscar Producto</label>
+                            <select id="productSelect" class="search-select">
+                                <option value="">Seleccione un producto...</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn-add-new" id="addNewProductBtn">
+                            + Nuevo Producto
+                        </button>
+                    </div>
+
+                    <div class="product-details-grid">
+                        <div class="entry-field">
+                            <label for="entryCategory">Categoría *</label>
+                            <select id="entryCategory" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="Fertilizantes Nitrogenados">Fertilizantes Nitrogenados</option>
+                                <option value="Fertilizantes Fosfatados">Fertilizantes Fosfatados</option>
+                                <option value="Fertilizantes Potásicos">Fertilizantes Potásicos</option>
+                                <option value="Fertilizantes Compuestos">Fertilizantes Compuestos</option>
+                                <option value="Fertilizantes Orgánicos">Fertilizantes Orgánicos</option>
+                                <option value="Micronutrientes">Micronutrientes</option>
+                            </select>
+                        </div>
+                        <div class="entry-field">
+                            <label for="entryQuantity">Cantidad *</label>
+                            <input type="number" id="entryQuantity" placeholder="0" min="0" step="0.01" required>
+                        </div>
+                        <div class="entry-field">
+                            <label for="entryUnit">Unidad *</label>
+                            <select id="entryUnit" required>
+                                <option value="kg">Kilogramos (kg)</option>
+                                <option value="ton">Toneladas (ton)</option>
+                                <option value="L">Litros (L)</option>
+                                <option value="unidad">Unidades</option>
+                                <option value="saco">Sacos</option>
+                            </select>
+                        </div>
+                        <div class="entry-field">
+                            <label for="entryUnitPrice">Precio Unit. ($) *</label>
+                            <input type="number" id="entryUnitPrice" placeholder="0.00" min="0" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="price-grid">
+                        <div class="entry-field">
+                            <label for="salePrice1">Precio 1 ($) *</label>
+                            <input type="number" id="salePrice1" placeholder="0.00" min="0" step="0.01" required>
+                        </div>
+                        <div class="entry-field">
+                            <label for="salePrice2">Precio 2 ($)</label>
+                            <input type="number" id="salePrice2" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                        <div class="entry-field">
+                            <label for="salePrice3">Precio 3 ($)</label>
+                            <input type="number" id="salePrice3" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="itbis-section">
+                        <div class="itbis-field">
+                            <label for="itbisRate">ITBIS (%):</label>
+                            <input type="number" id="itbisRate" value="18" min="0" max="100" step="0.01">
+                        </div>
+                        <span style="color: var(--color-text-light); font-size: 14px;">
+                            Los precios de venta se calcularán automáticamente con el ITBIS aplicado
+                        </span>
+                    </div>
+
+                    <div class="calculated-prices">
+                        <div class="calc-price-item">
+                            <label>Precio 1 + ITBIS</label>
+                            <div class="price-value" id="calcPrice1">$0.00</div>
+                        </div>
+                        <div class="calc-price-item">
+                            <label>Precio 2 + ITBIS</label>
+                            <div class="price-value" id="calcPrice2">$0.00</div>
+                        </div>
+                        <div class="calc-price-item">
+                            <label>Precio 3 + ITBIS</label>
+                            <div class="price-value" id="calcPrice3">$0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="entry-actions">
+                        <button type="button" class="btn-clear" id="clearEntryBtn">Limpiar</button>
+                        <button type="button" class="btn-save-entry" id="saveEntryBtn">Guardar Entrada</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="newProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agregar Nuevo Producto</h2>
+                <button class="close-btn" id="closeNewProductModal">&times;</button>
+            </div>
+            <form id="newProductForm">
+                <div style="padding: 24px;">
+                    <div class="form-group">
+                        <label for="newProductDescription">Descripción del Producto *</label>
+                        <input type="text" id="newProductDescription" required placeholder="Ej: Urea 46% Granulada">
+                    </div>
+                    <div class="form-actions" style="margin-top: 24px;">
+                        <button type="button" class="btn-secondary" id="cancelNewProductBtn">Cancelar</button>
+                        <button type="submit" class="btn-primary">Agregar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+<script>
+    class ProductEntryManager {
+        constructor() {
+            this.availableProducts = this.loadAvailableProducts();
+            this.init();
+        }
+
+        init() {
+            this.populateProductSelect();
+            this.attachEventListeners();
+            this.setDefaultDate();
+        }
+
+        loadAvailableProducts() {
+            const data = localStorage.getItem('availableProducts');
+            if (data) {
+                return JSON.parse(data);
+            }
+            return [];
+        }
+
+        saveAvailableProducts() {
+            localStorage.setItem('availableProducts', JSON.stringify(this.availableProducts));
+        }
+
+        setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entryDate').value = today;
+        }
+
+        populateProductSelect() {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">Seleccione un producto...</option>';
+            
+            this.availableProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = product.description;
+                select.appendChild(option);
+            });
+        }
+
+        attachEventListeners() {
+            document.getElementById('addNewProductBtn').addEventListener('click', () => {
+                document.getElementById('newProductModal').classList.add('active');
+            });
+
+            document.getElementById('closeNewProductModal').addEventListener('click', () => {
+                this.closeNewProductModal();
+            });
+
+            document.getElementById('cancelNewProductBtn').addEventListener('click', () => {
+                this.closeNewProductModal();
+            });
+
+            document.getElementById('newProductForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveNewProduct();
+            });
+
+            document.getElementById('productSelect').addEventListener('change', (e) => {
+                this.selectProduct(e.target.value);
+            });
+
+            // Escuchar cambios en los precios y el ITBIS para recalcular
+            ['salePrice1', 'salePrice2', 'salePrice3', 'itbisRate'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    this.calculatePricesWithITBIS();
+                });
+            });
+
+            document.getElementById('clearEntryBtn').addEventListener('click', () => {
+                this.clearForm();
+            });
+
+            document.getElementById('saveEntryBtn').addEventListener('click', () => {
+                this.saveEntry();
+            });
+
+            // Cerrar modal al hacer clic fuera del contenido
+            document.getElementById('newProductModal').addEventListener('click', (e) => {
+                if (e.target.id === 'newProductModal') {
+                    this.closeNewProductModal();
+                }
+            });
+        }
+
+        closeNewProductModal() {
+            document.getElementById('newProductModal').classList.remove('active');
+            document.getElementById('newProductForm').reset();
+        }
+
+        saveNewProduct() {
+            const description = document.getElementById('newProductDescription').value.trim();
+            
+            if (!description) {
+                this.showToast('Por favor ingrese una descripción', 'error');
+                return;
+            }
+
+            // Verificar si el producto ya existe
+            const existingProduct = this.availableProducts.find(
+                p => p.description.toLowerCase() === description.toLowerCase()
+            );
+            
+            if (existingProduct) {
+                this.showToast('Este producto ya existe', 'error');
+                return;
+            }
+
+            const newProduct = {
+                id: Date.now(),
+                description: description
+            };
+
+            this.availableProducts.push(newProduct);
+            this.saveAvailableProducts();
+            this.populateProductSelect();
+            this.closeNewProductModal();
+            
+            // Seleccionar el nuevo producto automáticamente
+            document.getElementById('productSelect').value = newProduct.id;
+            
+            this.showToast('Producto agregado exitosamente', 'success');
+        }
+
+        selectProduct(productId) {
+            if (!productId) return;
+            
+            const product = this.availableProducts.find(p => p.id == productId);
+            if (product) {
+                console.log('Producto seleccionado:', product);
+                // Aquí podrías cargar datos del producto si los tienes almacenados
+            }
+        }
+
+        calculatePricesWithITBIS() {
+            const itbisRate = parseFloat(document.getElementById('itbisRate').value) || 0;
+            const price1 = parseFloat(document.getElementById('salePrice1').value) || 0;
+            const price2 = parseFloat(document.getElementById('salePrice2').value) || 0;
+            const price3 = parseFloat(document.getElementById('salePrice3').value) || 0;
+
+            const itbisMultiplier = 1 + (itbisRate / 100);
+
+            const price1ConItbis = price1 * itbisMultiplier;
+            const price2ConItbis = price2 * itbisMultiplier;
+            const price3ConItbis = price3 * itbisMultiplier;
+
+            document.getElementById('calcPrice1').textContent = `$${price1ConItbis.toFixed(2)}`;
+            document.getElementById('calcPrice2').textContent = price2 > 0 ? `$${price2ConItbis.toFixed(2)}` : '$0.00';
+            document.getElementById('calcPrice3').textContent = price3 > 0 ? `$${price3ConItbis.toFixed(2)}` : '$0.00';
+        }
+
+        clearForm() {
+            if (confirm('¿Está seguro de que desea limpiar todos los campos?')) {
+                document.getElementById('supplier').value = '';
+                document.getElementById('productSelect').value = '';
+                document.getElementById('entryCategory').value = '';
+                document.getElementById('entryQuantity').value = '';
+                document.getElementById('entryUnit').value = 'kg';
+                document.getElementById('entryUnitPrice').value = '';
+                document.getElementById('salePrice1').value = '';
+                document.getElementById('salePrice2').value = '';
+                document.getElementById('salePrice3').value = '';
+                document.getElementById('itbisRate').value = '18';
+                this.calculatePricesWithITBIS();
+                this.setDefaultDate();
+                this.showToast('Formulario limpiado', 'success');
+            }
+        }
+
+        saveEntry() {
+            const entryDate = document.getElementById('entryDate').value;
+            const supplier = document.getElementById('supplier').value;
+            const productId = document.getElementById('productSelect').value;
+            const category = document.getElementById('entryCategory').value;
+            const quantity = parseFloat(document.getElementById('entryQuantity').value);
+            const unit = document.getElementById('entryUnit').value;
+            const unitPrice = parseFloat(document.getElementById('entryUnitPrice').value);
+            const salePrice1 = parseFloat(document.getElementById('salePrice1').value);
+            const salePrice2 = parseFloat(document.getElementById('salePrice2').value) || 0;
+            const salePrice3 = parseFloat(document.getElementById('salePrice3').value) || 0;
+            const itbisRate = parseFloat(document.getElementById('itbisRate').value);
+
+            // Validaciones (sin invoiceNumber)
+            if (!entryDate || !supplier || !productId || !category || 
+                !quantity || !unitPrice || !salePrice1) {
+                this.showToast('Por favor complete todos los campos requeridos', 'error');
+                return;
+            }
+
+            if (quantity <= 0) {
+                this.showToast('La cantidad debe ser mayor a 0', 'error');
+                return;
+            }
+
+            if (unitPrice <= 0) {
+                this.showToast('El precio unitario debe ser mayor a 0', 'error');
+                return;
+            }
+
+            if (salePrice1 <= 0) {
+                this.showToast('El precio de venta 1 debe ser mayor a 0', 'error');
+                return;
+            }
+
+            const product = this.availableProducts.find(p => p.id == productId);
+            
+            const entryData = {
+                entryDate: entryDate,
+                supplier: supplier,
+                product: product.description,
+                category: category,
+                quantity: quantity,
+                unit: unit,
+                unitPrice: unitPrice,
+                salePrice1: salePrice1,
+                salePrice2: salePrice2,
+                salePrice3: salePrice3,
+                itbisRate: itbisRate
+            };
+
+            // Mostrar loading
+            const saveBtn = document.getElementById('saveEntryBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Guardando...';
+            saveBtn.disabled = true;
+
+            // Enviar datos al servidor
+            fetch('/guardar-entrada/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify(entryData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la respuesta del servidor');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    let mensaje = 'Entrada registrada exitosamente';
+                    if (data.precios_con_itbis) {
+                        mensaje += `. Precios con ITBIS: $${data.precios_con_itbis.precio1}`;
+                        if (data.precios_con_itbis.precio2) {
+                            mensaje += `, $${data.precios_con_itbis.precio2}`;
+                        }
+                        if (data.precios_con_itbis.precio3) {
+                            mensaje += `, $${data.precios_con_itbis.precio3}`;
+                        }
+                    }
+                    
+                    this.showToast(mensaje, 'success');
+                    this.clearForm();
+                    
+                } else {
+                    this.showToast('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.showToast('Error de conexión: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Restaurar botón
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            });
+        }
+
+        // Método para obtener el token CSRF
+        getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        // Método adicional para formatear números
+        formatCurrency(amount) {
+            return new Intl.NumberFormat('es-DO', {
+                style: 'currency',
+                currency: 'DOP'
+            }).format(amount);
+        }
+    }
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        const productEntryManager = new ProductEntryManager();
+        
+        // Hacer disponible globalmente para debugging
+        window.productEntryManager = productEntryManager;
+        
+        // Calcular precios con ITBIS inicialmente
+        productEntryManager.calculatePricesWithITBIS();
+    });
+
+    // Función global para cerrar modales con Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('newProductModal');
+            if (modal.classList.contains('active')) {
+                modal.classList.remove('active');
+            }
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cuentas por Pagar - AgroInventario</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2d5016;
+            --color-primary-dark: #1a3009;
+            --color-primary-medium: #3d6b1f;
+            --color-primary-light: #f0f9f0;
+            --color-secondary: #fff8e1;
+            --color-accent: #ffd700;
+            --color-accent-dark: #ffb300;
+            --color-lime: #a3d977;
+            --color-bright-green: #03ff31e6;
+            --color-text: #1a1a1a;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --color-white: #ffffff;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Sidebar actualizado para coincidir con facturacion.html */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            color: var(--color-white);
+            padding: 0;
+            z-index: 100;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--color-lime);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin: 0.25rem 1rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: #3d6b1f;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .sidebar-menu i {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Resto del CSS original de compras.html */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header {
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: 24px 0;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .page-title p {
+            font-size: 14px;
+            color: var(--color-text-light);
+            margin-top: 4px;
+        }
+
+        .form-section {
+            background-color: var(--color-white);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .form-header {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .form-field input,
+        .form-field select {
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--color-text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .products-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-light);
+        }
+
+        .product-results {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-white);
+            display: none;
+        }
+
+        .product-results.show {
+            display: block;
+        }
+
+        .product-result-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border);
+            transition: background 0.2s;
+        }
+
+        .product-result-item:hover {
+            background: var(--color-primary-light);
+        }
+
+        .product-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .selected-products {
+            margin-top: 16px;
+        }
+
+        .selected-product-card {
+            background: linear-gradient(135deg, #f0f9f0, #fff8e1);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .product-card-title {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .btn-remove {
+            background: var(--color-danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remove:hover {
+            background: #dc2626;
+        }
+
+        .product-card-fields {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .total-section {
+            background: linear-gradient(135deg, #2d5016, #3d6b1f);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            padding: 12px 32px;
+            background-color: var(--color-bright-green);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-medium);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            padding: 12px 32px;
+            background-color: var(--color-white);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary-light);
+            border-color: var(--color-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background-color: var(--color-success);
+        }
+
+        .toast.error {
+            background-color: var(--color-danger);
+        }
+
+        @media (max-width: 1024px) {
+            .form-header {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .product-card-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-header {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar actualizado para coincidir con facturacion.html -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class='bx bxs-leaf'></i>
+                AgroInventario
+            </h2>
+            <p>Sistema de Fertilizantes</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="inventario.html">
+                    <i class='bx bx-archive'></i>
+                    <span>Inventario</span>
+                </a>
+            </li>
+            <li>
+                <a href="entrada-productos.html">
+                    <i class='bx bx-package'></i>
+                    <span>Entrada de Productos</span>
+                </a>
+            </li>
+            <li>
+                <a href="registro-clientes.html">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="gestion-clientes.html">
+                    <i class='bx bx-group'></i>
+                    <span>Gestión de Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="cuentas-por-cobrar.html">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
+                </a>
+            </li>
+            <li>
+                <a href="cuentas-por-pagar-registro.html" class="active">
+                    <i class='bx bx-receipt'></i>
+                    <span>Registro Cuentas por Pagar</span>
+                </a>
+            </li>
+            <li>
+                <a href="cuentas-por-pagar-gestion.html">
+                    <i class='bx bx-credit-card'></i>
+                    <span>Gestión Cuentas por Pagar</span>
+                </a>
+            </li>
+            <li>
+                <a href="roles-usuarios.html">
+                    <i class='bx bx-user-circle'></i>
+                    <span>Roles y Usuarios</span>
+                </a>
+            </li>
+            <li>
+                <a href="devoluciones.html">
+                    <i class='bx bx-undo'></i>
+                    <span>Devoluciones</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>© 2025 AgroInventario v1.0</p>
+        </div>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <header class="header">
+                <div class="header-content">
+                    <div class="page-title">
+                        <h1>Registro de Cuentas por Pagar</h1>
+                        <p>Registrar compras y deudas con proveedores</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <section class="form-section">
+                    <div class="form-header">
+                        <div class="form-field">
+                            <label for="condicion">Condición *</label>
+                            <select id="condicion" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Contado">Contado</option>
+                                <option value="Crédito">Crédito</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="numeroFactura">Número de Factura *</label>
+                            <input type="text" id="numeroFactura" placeholder="Ej: FAC-2025-001" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="fecha">Fecha *</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                        <div class="form-field">
+    <label for="proveedor">Proveedor *</label>
+    <select id="proveedor" required>
+        <option value="">Seleccionar proveedor...</option>
+        {% for suplidor in suplidores %}
+        <option value="{{ suplidor.id }}">{{ suplidor.nombre }} - {{ suplidor.rnc }}</option>
+        {% endfor %}
+    </select>
+</div>
+                    </div>
+
+                    <div class="products-section">
+                        <div class="section-title">
+                            <i class='bx bx-cart'></i>
+                            Productos
+                        </div>
+
+                        <div class="product-search-bar">
+                            <div class="search-input-wrapper">
+                                <i class='bx bx-search search-icon'></i>
+                                <input type="text" id="productSearch" class="search-input" placeholder="Buscar productos por nombre o código...">
+                                <div id="productResults" class="product-results"></div>
+                            </div>
+                        </div>
+
+                        <div id="selectedProducts" class="selected-products"></div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">Total a Pagar</div>
+                        <div class="total-amount" id="totalAmount">$0.00</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="clearBtn">Limpiar</button>
+                        <button type="button" class="btn-primary" id="saveBtn">Guardar Cuenta por Pagar</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+  <script>
+    class ComprasManager {
+        constructor() {
+            this.selectedProducts = [];
+            this.availableProducts = [];
+            this.init();
+        }
+
+        init() {
+            this.setDefaultDate();
+            this.attachEventListeners();
+            this.loadProductsFromTemplate();
+        }
+
+        loadProductsFromTemplate() {
+            // Los productos están disponibles desde el contexto de Django
+            this.availableProducts = [
+                {% for producto in productos %}
+                {
+                    id: {{ producto.id }},
+                    codigo: "{{ producto.codigo|default:'Sin código' }}",
+                    producto: "{{ producto.producto }}",
+                    categoria: "{{ producto.categoria|default:'Sin categoría' }}",
+                    unidad: "{{ producto.unidad|default:'Unidad' }}"
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+        }
+
+        setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha').value = today;
+        }
+
+        attachEventListeners() {
+            const searchInput = document.getElementById('productSearch');
+            searchInput.addEventListener('input', (e) => {
+                this.searchProducts(e.target.value);
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                this.clearForm();
+            });
+
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                this.guardarCompra();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-input-wrapper')) {
+                    document.getElementById('productResults').classList.remove('show');
+                }
+            });
+
+            // Actualizar estado según condición
+            document.getElementById('condicion').addEventListener('change', (e) => {
+                if (e.target.value === 'Contado') {
+                    this.showToast('La compra se marcará como Pagada', 'success');
+                }
+            });
+        }
+
+        searchProducts(query) {
+            const resultsContainer = document.getElementById('productResults');
+            
+            if (!query.trim()) {
+                resultsContainer.classList.remove('show');
+                return;
+            }
+
+            const filtered = this.availableProducts.filter(p => 
+                p.producto.toLowerCase().includes(query.toLowerCase()) ||
+                p.codigo.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = '<div class="product-result-item">No se encontraron productos</div>';
+                resultsContainer.classList.add('show');
+                return;
+            }
+
+            resultsContainer.innerHTML = filtered.map(product => `
+                <div class="product-result-item" onclick="comprasManager.addProduct(${product.id})">
+                    <strong>${product.codigo}</strong> - ${product.producto}
+                    <div style="font-size: 12px; color: var(--color-text-light);">
+                        ${product.categoria} • ${product.unidad}
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContainer.classList.add('show');
+        }
+
+        addProduct(productId) {
+            const product = this.availableProducts.find(p => p.id === productId);
+            
+            if (!product) return;
+
+            const alreadyAdded = this.selectedProducts.find(p => p.id === productId);
+            if (alreadyAdded) {
+                this.showToast('Este producto ya fue agregado', 'error');
+                return;
+            }
+
+            this.selectedProducts.push({
+                id: product.id,
+                code: product.codigo,
+                name: product.producto,
+                category: product.categoria,
+                unit: product.unidad,
+                cantidad: 1,
+                costoUnitario: 0,
+                subtotal: 0
+            });
+
+            this.renderSelectedProducts();
+            document.getElementById('productSearch').value = '';
+            document.getElementById('productResults').classList.remove('show');
+        }
+
+        removeProduct(productId) {
+            this.selectedProducts = this.selectedProducts.filter(p => p.id !== productId);
+            this.renderSelectedProducts();
+        }
+
+        updateProductField(productId, field, value) {
+            const product = this.selectedProducts.find(p => p.id === productId);
+            if (product) {
+                product[field] = parseFloat(value) || 0;
+                if (field === 'cantidad' || field === 'costoUnitario') {
+                    product.subtotal = product.cantidad * product.costoUnitario;
+                }
+                this.calculateTotal();
+                this.renderSelectedProducts();
+            }
+        }
+
+        renderSelectedProducts() {
+            const container = document.getElementById('selectedProducts');
+            
+            if (this.selectedProducts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--color-text-light); padding: 20px;">No hay productos seleccionados</p>';
+                this.calculateTotal();
+                return;
+            }
+
+            container.innerHTML = this.selectedProducts.map(product => `
+                <div class="selected-product-card">
+                    <div class="product-card-header">
+                        <div class="product-card-title">${product.code} - ${product.name}</div>
+                        <button class="btn-remove" onclick="comprasManager.removeProduct(${product.id})">Eliminar</button>
+                    </div>
+                    <div class="product-card-fields">
+                        <div class="form-field">
+                            <label>Cantidad *</label>
+                            <input type="number" value="${product.cantidad}" min="0.01" step="0.01" 
+                                onchange="comprasManager.updateProductField(${product.id}, 'cantidad', this.value)">
+                            <small style="font-size: 12px; color: var(--color-text-light);">${product.unit}</small>
+                        </div>
+                        <div class="form-field">
+                            <label>Costo Unitario ($) *</label>
+                            <input type="number" value="${product.costoUnitario}" min="0" step="0.01" 
+                                onchange="comprasManager.updateProductField(${product.id}, 'costoUnitario', this.value)">
+                        </div>
+                        <div class="form-field">
+                            <label>Subtotal</label>
+                            <input type="text" value="$${product.subtotal.toFixed(2)}" readonly 
+                                style="background: var(--color-primary-light); font-weight: 600;">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            this.calculateTotal();
+        }
+
+        calculateTotal() {
+            const total = this.selectedProducts.reduce((sum, product) => {
+                return sum + (product.cantidad * product.costoUnitario);
+            }, 0);
+
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+        }
+
+        clearForm() {
+            document.getElementById('condicion').value = '';
+            document.getElementById('numeroFactura').value = '';
+            document.getElementById('proveedor').value = '';
+            document.getElementById('productSearch').value = '';
+            this.selectedProducts = [];
+            this.renderSelectedProducts();
+            this.setDefaultDate();
+        }
+
+        async guardarCompra() {
+            const condicion = document.getElementById('condicion').value;
+            const numeroFactura = document.getElementById('numeroFactura').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            const proveedorId = document.getElementById('proveedor').value;
+
+            if (!condicion || !numeroFactura || !fecha || !proveedorId) {
+                this.showToast('Por favor complete todos los campos requeridos', 'error');
+                return;
+            }
+
+            if (this.selectedProducts.length === 0) {
+                this.showToast('Debe agregar al menos un producto', 'error');
+                return;
+            }
+
+            const invalidProducts = this.selectedProducts.filter(p => p.cantidad <= 0 || p.costoUnitario <= 0);
+            if (invalidProducts.length > 0) {
+                this.showToast('Todos los productos deben tener cantidad y costo válidos', 'error');
+                return;
+            }
+
+            const compraData = {
+                condicion: condicion,
+                numeroFactura: numeroFactura,
+                fecha: fecha,
+                proveedorId: parseInt(proveedorId),
+                productos: this.selectedProducts
+            };
+
+            try {
+                const response = await fetch('{% url "guardar_compra" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCsrfToken()
+                    },
+                    body: JSON.stringify(compraData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    this.showToast(result.message, 'success');
+                    this.clearForm();
+                    // Se eliminó la redirección automática
+                } else {
+                    this.showToast(result.error || 'Error al guardar la compra', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.showToast('Error de conexión al guardar la compra', 'error');
+            }
+        }
+
+        getCsrfToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+    }
+
+    const comprasManager = new ComprasManager();
+</script>
+</body>
+</html>

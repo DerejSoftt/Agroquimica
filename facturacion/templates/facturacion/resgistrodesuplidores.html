@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Suplidores</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            padding: 20px;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: #ffd700;
+        }
+
+        .menu-item {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            color: white;
+        }
+
+        .menu-item i {
+            font-size: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header h1 i {
+            color: #ffd700;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #2d5016;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #84cc16;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h3 i {
+            color: #84cc16;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #2d5016;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: #84cc16;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #84cc16;
+            box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo span {
+                display: none;
+            }
+
+            .menu-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class='bx bxs-leaf'></i>
+            <span>AgroSystem</span>
+        </div>
+        <a href="#" class="menu-item">
+            <i class='bx bx-home'></i>
+            <span>Inicio</span>
+        </a>
+        <a href="registro-suplidores.html" class="menu-item active">
+            <i class='bx bx-user-plus'></i>
+            <span>Registro Suplidores</span>
+        </a>
+        <a href="gestion-suplidores.html" class="menu-item">
+            <i class='bx bx-group'></i>
+            <span>Gestión Suplidores</span>
+        </a>
+        <a href="#" class="menu-item">
+            <i class='bx bx-package'></i>
+            <span>Productos</span>
+        </a>
+        <a href="#" class="menu-item">
+            <i class='bx bx-dollar-circle'></i>
+            <span>Cuentas por Cobrar</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>
+                <i class='bx bx-user-plus'></i>
+                Registro de Suplidores
+            </h1>
+            <p>Complete el formulario para registrar un nuevo suplidor en el sistema</p>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            <i class='bx bx-check-circle' style="font-size: 24px;"></i>
+            <span>Suplidor registrado exitosamente</span>
+        </div>
+
+        <div class="form-container">
+            <form id="supplierForm">
+                <div class="form-section">
+                    <h3>
+                        <i class='bx bx-info-circle'></i>
+                        Información General
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-user'></i>
+                                Nombre del Suplidor *
+                            </label>
+                            <input type="text" id="nombre" required placeholder="Ej: Distribuidora Agrícola S.A.">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-id-card'></i>
+                                RNC *
+                            </label>
+                            <input type="text" id="rnc" required placeholder="Ej: 123-45678-9">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-phone'></i>
+                                Teléfono *
+                            </label>
+                            <input type="tel" id="telefono" required placeholder="Ej: 809-555-1234">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-envelope'></i>
+                                Correo Electrónico *
+                            </label>
+                            <input type="email" id="email" required placeholder="Ej: contacto@suplidor.com">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>
+                                <i class='bx bx-map'></i>
+                                Dirección *
+                            </label>
+                            <input type="text" id="direccion" required placeholder="Ej: Calle Principal #123, Santo Domingo">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>
+                        <i class='bx bx-briefcase'></i>
+                        Información Comercial
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-user-circle'></i>
+                                Persona de Contacto
+                            </label>
+                            <input type="text" id="contacto" placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-category'></i>
+                                Categoría de Productos *
+                            </label>
+                            <select id="categoria" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="semillas">Semillas</option>
+                                <option value="fertilizantes">Fertilizantes</option>
+                                <option value="pesticidas">Pesticidas</option>
+                                <option value="herramientas">Herramientas</option>
+                                <option value="maquinaria">Maquinaria</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-calendar'></i>
+                                Términos de Pago
+                            </label>
+                            <select id="terminos">
+                                <option value="contado">Contado</option>
+                                <option value="15dias">15 días</option>
+                                <option value="30dias">30 días</option>
+                                <option value="45dias">45 días</option>
+                                <option value="60dias">60 días</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class='bx bx-toggle-left'></i>
+                                Estado
+                            </label>
+                            <select id="estado">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>
+                                <i class='bx bx-note'></i>
+                                Notas Adicionales
+                            </label>
+                            <textarea id="notas" placeholder="Información adicional sobre el suplidor..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class='bx bx-x'></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class='bx bx-save'></i>
+                        Registrar Suplidor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+  <script>
+    class SupplierRegistration {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            this.attachEventListeners();
+            this.setupInputMasks();
+        }
+
+        setupInputMasks() {
+            // Máscara para teléfono (opcional, puedes mantenerla o eliminar)
+            const telefonoInput = document.getElementById('telefono');
+            telefonoInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 0) {
+                    value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(6, 10);
+                }
+                e.target.value = value;
+            });
+        }
+
+        attachEventListeners() {
+            document.getElementById('supplierForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveSupplier();
+            });
+        }
+
+        async saveSupplier() {
+            const nombre = document.getElementById('nombre').value;
+            const rnc = document.getElementById('rnc').value;
+            const telefono = document.getElementById('telefono').value;
+            const email = document.getElementById('email').value;
+            const direccion = document.getElementById('direccion').value;
+            const contacto = document.getElementById('contacto').value;
+            const categoria = document.getElementById('categoria').value;
+            const terminos = document.getElementById('terminos').value;
+            const estado = document.getElementById('estado').value;
+            const notas = document.getElementById('notas').value;
+
+            // Validación básica
+            if (!this.validarFormulario(nombre, rnc, telefono, email, direccion, categoria)) {
+                return;
+            }
+
+            const supplierData = {
+                nombre: nombre,
+                rnc: rnc,
+                telefono: telefono,
+                email: email,
+                direccion: direccion,
+                contacto: contacto,
+                categoria: categoria,
+                terminos_pago: terminos,
+                estado: estado,
+                notas: notas
+            };
+
+            try {
+                const response = await fetch('/guardar-suplidor/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken()
+                    },
+                    body: JSON.stringify(supplierData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.showSuccessMessage(data.message);
+                    this.resetForm();
+                } else {
+                    this.showErrorMessage(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                this.showErrorMessage('Error de conexión');
+            }
+        }
+
+        validarFormulario(nombre, rnc, telefono, email, direccion, categoria) {
+            if (!nombre) {
+                this.showErrorMessage('El nombre del suplidor es obligatorio');
+                return false;
+            }
+
+            if (!rnc) {
+                this.showErrorMessage('El RNC es obligatorio');
+                return false;
+            }
+
+            if (!telefono) {
+                this.showErrorMessage('El teléfono es obligatorio');
+                return false;
+            }
+
+            if (!email) {
+                this.showErrorMessage('El email es obligatorio');
+                return false;
+            }
+
+            if (!this.validarEmail(email)) {
+                this.showErrorMessage('Formato de email inválido');
+                return false;
+            }
+
+            if (!direccion) {
+                this.showErrorMessage('La dirección es obligatoria');
+                return false;
+            }
+
+            if (!categoria) {
+                this.showErrorMessage('La categoría es obligatoria');
+                return false;
+            }
+
+            return true;
+        }
+
+        validarEmail(email) {
+            const patron = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return patron.test(email);
+        }
+
+        getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        resetForm() {
+            document.getElementById('supplierForm').reset();
+        }
+
+        showSuccessMessage(message) {
+            const successMsg = document.getElementById('successMessage');
+            successMsg.querySelector('span').textContent = message;
+            successMsg.classList.add('show');
+            
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 5000);
+        }
+
+        showErrorMessage(message) {
+            // Crear elemento de error si no existe
+            let errorMsg = document.getElementById('errorMessage');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.id = 'errorMessage';
+                errorMsg.className = 'error-message';
+                errorMsg.innerHTML = `
+                    <i class='bx bx-error-circle' style="font-size: 24px;"></i>
+                    <span></span>
+                `;
+                errorMsg.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                errorMsg.style.color = 'white';
+                errorMsg.style.padding = '15px 20px';
+                errorMsg.style.borderRadius = '8px';
+                errorMsg.style.marginBottom = '20px';
+                errorMsg.style.display = 'none';
+                errorMsg.style.alignItems = 'center';
+                errorMsg.style.gap = '10px';
+                errorMsg.style.animation = 'slideDown 0.3s ease';
+                
+                const formContainer = document.querySelector('.form-container');
+                formContainer.insertBefore(errorMsg, formContainer.firstChild);
+            }
+
+            errorMsg.querySelector('span').textContent = message;
+            errorMsg.style.display = 'flex';
+            
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 5000);
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('supplierForm').reset();
+    }
+
+    // Inicializar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        new SupplierRegistration();
+    });
+</script>
+</body>
+</html>

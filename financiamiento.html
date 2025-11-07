@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financiamiento - AgroSystem</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2d5016;
+            --color-primary-dark: #1a3009;
+            --color-primary-medium: #3d6b1f;
+            --color-primary-light: #f0f9f0;
+            --color-secondary: #fff8e1;
+            --color-accent: #ffd700;
+            --color-accent-dark: #ffb300;
+            --color-lime: #a3d977;
+            --color-bright-green: #03ff31e6;
+            --color-text: #1a1a1a;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-white: #ffffff;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            color: var(--color-white);
+            padding: 0;
+            z-index: 100;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--color-lime);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin: 0.25rem 1rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: #3d6b1f;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .sidebar-menu i {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .search-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--color-lime);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #e1e8ed;
+            transition: background 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background: var(--color-primary-light);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item strong {
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .autocomplete-item small {
+            color: var(--color-text-light);
+            font-size: 0.85rem;
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--color-text-light);
+        }
+
+        /* Form Section */
+        .form-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .alert i {
+            font-size: 24px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #f59e0b;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.4);
+        }
+
+        .btn-success {
+            background: var(--color-bright-green);
+            color: white;
+            box-shadow: 0 5px 15px rgba(3, 255, 49, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(3, 255, 49, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        .btn i {
+            font-size: 20px;
+        }
+
+        /* History Section */
+        .history-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .history-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e1e8ed;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.aprobado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.rechazado {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class='bx bxs-leaf'></i>
+                AgroSystem
+            </h2>
+            <p>Sistema de Gestión</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard.html">
+                    <i class='bx bx-home'></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="registro-suplidores.html">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
+            <li>
+                <a href="gestion-suplidores.html">
+                    <i class='bx bx-group'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
+            <li>
+                <a href="facturacion.html">
+                    <i class='bx bx-receipt'></i>
+                    <span>Facturación</span>
+                </a>
+            </li>
+            <li>
+                <a href="anulacion-factura.html">
+                    <i class='bx bx-x-circle'></i>
+                    <span>Anulación de Factura</span>
+                </a>
+            </li>
+            <li>
+                <a href="financiamiento.html" class="active">
+                    <i class='bx bx-dollar-circle'></i>
+                    <span>Financiamiento</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>© 2025 AgroSystem v1.0</p>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>
+                    <i class='bx bx-dollar-circle'></i>
+                    Financiamiento
+                </h1>
+                <p>Gestión de Financiamiento para Clientes</p>
+            </div>
+
+            <div class="alert alert-info">
+                <i class='bx bx-info-circle'></i>
+                <span>Busque un cliente por nombre o cédula para procesar una solicitud de financiamiento</span>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <h3>
+                    <i class='bx bx-search'></i>
+                    Buscar Cliente
+                </h3>
+                <div class="search-container">
+                    <div class="form-group">
+                        <label for="clientSearch">
+                            <i class='bx bx-user'></i>
+                            Nombre o Cédula del Cliente
+                        </label>
+                        <input 
+                            type="text" 
+                            id="clientSearch" 
+                            class="form-input" 
+                            placeholder="Escriba el nombre o cédula del cliente..."
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div class="form-section">
+                <h3>
+                    <i class='bx bx-file-blank'></i>
+                    Datos del Financiamiento
+                </h3>
+                <form id="financingForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="clientCedula">
+                                <i class='bx bx-id-card'></i>
+                                Cédula
+                            </label>
+                            <input 
+                                type="text" 
+                                id="clientCedula" 
+                                class="form-input" 
+                                placeholder="Cédula del cliente"
+                                disabled
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="clientName">
+                                <i class='bx bx-user'></i>
+                                Nombre Completo
+                            </label>
+                            <input 
+                                type="text" 
+                                id="clientName" 
+                                class="form-input" 
+                                placeholder="Nombre completo del cliente"
+                                disabled
+                            >
+                        </div>
+                        <div class="form-group form-grid-full">
+                            <label for="clientAddress">
+                                <i class='bx bx-map'></i>
+                                Dirección
+                            </label>
+                            <input 
+                                type="text" 
+                                id="clientAddress" 
+                                class="form-input" 
+                                placeholder="Dirección del cliente"
+                                disabled
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="financingAmount">
+                                <i class='bx bx-money'></i>
+                                Monto del Financiamiento *
+                            </label>
+                            <input 
+                                type="number" 
+                                id="financingAmount" 
+                                class="form-input" 
+                                placeholder="0.00"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="financingDate">
+                                <i class='bx bx-calendar'></i>
+                                Fecha de Solicitud
+                            </label>
+                            <input 
+                                type="date" 
+                                id="financingDate" 
+                                class="form-input"
+                                disabled
+                            >
+                        </div>
+                        <div class="form-group form-grid-full">
+                            <label for="financingComments">
+                                <i class='bx bx-comment-detail'></i>
+                                Comentarios / Observaciones
+                            </label>
+                            <textarea 
+                                id="financingComments" 
+                                class="form-input" 
+                                placeholder="Ingrese comentarios u observaciones sobre el financiamiento..."
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-success">
+                            <i class='bx bx-check-circle'></i>
+                            Procesar Financiamiento
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                            <i class='bx bx-x-circle'></i>
+                            Limpiar Formulario
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section">
+                <h3>
+                    <i class='bx bx-history'></i>
+                    Historial de Financiamientos
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Cédula</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Comentarios</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
+                                    <i class='bx bx-folder-open' style="font-size: 48px; display: block; margin-bottom: 10px; opacity: 0.5;"></i>
+                                    No hay financiamientos registrados
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo de clientes
+        const clientsDatabase = [
+            {
+                id: 1,
+                cedula: '001-1234567-8',
+                nombre: 'Juan Pérez García',
+                direccion: 'Calle Principal #123, Santo Domingo'
+            },
+            {
+                id: 2,
+                cedula: '001-2345678-9',
+                nombre: 'María Rodríguez López',
+                direccion: 'Av. Independencia #456, Santiago'
+            },
+            {
+                id: 3,
+                cedula: '001-3456789-0',
+                nombre: 'Carlos Martínez Sánchez',
+                direccion: 'Calle Duarte #789, La Vega'
+            },
+            {
+                id: 4,
+                cedula: '001-4567890-1',
+                nombre: 'Ana Gómez Fernández',
+                direccion: 'Av. 27 de Febrero #321, Santo Domingo'
+            },
+            {
+                id: 5,
+                cedula: '001-5678901-2',
+                nombre: 'Pedro Jiménez Díaz',
+                direccion: 'Calle Mella #654, San Cristóbal'
+            }
+        ];
+
+        let selectedClient = null;
+        let financingHistory = JSON.parse(localStorage.getItem('financingHistory') || '[]');
+
+        // Inicializar fecha actual
+        document.getElementById('financingDate').valueAsDate = new Date();
+
+        // Búsqueda de clientes con autocompletado
+        const searchInput = document.getElementById('clientSearch');
+        const dropdown = document.getElementById('autocompleteDropdown');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm.length === 0) {
+                dropdown.classList.remove('show');
+                return;
+            }
+
+            const results = clientsDatabase.filter(client => {
+                return client.nombre.toLowerCase().includes(searchTerm) ||
+                       client.cedula.includes(searchTerm);
+            });
+
+            displayResults(results);
+        });
+
+        function displayResults(results) {
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div class="no-results">No se encontraron clientes</div>';
+                dropdown.classList.add('show');
+                return;
+            }
+
+            const html = results.map(client => `
+                <div class="autocomplete-item" onclick="selectClient(${client.id})">
+                    <strong>${client.nombre}</strong>
+                    <small>Cédula: ${client.cedula}</small>
+                </div>
+            `).join('');
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+        }
+
+        function selectClient(clientId) {
+            selectedClient = clientsDatabase.find(c => c.id === clientId);
+            
+            if (selectedClient) {
+                document.getElementById('clientSearch').value = selectedClient.nombre;
+                document.getElementById('clientCedula').value = selectedClient.cedula;
+                document.getElementById('clientName').value = selectedClient.nombre;
+                document.getElementById('clientAddress').value = selectedClient.direccion;
+                
+                dropdown.classList.remove('show');
+            }
+        }
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-container')) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Procesar formulario
+        document.getElementById('financingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!selectedClient) {
+                alert('Por favor, seleccione un cliente de la lista');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById('financingAmount').value);
+            const comments = document.getElementById('financingComments').value;
+
+            if (!amount || amount <= 0) {
+                alert('Por favor, ingrese un monto válido');
+                return;
+            }
+
+            const financing = {
+                id: Date.now(),
+                fecha: new Date().toISOString(),
+                clienteId: selectedClient.id,
+                clienteNombre: selectedClient.nombre,
+                clienteCedula: selectedClient.cedula,
+                monto: amount,
+                comentarios: comments,
+                estado: 'pendiente'
+            };
+
+            financingHistory.unshift(financing);
+            localStorage.setItem('financingHistory', JSON.stringify(financingHistory));
+
+            alert('Financiamiento procesado exitosamente');
+            clearForm();
+            renderHistory();
+        });
+
+        function clearForm() {
+            selectedClient = null;
+            document.getElementById('clientSearch').value = '';
+            document.getElementById('clientCedula').value = '';
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientAddress').value = '';
+            document.getElementById('financingAmount').value = '';
+            document.getElementById('financingComments').value = '';
+            document.getElementById('financingDate').valueAsDate = new Date();
+        }
+
+        function renderHistory() {
+            const tbody = document.getElementById('historyTableBody');
+
+            if (financingHistory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
+                            <i class='bx bx-folder-open' style="font-size: 48px; display: block; margin-bottom: 10px; opacity: 0.5;"></i>
+                            No hay financiamientos registrados
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const html = financingHistory.map(item => {
+                const date = new Date(item.fecha).toLocaleDateString('es-DO');
+                const amount = item.monto.toLocaleString('es-DO', {
+                    style: 'currency',
+                    currency: 'DOP'
+                });
+
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td><strong>${item.clienteNombre}</strong></td>
+                        <td>${item.clienteCedula}</td>
+                        <td><strong>${amount}</strong></td>
+                        <td>
+                            <span class="status-badge ${item.estado}">
+                                ${item.estado.charAt(0).toUpperCase() + item.estado.slice(1)}
+                            </span>
+                        </td>
+                        <td>${item.comentarios || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = html;
+        }
+
+        // Cargar historial al iniciar
+        renderHistory();
+    </script>
+</body>
+</html>

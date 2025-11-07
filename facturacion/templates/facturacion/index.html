@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroRice - Sistema POS</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Fondo con imagen agrícola y gradiente verde-dorado */
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(139, 195, 74, 0.9) 50%, rgba(255, 193, 7, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80') center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .login-container {
+            /* Gradiente verde-dorado deslumbrante con efecto de profundidad */
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.95) 0%, rgba(76, 175, 80, 0.92) 50%, rgba(255, 193, 7, 0.88) 100%);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            /* Borde con gradiente y sombra más dramática */
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 70px rgba(46, 125, 50, 0.4), 
+                        0 0 40px rgba(255, 193, 7, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo en la tarjeta */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo con imagen de arroz/agricultura */
+        .logo-icon {
+            /* Gradiente más vibrante y sombra mejorada */
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 50%, #8BC34A 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.5),
+                        0 0 30px rgba(255, 193, 7, 0.3),
+                        inset -2px -2px 5px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-icon i {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Título con colores agrícolas */
+        .logo-title {
+            font-size: 2rem;
+            font-weight: 700;
+            /* Gradiente más vibrante */
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 50%, #2E7D32 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-subtitle {
+            font-size: 0.9rem;
+            /* Color más oscuro para mejor contraste */
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            /* Color blanco para mejor contraste en fondo verde */
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            /* Fondo blanco con borde verde */
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
+        /* Focus con color verde agrícola */
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2),
+                        0 5px 15px rgba(76, 175, 80, 0.3);
+            background: white;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            /* Color verde más vibrante */
+            color: #4CAF50;
+            font-size: 1.3rem;
+        }
+
+        /* Botón con gradiente verde-dorado */
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            /* Gradiente más vibrante y deslumbrante */
+            background: linear-gradient(135deg, #FFC107 0%, #FFD54F 50%, #4CAF50 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            /* Sombra más dramática */
+            box-shadow: 0 12px 35px rgba(255, 193, 7, 0.4),
+                        0 0 20px rgba(76, 175, 80, 0.3);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-button:hover {
+            transform: translateY(-3px);
+            /* Sombra más intensa en hover */
+            box-shadow: 0 18px 45px rgba(255, 193, 7, 0.5),
+                        0 0 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(-1px);
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Enlaces con color dorado */
+        .forgot-link a {
+            /* Color dorado para mejor contraste */
+            color: #FFD54F;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .forgot-link a:hover {
+            color: #FFC107;
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        /* Tablets (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .login-container {
+                max-width: 420px;
+                padding: 35px;
+            }
+
+            .logo-icon {
+                width: 90px;
+                height: 90px;
+            }
+
+            .logo-icon i {
+                font-size: 2.7rem;
+            }
+
+            .logo-title {
+                font-size: 1.9rem;
+            }
+        }
+
+        /* Mobile Large (576px - 767px) */
+        @media (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+
+            .login-container {
+                max-width: 380px;
+                padding: 30px;
+                border-radius: 18px;
+            }
+
+            .logo-icon {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 12px;
+            }
+
+            .logo-icon i {
+                font-size: 2.5rem;
+            }
+
+            .logo-title {
+                font-size: 1.8rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .form-input {
+                padding: 13px 40px 13px 14px;
+                font-size: 0.95rem;
+            }
+
+            .login-button {
+                padding: 14px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Mobile Medium (480px - 575px) */
+        @media (max-width: 575px) {
+            body {
+                padding: 15px;
+            }
+
+            .login-container {
+                max-width: 350px;
+                padding: 25px;
+                border-radius: 16px;
+            }
+
+            .logo-icon {
+                width: 75px;
+                height: 75px;
+            }
+
+            .logo-icon i {
+                font-size: 2.3rem;
+            }
+
+            .logo-title {
+                font-size: 1.7rem;
+            }
+
+            .form-input {
+                padding: 12px 38px 12px 13px;
+                font-size: 0.9rem;
+            }
+
+            .login-button {
+                padding: 13px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Mobile Small (320px - 479px) */
+        @media (max-width: 479px) {
+            body {
+                padding: 10px;
+            }
+
+            .login-container {
+                max-width: 320px;
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .logo-section {
+                margin-bottom: 25px;
+            }
+
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 10px;
+            }
+
+            .logo-icon i {
+                font-size: 2rem;
+            }
+
+            .logo-title {
+                font-size: 1.5rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+
+            .form-label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            .form-input {
+                padding: 11px 36px 11px 12px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+
+            .input-icon {
+                font-size: 1.2rem;
+                right: 12px;
+            }
+
+            .login-button {
+                padding: 12px;
+                font-size: 0.9rem;
+                border-radius: 10px;
+            }
+
+            .forgot-link {
+                margin-top: 15px;
+            }
+
+            .forgot-link a {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Landscape Orientation - MANTIENE CENTRADO */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                padding: 15px;
+            }
+
+            .login-container {
+                max-width: 500px;
+                padding: 20px 30px;
+            }
+
+            .logo-section {
+                margin-bottom: 15px;
+            }
+
+            .logo-icon {
+                width: 60px;
+                height: 60px;
+                margin-bottom: 8px;
+            }
+
+            .logo-icon i {
+                font-size: 1.8rem;
+            }
+
+            .logo-title {
+                font-size: 1.4rem;
+                margin-bottom: 3px;
+            }
+
+            .logo-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-input {
+                padding: 10px 38px 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .login-button {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            .forgot-link {
+                margin-top: 12px;
+            }
+        }
+
+        /* Extra Small Landscape */
+        @media (max-height: 450px) and (orientation: landscape) {
+            .login-container {
+                max-width: 550px;
+                padding: 15px 25px;
+            }
+
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 5px;
+            }
+
+            .logo-icon i {
+                font-size: 1.5rem;
+            }
+
+            .logo-title {
+                font-size: 1.2rem;
+            }
+
+            .logo-subtitle {
+                font-size: 0.7rem;
+            }
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+            .form-input {
+                padding: 8px 35px 8px 10px;
+                font-size: 0.85rem;
+            }
+
+            .login-button {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <!-- Logo con opción de imagen o icono de arroz -->
+            <div class="logo-icon">
+                <!-- Puedes reemplazar el src con tu logo -->
+                <!-- <img src="ruta/a/tu/logo.png" alt="AgroRice Logo"> -->
+                <i class='bx bxs-leaf'></i>
+            </div>
+            <h1 class="logo-title">DerejSoft</h1>
+            <p class="logo-subtitle">Arroz y Fertilizantes</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username" class="form-label">Usuario</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="form-input" 
+                        placeholder="Ingrese su usuario"
+                        required
+                    >
+                    <i class='bx bx-user input-icon'></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Ingrese su contraseña"
+                        required
+                    >
+                    <i class='bx bx-lock-alt input-icon'></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-button">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div class="forgot-link">
+            <a href="#">¿Olvidó su contraseña?</a>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username && password) {
+                alert('¡Inicio de sesión exitoso!\n\nUsuario: ' + username);
+                // Aquí iría la lógica de autenticación real
+            }
+        });
+
+        // Animación de entrada
+        window.addEventListener('load', () => {
+            const container = document.querySelector('.login-container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!-- templates/facturacion/factura_detalle.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura #{{ venta.id }} - AgroInventario</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .company-info { margin-bottom: 20px; }
+        .client-info { margin-bottom: 20px; }
+        .invoice-details { margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .totals { float: right; width: 300px; }
+        .footer { margin-top: 50px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AgroInventario</h1>
+        <h2>FACTURA</h2>
+    </div>
+    
+    <div class="company-info">
+        <p><strong>Empresa:</strong> AgroInventario</p>
+        <p><strong>Teléfono:</strong> (809) 123-4567</p>
+        <p><strong>Dirección:</strong> Santo Domingo, República Dominicana</p>
+    </div>
+    
+    <div class="client-info">
+        <p><strong>Cliente:</strong> {{ venta.cliente.nombre|default:"Cliente General" }}</p>
+        {% if venta.cliente %}
+        <p><strong>Cédula:</strong> {{ venta.cliente.cedula }}</p>
+        <p><strong>Teléfono:</strong> {{ venta.cliente.telefono1 }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="invoice-details">
+        <p><strong>Número de Factura:</strong> #{{ venta.id }}</p>
+        <p><strong>Fecha:</strong> {{ venta.fecha|date:"d/m/Y H:i" }}</p>
+        <p><strong>Tipo de Venta:</strong> {{ venta.get_tipo_venta_display }}</p>
+        <p><strong>Método de Pago:</strong> {{ venta.get_metodo_pago_display }}</p>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+            <tr>
+                <td>{{ detalle.producto.producto }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>RD$ {{ detalle.precio_unitario }}</td>
+                <td>RD$ {{ detalle.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="totals">
+        <p><strong>Subtotal:</strong> RD$ {{ venta.subtotal }}</p>
+        <p><strong>Descuento:</strong> RD$ {{ venta.descuento }}</p>
+        <p><strong>TOTAL:</strong> RD$ {{ venta.total }}</p>
+    </div>
+    
+    <div class="footer">
+        <p>¡Gracias por su compra!</p>
+        <p>AgroInventario - Sistema de Fertilizantes</p>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            window.print();
+            setTimeout(function() {
+                window.location.href = "{% url 'facturacion' %}";
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

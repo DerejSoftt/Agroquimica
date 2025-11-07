@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuentas por Cobrar - AgroInventario</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2d5016;
+            --color-primary-dark: #1a3009;
+            --color-primary-medium: #3d6b1f;
+            --color-primary-light: #f0f9f0;
+            --color-secondary: #fff8e1;
+            --color-accent: #ffd700;
+            --color-accent-dark: #ffb300;
+            --color-lime: #a3d977;
+            --color-bright-green: #03ff31e6;
+            --color-text: #1a1a1a;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-white: #ffffff;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Sidebar con colores de fertilizantes */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            color: var(--color-white);
+            padding: 0;
+            z-index: 100;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--color-lime);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin: 0.25rem 1rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: #3d6b1f;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .sidebar-menu i {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header con gradiente de colores de fertilizantes */
+        .header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Grid con colores personalizados */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon.pending {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        }
+
+        .stat-icon.overdue {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .stat-icon.paid {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+        }
+
+        .stat-info {
+            text-align: left;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .stat-info p {
+            opacity: 0.9;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        /* Table Styles con colores de fertilizantes */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e1e8ed;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        /* Client row styling */
+        .table tbody tr.client-row {
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            font-weight: 600;
+        }
+
+        .table tbody tr.client-row:hover {
+            background: linear-gradient(135deg, #e8f5e8 0%, #fff4d1 100%);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        /* Invoice row styling */
+        .table tbody tr.invoice-row {
+            background: white;
+        }
+
+        .table tbody tr.invoice-row:hover {
+            background: #f8f9fa;
+        }
+
+        /* Product row styling */
+        .table tbody tr.product-row {
+            background: #f0f9f0;
+            display: none;
+        }
+
+        .table tbody tr.product-row.expanded {
+            display: table-row;
+        }
+
+        /* Payment row styling */
+        .table tbody tr.payment-row {
+            background: #fff8e1;
+            display: none;
+        }
+
+        .table tbody tr.payment-row.expanded {
+            display: table-row;
+        }
+
+        .product-list-cell, .payment-list-cell {
+            padding: 0 !important;
+        }
+
+        .product-list-cell > div, .payment-list-cell > div {
+            padding: 20px 30px;
+        }
+
+        .product-list-cell ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+        }
+
+        .product-list-cell li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #e1e8ed;
+        }
+
+        .product-list-cell li:last-child {
+            border-bottom: none;
+        }
+
+        /* Product toggle button */
+        .product-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--color-primary);
+            cursor: pointer;
+            padding: 4px 8px;
+            margin-left: 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .product-toggle-btn:hover {
+            background: var(--color-primary-light);
+        }
+
+        .product-toggle-btn i {
+            font-size: 16px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #856404;
+        }
+
+        .status-overdue {
+            background: #dc3545;
+            color: white;
+        }
+
+        .status-paid {
+            background: #28a745;
+            color: white;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+            white-space: nowrap;
+            flex-wrap: wrap;
+        }
+
+        .actions .btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .currency {
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Buttons con colores de fertilizantes */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.4);
+        }
+
+        .btn-success {
+            background: var(--color-bright-green);
+            color: white;
+            box-shadow: 0 5px 15px rgba(3, 255, 49, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(3, 255, 49, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-danger:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .payment-form-group {
+            margin-bottom: 20px;
+        }
+
+        .payment-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payment-form-group input,
+        .payment-form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .payment-form-group input:focus,
+        .payment-form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .payment-info {
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            border: 1px solid var(--color-accent);
+            color: var(--color-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-info i {
+            font-size: 1.5rem;
+        }
+
+        /* Estilos para la barra de progreso */
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+
+        /* Estilos para tablas internas */
+        .internal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .internal-table th {
+            background: #2d5016;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .internal-table td {
+            padding: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .internal-table tfoot tr {
+            background: #f0f9f0;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class='bx bxs-leaf'></i>
+                AgroInventario
+            </h2>
+            <p>Sistema de Fertilizantes</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="inventario.html">
+                    <i class='bx bx-archive'></i>
+                    <span>Inventario</span>
+                </a>
+            </li>
+            <li>
+                <a href="entrada-productos.html">
+                    <i class='bx bx-package'></i>
+                    <span>Entrada de Productos</span>
+                </a>
+            </li>
+            <li>
+                <a href="registro-clientes.html">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="gestion-clientes.html">
+                    <i class='bx bx-group'></i>
+                    <span>Gestión de Clientes</span>
+                </a>
+            </li>
+            <li>
+                <a href="cuentas-por-cobrar.html" class="active">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>© 2025 AgroInventario v1.0</p>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>
+                    <i class='bx bx-credit-card'></i>
+                    Cuentas por Cobrar
+                </h1>
+                <p>Gestión de Pagos Pendientes de Clientes</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class='bx bx-time'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingAmount">RD$ 0</h3>
+                        <p>Pendientes de Cobro</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon overdue">
+                        <i class='bx bx-error-alt'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="overdueAmount">RD$ 0</h3>
+                        <p>Vencidas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon paid">
+                        <i class='bx bx-check-circle'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="paidThisMonthAmount">RD$ 0</h3>
+                        <p>Cobradas este Mes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class='bx bx-calculator'></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalReceivableAmount">RD$ 0</h3>
+                        <p>Total por Cobrar</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="searchClient">Buscar Cliente</label>
+                        <input type="text" class="filter-input" placeholder="Nombre del cliente..." id="searchClient">
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Estado</label>
+                        <select class="filter-input" id="statusFilter">
+                            <option value="">Todos los estados</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="parcial">Parcial</option>
+                            <option value="vencida">Vencida</option>
+                            <option value="pagada">Pagada</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class='bx bx-search'></i>
+                            Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Lista de Cuentas por Cobrar</h2>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class='bx bx-download'></i>
+                        Exportar
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table" id="accountsTable">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Teléfono</th>
+                                <th>Facturas Pendientes</th>
+                                <th>Monto Total Pendiente</th>
+                                <th>Estado General</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="no-data" id="noDataMessage" style="display: none;">
+                        <i class='bx bx-credit-card-alt'></i>
+                        <p>No hay cuentas por cobrar registradas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Registrar Pago -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i class='bx bx-dollar-circle'></i>
+                    Registrar Pago
+                </h2>
+                <button class="close-btn" onclick="closePaymentModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-info">
+                    <i class='bx bx-info-circle'></i>
+                    Saldo Pendiente: <span id="paymentModalPendingAmount" class="currency">RD$ 0</span>
+                </div>
+                <form id="paymentForm">
+                    <input type="hidden" id="paymentAccountId">
+                    <div class="payment-form-group">
+                        <label for="paymentAmountInput">Monto a Pagar *</label>
+                        <input type="number" id="paymentAmountInput" step="0.01" min="0" required>
+                    </div>
+                    <div class="payment-form-group">
+                        <label for="paymentMethod">Método de Pago *</label>
+                        <select id="paymentMethod" required>
+                            <option value="">Seleccione un método</option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                    <div class="payment-form-group">
+                        <label for="paymentReference">Referencia/Número de Transacción</label>
+                        <input type="text" id="paymentReference" placeholder="Opcional">
+                    </div>
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                        <button type="button" class="btn btn-danger" onclick="closePaymentModal()">
+                            <i class='bx bx-x'></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class='bx bx-save'></i>
+                            Registrar Pago
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let accounts = [];
+    let filteredAccounts = [];
+    let groupedClients = [];
+
+    // Función para cargar datos desde la API
+    async function loadAccounts() {
+        try {
+            const response = await fetch('/api/cuentas-por-cobrar/');
+            if (response.ok) {
+                accounts = await response.json();
+                filteredAccounts = [...accounts];
+                renderTable();
+                updateStats();
+            } else {
+                console.error('Error al cargar las cuentas');
+                const error = await response.json();
+                alert('Error al cargar datos: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión al cargar las cuentas');
+        }
+    }
+
+    // Función para agrupar cuentas por cliente
+    function groupAccountsByClient(accountsData) {
+        const clientsMap = {};
+        
+        accountsData.forEach(account => {
+            const clientKey = `${account.clientName}-${account.clientPhone}`;
+            
+            if (!clientsMap[clientKey]) {
+                clientsMap[clientKey] = {
+                    clientName: account.clientName,
+                    clientPhone: account.clientPhone,
+                    invoices: [],
+                    totalPending: 0,
+                    status: 'pagada',
+                    isExpanded: false
+                };
+            }
+            
+            const pendingBalance = account.totalAmount - account.paidAmount;
+            
+            clientsMap[clientKey].invoices.push({
+                id: account.id,
+                invoiceNumber: account.invoiceNumber,
+                products: account.products,
+                saleDate: account.saleDate,
+                dueDate: account.dueDate,
+                totalAmount: account.totalAmount,
+                paidAmount: account.paidAmount,
+                pendingBalance: pendingBalance,
+                status: account.status,
+                observations: account.observations,
+                isExpanded: false,
+                isProductsExpanded: false,
+                isPaymentsExpanded: false
+            });
+            
+            clientsMap[clientKey].totalPending += pendingBalance;
+            
+            if (account.status === 'vencida') {
+                clientsMap[clientKey].status = 'vencida';
+            } else if (account.status === 'pendiente' && clientsMap[clientKey].status !== 'vencida') {
+                clientsMap[clientKey].status = 'pendiente';
+            } else if (account.status === 'parcial' && clientsMap[clientKey].status !== 'vencida' && clientsMap[clientKey].status !== 'pendiente') {
+                clientsMap[clientKey].status = 'parcial';
+            }
+        });
+        
+        return Object.values(clientsMap);
+    }
+
+    // Función para actualizar estadísticas
+    function updateStats(accountsData = accounts) {
+        let pendingAmount = 0;
+        let overdueAmount = 0;
+        let paidThisMonthAmount = 0;
+        let totalReceivableAmount = 0;
+        
+        accountsData.forEach(account => {
+            const pendingBalance = account.totalAmount - account.paidAmount;
+            totalReceivableAmount += pendingBalance;
+            
+            if (account.status === 'pendiente' || account.status === 'parcial') {
+                pendingAmount += pendingBalance;
+            } else if (account.status === 'vencida') {
+                overdueAmount += pendingBalance;
+            }
+            
+            if (account.status === 'pagada') {
+                const saleDate = new Date(account.saleDate);
+                const now = new Date();
+                if (saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear()) {
+                    paidThisMonthAmount += account.totalAmount;
+                }
+            }
+        });
+        
+        document.getElementById('pendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
+        document.getElementById('overdueAmount').textContent = `RD$ ${overdueAmount.toLocaleString('es-DO')}`;
+        document.getElementById('paidThisMonthAmount').textContent = `RD$ ${paidThisMonthAmount.toLocaleString('es-DO')}`;
+        document.getElementById('totalReceivableAmount').textContent = `RD$ ${totalReceivableAmount.toLocaleString('es-DO')}`;
+    }
+
+    // Función para obtener clase de estado
+    function getStatusClass(status) {
+        const statusClasses = {
+            'pendiente': 'status-pending',
+            'parcial': 'status-pending',
+            'vencida': 'status-overdue',
+            'pagada': 'status-paid'
+        };
+        return statusClasses[status] || '';
+    }
+
+    // Función para obtener nombre de estado
+    function getStatusName(status) {
+        const statusNames = {
+            'pendiente': 'Pendiente',
+            'parcial': 'Parcial',
+            'vencida': 'Vencida',
+            'pagada': 'Pagada'
+        };
+        return statusNames[status] || status;
+    }
+
+    // Función para renderizar la tabla
+    function renderTable(data = accounts) {
+        const tableBody = document.getElementById('tableBody');
+        const noDataMessage = document.getElementById('noDataMessage');
+        
+        if (!data || data.length === 0) {
+            tableBody.innerHTML = '';
+            noDataMessage.style.display = 'block';
+            return;
+        }
+        
+        noDataMessage.style.display = 'none';
+        groupedClients = groupAccountsByClient(data);
+        
+        let tableRowsHTML = '';
+        
+        groupedClients.forEach(client => {
+            const isClientExpanded = client.isExpanded;
+            
+            // Fila del cliente
+            tableRowsHTML += `
+                <tr class="client-row" data-client-key="${client.clientName}-${client.clientPhone}">
+                    <td><strong>${client.clientName}</strong></td>
+                    <td>${client.clientPhone}</td>
+                    <td>${client.invoices.length} factura(s)</td>
+                    <td class="currency"><strong>RD$ ${client.totalPending.toLocaleString('es-DO')}</strong></td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(client.status)}">
+                            ${getStatusName(client.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-info" onclick="toggleClientInvoices('${client.clientName}-${client.clientPhone}')" title="${isClientExpanded ? 'Ocultar' : 'Mostrar'} facturas">
+                                <i class='bx bx-${isClientExpanded ? 'minus' : 'plus'}'></i>
+                                ${isClientExpanded ? 'Ocultar' : 'Mostrar'}
+                            </button>
+                            ${client.totalPending > 0 ? `
+                            <button class="btn btn-success" onclick="payAllInvoices('${client.clientName}-${client.clientPhone}')" title="Pagar todas">
+                                <i class='bx bx-dollar'></i>
+                                Pagar Todo
+                            </button>
+                            ` : ''}
+                            ${client.totalPending <= 0 ? `
+                            <button class="btn btn-danger" onclick="deletePaidAccounts('${client.clientName}-${client.clientPhone}')" title="Eliminar cuentas pagadas">
+                                <i class='bx bx-trash'></i>
+                                Eliminar
+                            </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Filas de facturas (si está expandido)
+            if (isClientExpanded) {
+                client.invoices.forEach(invoice => {
+                    const hasMultipleProducts = invoice.products && invoice.products.length > 0;
+                    const progressPercentage = (invoice.paidAmount / invoice.totalAmount * 100).toFixed(1);
+                    
+                    tableRowsHTML += `
+                        <tr class="invoice-row" data-client-key="${client.clientName}-${client.clientPhone}" data-invoice-id="${invoice.id}">
+                            <td colspan="2"></td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <strong>Factura: ${invoice.invoiceNumber}</strong>
+                                    <div class="actions" style="margin-left: auto;">
+                                        ${hasMultipleProducts ? `
+                                        <button class="btn btn-info" onclick="toggleInvoiceProducts(${invoice.id}, '${client.clientName}-${client.clientPhone}')" title="${invoice.isProductsExpanded ? 'Ocultar' : 'Mostrar'} productos">
+                                            <i class='bx bx-${invoice.isProductsExpanded ? 'minus' : 'plus'}'></i>
+                                            Productos
+                                        </button>
+                                        ` : ''}
+                                        <button class="btn btn-warning" onclick="loadPaymentsHistory(${invoice.id})" title="Ver historial de pagos">
+                                            <i class='bx bx-history'></i>
+                                            Pagos
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="currency">RD$ ${invoice.pendingBalance.toLocaleString('es-DO')}</td>
+                            <td>
+                                <span class="status-badge ${getStatusClass(invoice.status)}">
+                                    ${getStatusName(invoice.status)}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    ${invoice.pendingBalance > 0 ? `
+                                    <button class="btn btn-success" onclick="openPaymentModal(${invoice.id})" title="Registrar Pago">
+                                        <i class='bx bx-dollar'></i>
+                                        Pagar
+                                    </button>
+                                    ` : ''}
+                                    ${invoice.pendingBalance <= 0 ? `
+                                    <button class="btn btn-danger" onclick="deleteAccount(${invoice.id})" title="Eliminar cuenta">
+                                        <i class='bx bx-trash'></i>
+                                        Eliminar
+                                    </button>
+                                    ` : ''}
+                                    ${invoice.pendingBalance <= 0 ? `
+                                    <button class="btn btn-info" onclick="generateReceiptForLastPayment(${invoice.id})" title="Generar Comprobante">
+                                        <i class='bx bx-receipt'></i>
+                                        Comprobante
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    
+                    // Fila de productos (si está expandido)
+                    if (hasMultipleProducts && invoice.isProductsExpanded) {
+                        tableRowsHTML += `
+                            <tr class="product-row expanded" data-invoice-id="${invoice.id}">
+                                <td colspan="6" class="product-list-cell">
+                                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                        <h4 style="margin-bottom: 15px; color: #2d5016;">
+                                            <i class='bx bx-package'></i>
+                                            Productos de la Factura ${invoice.invoiceNumber}
+                                        </h4>
+                                        <table class="internal-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th style="text-align: center;">Cantidad</th>
+                                                    <th style="text-align: right;">Precio Unitario</th>
+                                                    <th style="text-align: right;">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${invoice.products.map(p => `
+                                                    <tr>
+                                                        <td>${p.nombre}</td>
+                                                        <td style="text-align: center;">${p.cantidad}</td>
+                                                        <td style="text-align: right;">RD$ ${p.precio.toLocaleString('es-DO')}</td>
+                                                        <td style="text-align: right;">RD$ ${(p.cantidad * p.precio).toLocaleString('es-DO')}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                                                    <td style="text-align: right;"><strong>RD$ ${invoice.totalAmount.toLocaleString('es-DO')}</strong></td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        ${invoice.observations ? `
+                                        <div style="margin-top: 15px; padding: 10px; background: #fff8e1; border-radius: 5px;">
+                                            <strong>Observaciones:</strong> ${invoice.observations}
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                    
+                    // Fila de pagos (se cargará dinámicamente)
+                    if (invoice.isPaymentsExpanded) {
+                        tableRowsHTML += `
+                            <tr class="payment-row expanded" data-invoice-id="${invoice.id}">
+                                <td colspan="6" class="payment-list-cell">
+                                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                                        <h4 style="margin-bottom: 15px; color: #2d5016;">
+                                            <i class='bx bx-money'></i>
+                                            Historial de Pagos - Factura ${invoice.invoiceNumber}
+                                        </h4>
+                                        <div id="payments-content-${invoice.id}">
+                                            <div style="text-align: center; padding: 20px;">
+                                                <i class='bx bx-loader-circle bx-spin' style="font-size: 2em;"></i>
+                                                <p>Cargando historial de pagos...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+        });
+        
+        tableBody.innerHTML = tableRowsHTML;
+        
+        // Cargar los pagos para las facturas que están expandidas
+        groupedClients.forEach(client => {
+            if (client.isExpanded) {
+                client.invoices.forEach(invoice => {
+                    if (invoice.isPaymentsExpanded) {
+                        loadPaymentsHistory(invoice.id);
+                    }
+                });
+            }
+        });
+    }
+
+    // Función para expandir/colapsar facturas de un cliente
+    function toggleClientInvoices(clientKey) {
+        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
+        if (clientIndex !== -1) {
+            groupedClients[clientIndex].isExpanded = !groupedClients[clientIndex].isExpanded;
+            renderTable(filteredAccounts);
+        }
+    }
+
+    // Función para expandir/colapsar productos de una factura
+    function toggleInvoiceProducts(invoiceId, clientKey) {
+        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
+        if (clientIndex !== -1) {
+            const invoiceIndex = groupedClients[clientIndex].invoices.findIndex(i => i.id === invoiceId);
+            if (invoiceIndex !== -1) {
+                groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded = 
+                    !groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded;
+                // Cerrar pagos si se abren productos
+                if (groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded) {
+                    groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded = false;
+                }
+                renderTable(filteredAccounts);
+            }
+        }
+    }
+
+    // Función para expandir/colapsar pagos de una factura
+    function toggleInvoicePayments(invoiceId, clientKey) {
+        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
+        if (clientIndex !== -1) {
+            const invoiceIndex = groupedClients[clientIndex].invoices.findIndex(i => i.id === invoiceId);
+            if (invoiceIndex !== -1) {
+                groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded = 
+                    !groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded;
+                // Cerrar productos si se abren pagos
+                if (groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded) {
+                    groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded = false;
+                }
+                renderTable(filteredAccounts);
+            }
+        }
+    }
+
+    // Nueva función para cargar el historial de pagos
+    async function loadPaymentsHistory(accountId) {
+        try {
+            const response = await fetch(`/api/pagos-cuenta/${accountId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                renderPaymentsContent(accountId, data);
+            } else {
+                const error = await response.json();
+                document.getElementById(`payments-content-${accountId}`).innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #dc3545;">
+                        <i class='bx bx-error' style="font-size: 2em;"></i>
+                        <p>Error al cargar pagos: ${error.error}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            document.getElementById(`payments-content-${accountId}`).innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #dc3545;">
+                    <i class='bx bx-error' style="font-size: 2em;"></i>
+                    <p>Error de conexión: ${error.message}</p>
+                </div>
+            `;
+        }
+    }
+
+    // Función para renderizar el contenido de pagos
+    function renderPaymentsContent(accountId, data) {
+        const progressPercentage = (data.paid_amount / data.total_amount * 100).toFixed(1);
+        
+        let paymentsHTML = `
+            <div style="margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2d5016;">
+                        <strong>Total Factura:</strong>
+                        <div style="font-size: 1.2em; color: #2d5016;">RD$ ${data.total_amount.toLocaleString('es-DO')}</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                        <strong>Total Pagado:</strong>
+                        <div style="font-size: 1.2em; color: #28a745;">RD$ ${data.paid_amount.toLocaleString('es-DO')}</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                        <strong>Saldo Pendiente:</strong>
+                        <div style="font-size: 1.2em; color: #dc3545;">RD$ ${data.pending_balance.toLocaleString('es-DO')}</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <strong>Progreso:</strong>
+                        <div style="font-size: 1.2em; color: #ffc107;">${progressPercentage}%</div>
+                    </div>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>Progreso de Pago:</strong>
+                    <div style="margin-top: 10px;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercentage}%">
+                                ${progressPercentage}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        `;
+        
+        if (data.pagos && data.pagos.length > 0) {
+            paymentsHTML += `
+                <div style="margin-bottom: 20px;">
+                    <h5 style="margin-bottom: 15px; color: #2d5016;">
+                        <i class='bx bx-list-ul'></i>
+                        Detalle de Pagos Realizados
+                    </h5>
+                    <table class="internal-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Método</th>
+                                <th>Referencia</th>
+                                <th style="text-align: right;">Monto</th>
+                                <th style="text-align: center;">Comprobante</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.pagos.map(pago => `
+                                <tr>
+                                    <td>${pago.fecha_pago}</td>
+                                    <td>${pago.metodo_pago}</td>
+                                    <td>${pago.referencia}</td>
+                                    <td style="text-align: right; color: #28a745; font-weight: bold;">
+                                        RD$ ${pago.monto_pagado.toLocaleString('es-DO')}
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <button class="btn btn-info" onclick="generateReceipt(${pago.id})" title="Descargar Comprobante">
+                                            <i class='bx bx-download'></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } else {
+            paymentsHTML += `
+                <div style="text-align: center; padding: 30px; color: #6c757d;">
+                    <i class='bx bx-info-circle' style="font-size: 3em; margin-bottom: 10px;"></i>
+                    <p>No se han realizado pagos para esta factura</p>
+                </div>
+            `;
+        }
+        
+        if (data.pending_balance > 0) {
+            paymentsHTML += `
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn btn-success" onclick="openPaymentModal(${accountId})">
+                        <i class='bx bx-dollar'></i>
+                        Registrar Nuevo Pago
+                    </button>
+                </div>
+            `;
+        }
+        
+        paymentsHTML += `</div>`;
+        
+        document.getElementById(`payments-content-${accountId}`).innerHTML = paymentsHTML;
+    }
+
+    // Función para pagar todas las facturas de un cliente
+    async function payAllInvoices(clientKey) {
+        const client = groupedClients.find(c => `${c.clientName}-${c.clientPhone}` === clientKey);
+        if (client && confirm(`¿Está seguro de que desea pagar todas las facturas de ${client.clientName} por un total de RD$ ${client.totalPending.toLocaleString('es-DO')}?`)) {
+            try {
+                let pagoIds = [];
+                
+                for (const invoice of client.invoices) {
+                    if (invoice.pendingBalance > 0) {
+                        const response = await fetch('/api/cuentas-por-cobrar/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCSRFToken()
+                            },
+                            body: JSON.stringify({
+                                cuenta_id: invoice.id,
+                                monto_pagado: invoice.pendingBalance,
+                                metodo_pago: 'efectivo',
+                                referencia: 'Pago completo de todas las facturas'
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            pagoIds.push(result.pago_id);
+                        } else {
+                            const error = await response.json();
+                            throw new Error(error.error);
+                        }
+                    }
+                }
+                
+                await loadAccounts();
+                
+                if (pagoIds.length > 0 && confirm('Todas las facturas han sido pagadas exitosamente. ¿Desea generar los comprobantes de pago?')) {
+                    // Generar comprobante para el último pago
+                    generateReceipt(pagoIds[pagoIds.length - 1]);
+                }
+            } catch (error) {
+                alert('Error al procesar los pagos: ' + error.message);
+            }
+        }
+    }
+
+    // Función para eliminar una cuenta pagada
+    async function deleteAccount(accountId) {
+        if (confirm('¿Está seguro de que desea eliminar esta cuenta pagada? Esta acción no se puede deshacer.')) {
+            try {
+                const response = await fetch(`/api/cuentas-por-cobrar/${accountId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    }
+                });
+                
+                if (response.ok) {
+                    await loadAccounts();
+                    alert('Cuenta eliminada exitosamente');
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.error);
+                }
+            } catch (error) {
+                alert('Error al eliminar la cuenta: ' + error.message);
+            }
+        }
+    }
+
+    // Función para eliminar todas las cuentas pagadas de un cliente
+    async function deletePaidAccounts(clientKey) {
+        const client = groupedClients.find(c => `${c.clientName}-${c.clientPhone}` === clientKey);
+        if (client && confirm(`¿Está seguro de que desea eliminar todas las cuentas pagadas de ${client.clientName}?`)) {
+            try {
+                for (const invoice of client.invoices) {
+                    if (invoice.pendingBalance <= 0) {
+                        const response = await fetch(`/api/cuentas-por-cobrar/${invoice.id}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken()
+                            }
+                        });
+                        
+                        if (!response.ok) {
+                            const error = await response.json();
+                            throw new Error(error.error);
+                        }
+                    }
+                }
+                
+                await loadAccounts();
+                alert('Todas las cuentas pagadas han sido eliminadas exitosamente');
+            } catch (error) {
+                alert('Error al eliminar las cuentas: ' + error.message);
+            }
+        }
+    }
+
+    // Función para generar comprobante con ID de pago
+    function generateReceipt(pagoId) {
+        window.open(`/comprobante-pago/${pagoId}/`, '_blank');
+    }
+
+    // Función para generar comprobante del último pago de una cuenta
+    async function generateReceiptForLastPayment(accountId) {
+        try {
+            const response = await fetch(`/api/obtener-ultimo-pago/${accountId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.pago_id) {
+                    window.open(`/comprobante-pago/${data.pago_id}/`, '_blank');
+                } else {
+                    alert('No se encontró un pago para generar el comprobante');
+                }
+            } else {
+                const error = await response.json();
+                alert('Error: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Error al generar comprobante:', error);
+            alert('Error al generar el comprobante');
+        }
+    }
+
+    // Función para aplicar filtros
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchClient').value.toLowerCase().trim();
+        const statusFilter = document.getElementById('statusFilter').value;
+        
+        filteredAccounts = accounts.filter(account => {
+            const matchesSearch = !searchTerm ||
+                account.clientName.toLowerCase().includes(searchTerm) ||
+                account.invoiceNumber.toLowerCase().includes(searchTerm) ||
+                account.clientPhone.toLowerCase().includes(searchTerm);
+            
+            const matchesStatus = !statusFilter || account.status === statusFilter;
+            
+            return matchesSearch && matchesStatus;
+        });
+        
+        renderTable(filteredAccounts);
+        updateStats(filteredAccounts);
+    }
+
+    // Función para abrir modal de pago
+    function openPaymentModal(id) {
+        const account = accounts.find(acc => acc.id === id);
+        if (!account) return;
+        
+        const currentPendingBalance = account.totalAmount - account.paidAmount;
+        
+        if (currentPendingBalance <= 0) {
+            alert('Esta cuenta ya está completamente pagada');
+            return;
+        }
+        
+        document.getElementById('paymentModalPendingAmount').textContent = `RD$ ${currentPendingBalance.toLocaleString('es-DO')}`;
+        document.getElementById('paymentAccountId').value = id;
+        document.getElementById('paymentAmountInput').value = currentPendingBalance.toFixed(2);
+        document.getElementById('paymentAmountInput').max = currentPendingBalance.toFixed(2);
+        document.getElementById('paymentAmountInput').min = "0.01";
+        
+        document.getElementById('paymentModal').classList.add('active');
+    }
+
+    // Función para cerrar modal de pago
+    function closePaymentModal() {
+        document.getElementById('paymentModal').classList.remove('active');
+        document.getElementById('paymentForm').reset();
+    }
+
+    // Función para obtener el token CSRF
+    function getCSRFToken() {
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Función para procesar pago
+    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const accountId = parseInt(document.getElementById('paymentAccountId').value);
+        const amount = parseFloat(document.getElementById('paymentAmountInput').value);
+        const method = document.getElementById('paymentMethod').value;
+        const reference = document.getElementById('paymentReference').value;
+        
+        if (!amount || amount <= 0) {
+            alert('Ingrese un monto válido mayor a 0');
+            return;
+        }
+        
+        if (!method) {
+            alert('Seleccione un método de pago');
+            return;
+        }
+        
+        const account = accounts.find(acc => acc.id === accountId);
+        if (!account) {
+            alert('Error: Cuenta no encontrada');
+            return;
+        }
+        
+        const maxAmount = account.totalAmount - account.paidAmount;
+        if (amount > maxAmount) {
+            alert(`El monto no puede exceder el saldo pendiente de RD$ ${maxAmount.toLocaleString('es-DO')}`);
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/cuentas-por-cobrar/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({
+                    cuenta_id: accountId,
+                    monto_pagado: amount,
+                    metodo_pago: method,
+                    referencia: reference
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                closePaymentModal();
+                await loadAccounts();
+                
+                // Preguntar si desea generar comprobante
+                if (confirm('Pago registrado exitosamente. ¿Desea generar el comprobante de pago?')) {
+                    generateReceipt(result.pago_id);
+                }
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            alert('Error al registrar el pago: ' + error.message);
+        }
+    });
+
+    // Función para exportar datos
+    function exportData() {
+        // Crear datos para exportar
+        const exportData = [];
+        
+        groupedClients.forEach(client => {
+            client.invoices.forEach(invoice => {
+                exportData.push({
+                    'Cliente': client.clientName,
+                    'Teléfono': client.clientPhone,
+                    'Factura': invoice.invoiceNumber,
+                    'Fecha Venta': invoice.saleDate,
+                    'Fecha Vencimiento': invoice.dueDate,
+                    'Monto Total': invoice.totalAmount,
+                    'Monto Pagado': invoice.paidAmount,
+                    'Saldo Pendiente': invoice.pendingBalance,
+                    'Estado': getStatusName(invoice.status),
+                    'Observaciones': invoice.observations
+                });
+            });
+        });
+        
+        // Convertir a CSV
+        if (exportData.length === 0) {
+            alert('No hay datos para exportar');
+            return;
+        }
+        
+        const headers = Object.keys(exportData[0]);
+        const csvContent = [
+            headers.join(','),
+            ...exportData.map(row => 
+                headers.map(header => {
+                    const value = row[header] || '';
+                    return `"${value.toString().replace(/"/g, '""')}"`;
+                }).join(',')
+            )
+        ].join('\n');
+        
+        // Descargar archivo
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `cuentas_por_cobrar_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Event listener para el input de monto de pago
+    document.getElementById('paymentAmountInput').addEventListener('input', function() {
+        const amount = parseFloat(this.value) || 0;
+        const maxAmount = parseFloat(this.max) || 0;
+        
+        if (amount > maxAmount) {
+            this.value = maxAmount.toFixed(2);
+        }
+    });
+
+    // Inicializar al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAccounts();
+        
+        // Event listener para búsqueda en tiempo real
+        document.getElementById('searchClient').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        
+        // Event listener para cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePaymentModal();
+            }
+        });
+        
+        // Event listener para cerrar modal haciendo click fuera
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>
