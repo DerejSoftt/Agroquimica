@@ -5,6 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('inventario', views.inventario, name='inventario'),
     path('registrodeclientes', views.registrodeclientes, name='registrodeclientes'),
     path('guardar-cliente/', views.guardar_cliente, name='guardar_cliente'),
@@ -35,7 +37,30 @@ urlpatterns = [
     path('facturas/<int:venta_id>/', views.factura_detalle, name='factura_detalle'),
     path('cuentaporcobrar', views.cuentaporcobrar, name='cuentaporcobrar'),
     path('api/cuentas-por-cobrar/', views.api_cuentas_por_cobrar, name='api_cuentas_por_cobrar'),
-    path('api/cuentas-por-cobrar/<int:cuenta_id>/', views.api_cuentas_por_cobrar_delete, name='api_cuentas_por_cobrar_delete'),
-    path('comprobante-pago/<int:pago_id>/', views.generar_comprobante_pago, name='generar_comprobante_pago'),
+    path('api/cuentas-por-cobrar/<int:cuenta_id>/eliminar/', views.api_eliminar_cuenta, name='api_eliminar_cuenta'),
+   
      path('api/obtener-ultimo-pago/<int:cuenta_id>/', views.obtener_ultimo_pago, name='obtener_ultimo_pago'),
+      path('api/detalles-cliente/<int:cliente_id>/', views.api_obtener_detalles_cliente, name='api_detalles_cliente'),
+
+     path('comprobante-pago-80mm/<int:pago_id>/', views.generar_comprobante_pago, name='comprobante_pago_80mm'),
+    path('comprobante-pago/<int:pago_id>/', views.generar_comprobante_pago, name='comprobante_pago'),
+    path('anulacionesdefactura', views.anulacionesdefactura, name='anulacionesdefactura'),
+
+    path('buscar-factura/', views.buscar_factura_ajax, name='buscar_factura'),
+    path('anular-factura/', views.anular_factura_ajax, name='anular_factura'),
+    path('buscar-ultima-factura/', views.buscar_ultima_factura, name='buscar_ultima_factura'),
+    path('buscar-recibo/', views.buscar_recibo_ajax, name='buscar_recibo'),
+    path('anular-recibo/', views.anular_recibo_ajax, name='anular_recibo'),
+    path('devoluciones', views.devoluciones, name='devoluciones'),
+    path('buscar-factura-devolucion/', views.buscar_factura_devolucion, name='buscar_factura_devolucion'),
+    path('procesar-devolucion/', views.procesar_devolucion, name='procesar_devolucion'),
+    path('estadodecuenta', views.estadodecuenta, name='estadodecuenta'),
+
+     path('facturacion/buscar-clientes-estado-cuenta/', views.buscar_clientes_estado_cuenta, name='buscar_clientes_estado_cuenta'),
+    path('facturacion/cliente/<int:cliente_id>/datos-estado-cuenta/', views.obtener_datos_estado_cuenta, name='obtener_datos_estado_cuenta'),
+    path('facturacion/cliente/<int:cliente_id>/pdf-estado-cuenta/', views.generar_pdf_estado_cuenta, name='generar_pdf_estado_cuenta'),
+
+    path('dashboard', views.dashboard, name='dashboard'),
+
+
     ]

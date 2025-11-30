@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 import json
-from .models import Cliente, Suplidor, EntradaProducto , Compra, DetalleCompra,Venta, DetalleVenta, CuentaPorCobrar, PagoCuentaCobrar
+from .models import Cliente, Suplidor, EntradaProducto , Compra, DetalleCompra,Venta, DetalleVenta, CuentaPorCobrar, PagoCuentaCobrar, Devolucion, ItemDevolucion
 import re
 from django.utils.decorators import method_decorator
 from datetime import datetime
@@ -22,11 +22,103 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 from django.http import HttpResponse
+from decimal import Decimal
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.conf import settings
+
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+from reportlab.pdfgen import canvas
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from django.urls import reverse
+from django.db.models import Q, Sum, Count, F
+from datetime import date
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+import pandas as pd
+import numpy as np
+from django.utils import timezone
+from django.contrib.humanize.templatetags.humanize import intcomma
 #==============================================================
 #           Login 
 #==============================================================
 def index(request):
+    # Si el usuario ya está autenticado, redirigir al inventario
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('inventario')
     return render(request, "facturacion/index.html")
+
+def login_view(request):
+    if request.method == 'POST':
+        try:
+            # Para requests AJAX
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                data = json.loads(request.body)
+                username = data.get('username')
+                password = data.get('password')
+            else:
+                # Para form submission tradicional
+                username = request.POST.get('username')
+                password = request.POST.get('password')
+            
+            # Autenticar usuario
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                # Verificar si es superusuario
+                if user.is_superuser:
+                    login(request, user)
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': True, 
+                            'redirect_url': 'inventario'
+                        })
+                    else:
+                        return redirect('inventario')
+                else:
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False, 
+                            'error': 'No tiene permisos de superusuario'
+                        }, status=403)
+                    else:
+                        return render(request, 'facturacion/index.html', {
+                            'error': 'No tiene permisos de superusuario'
+                        })
+            else:
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False, 
+                        'error': 'Credenciales inválidas'
+                    }, status=401)
+                else:
+                    return render(request, 'facturacion/index.html', {
+                        'error': 'Credenciales inválidas'
+                    })
+                    
+        except Exception as e:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Error del servidor'
+                }, status=500)
+            else:
+                return render(request, 'facturacion/index.html', {
+                    'error': 'Error del servidor'
+                })
+    
+    # Si es GET, mostrar el formulario de login
+    return redirect('index')
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
 
 
 #==============================================================
@@ -949,7 +1041,6 @@ def buscar_clientes(request):
         return JsonResponse({'clientes': resultados})
 
 
-
 @csrf_exempt
 def procesar_venta(request):
     if request.method == 'POST':
@@ -968,6 +1059,7 @@ def procesar_venta(request):
                 # Crear la venta
                 venta = Venta(
                     cliente_id=data.get('cliente_id'),
+                    cliente_nombre=data.get('cliente_nombre'),  # Nuevo campo
                     tipo_venta=data['tipo_venta'],
                     metodo_pago=data['metodo_pago'],
                     subtotal=float(data['subtotal']),
@@ -976,6 +1068,8 @@ def procesar_venta(request):
                     observacion=data.get('observacion', '')
                 )
                 venta.save()
+                
+                print(f"Factura creada: {venta.numero_factura}")
                 
                 # Crear detalles de venta y actualizar stock
                 for item in data['items']:
@@ -1011,7 +1105,6 @@ def procesar_venta(request):
                 if data['tipo_venta'] == 'credito' and data.get('cliente_id'):
                     try:
                         cliente = Cliente.objects.get(id=data['cliente_id'])
-                        # Calcular fecha de vencimiento (30 días por defecto)
                         fecha_vencimiento = date.today() + timedelta(days=30)
                         
                         CuentaPorCobrar.objects.create(
@@ -1024,27 +1117,17 @@ def procesar_venta(request):
                             observaciones=data.get('observacion', '')
                         )
                     except Cliente.DoesNotExist:
-                        # Si no existe el cliente, continuamos sin crear la cuenta por cobrar
                         pass
                 
                 return JsonResponse({
                     'success': True,
                     'venta_id': venta.id,
+                    'numero_factura': venta.numero_factura,
                     'redirect_url': f'/facturas/{venta.id}/'
                 })
                 
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'success': False,
-                'error': 'Error en el formato JSON de la solicitud'
-            })
-        except KeyError as e:
-            return JsonResponse({
-                'success': False,
-                'error': f'Falta campo requerido: {str(e)}'
-            })
         except Exception as e:
-            print("Error completo:", str(e))  # Para debug
+            print("Error completo:", str(e))
             return JsonResponse({
                 'success': False,
                 'error': f'Error al procesar la venta: {str(e)}'
@@ -1053,16 +1136,24 @@ def procesar_venta(request):
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 
+
 def factura_detalle(request, venta_id):
-    venta = Venta.objects.get(id=venta_id)
-    detalles = venta.detalles.all()
-    
-    context = {
-        'venta': venta,
-        'detalles': detalles,
-    }
-    return render(request, "facturacion/factura_detalle.html", context)
+    try:
+        venta = Venta.objects.get(id=venta_id)
+        detalles = venta.detalles.all()
+        
+        context = {
+            'venta': venta,
+            'detalles': detalles,
+        }
+        return render(request, "facturacion/factura_detalle.html", context)
+    except Venta.DoesNotExist:
+        return render(request, "404.html", status=404)
 #==============================================================
+
+
+
+
 
 def cuentaporcobrar(request):
     return render(request, "facturacion/cuentaporcobrar.html")  
@@ -1073,50 +1164,61 @@ def cuentaporcobrar(request):
 def api_cuentas_por_cobrar(request):
     if request.method == 'GET':
         try:
-            cuentas = CuentaPorCobrar.objects.select_related('cliente', 'venta').prefetch_related('pagos').all()
-            
-            # Actualizar estado de vencimiento
-            for cuenta in cuentas:
-                cuenta.verificar_vencimiento()
+            # Optimizar la consulta con prefetch_related para detalles y productos
+            cuentas = CuentaPorCobrar.objects.select_related(
+                'cliente', 'venta'
+            ).prefetch_related(
+                'pagos',
+                'venta__detalles__producto'
+            ).exclude(estado='anulada').filter(saldo_pendiente__gt=0)
             
             data = []
             for cuenta in cuentas:
+                # Verificar vencimiento
+                if date.today() > cuenta.fecha_vencimiento and cuenta.estado not in ['pagada', 'vencida']:
+                    cuenta.estado = 'vencida'
+                    cuenta.save()
+                
                 # Obtener productos de la venta
                 productos = []
                 try:
-                    if cuenta.venta and hasattr(cuenta.venta, 'detalles'):
+                    if cuenta.venta:
                         detalles_venta = cuenta.venta.detalles.all()
                         for detalle in detalles_venta:
                             productos.append({
-                                'nombre': getattr(detalle.producto, 'nombre', 'Producto no disponible') if detalle.producto else 'Producto no disponible',
-                                'cantidad': detalle.cantidad,
+                                'nombre': detalle.producto.producto if detalle.producto else 'Producto no disponible',
+                                'cantidad': float(detalle.cantidad),
                                 'precio': float(detalle.precio_unitario)
                             })
                     else:
-                        productos = [{'nombre': 'Información de productos no disponible', 'cantidad': 1, 'precio': float(cuenta.monto_total)}]
+                        productos = [{'nombre': 'Venta no disponible', 'cantidad': 1, 'precio': float(cuenta.monto_total)}]
                 except Exception as e:
-                    productos = [{'nombre': 'Error al cargar productos', 'cantidad': 1, 'precio': float(cuenta.monto_total)}]
+                    productos = [{'nombre': f'Error: {str(e)}', 'cantidad': 1, 'precio': float(cuenta.monto_total)}]
                 
                 # Obtener información del cliente
-                client_name = getattr(cuenta.cliente, 'nombre', 'Cliente no disponible')
-                client_phone = getattr(cuenta.cliente, 'telefono1', 'No disponible')
+                client_name = getattr(cuenta.cliente, 'nombre', 'Cliente no disponible') if cuenta.cliente else 'Cliente no disponible'
+                client_phone = getattr(cuenta.cliente, 'telefono1', 'No disponible') if cuenta.cliente else 'No disponible'
+                client_id = getattr(cuenta.cliente, 'id', None) if cuenta.cliente else None
                 
                 # Obtener pagos de esta cuenta
                 pagos = []
                 for pago in cuenta.pagos.all():
                     pagos.append({
                         'id': pago.id,
+                        'numero_recibo': pago.numero_recibo or 'N/A',
                         'monto_pagado': float(pago.monto_pagado),
                         'fecha_pago': pago.fecha_pago.strftime('%Y-%m-%d'),
                         'metodo_pago': pago.metodo_pago,
-                        'referencia': pago.observaciones or ''
+                        'referencia': pago.observaciones or '',
+                        'estado': pago.estado
                     })
                 
                 data.append({
                     'id': cuenta.id,
+                    'clientId': client_id,
                     'clientName': client_name,
                     'clientPhone': client_phone,
-                    'invoiceNumber': f"FAC-{cuenta.venta.id:05d}" if cuenta.venta else f"CTA-{cuenta.id:05d}",
+                    'invoiceNumber': cuenta.venta.numero_factura if cuenta.venta else f"CTA-{cuenta.id:05d}",
                     'products': productos,
                     'saleDate': cuenta.fecha_emision.strftime('%Y-%m-%d'),
                     'dueDate': cuenta.fecha_vencimiento.strftime('%Y-%m-%d'),
@@ -1125,69 +1227,180 @@ def api_cuentas_por_cobrar(request):
                     'pendingBalance': float(cuenta.saldo_pendiente),
                     'status': cuenta.estado,
                     'observations': cuenta.observaciones or '',
-                    'pagos': pagos  # Incluimos los pagos en la respuesta
+                    'pagos': pagos
                 })
             
             return JsonResponse(data, safe=False)
             
         except Exception as e:
+            import traceback
+            print(f"Error en GET: {str(e)}")
+            print(traceback.format_exc())
             return JsonResponse({'error': f'Error al cargar datos: {str(e)}'}, status=500)
     
     elif request.method == 'POST':
         try:
+            # Parsear los datos del pago
             data = json.loads(request.body)
             cuenta_id = data.get('cuenta_id')
-            monto_pagado = float(data.get('monto_pagado'))
+            monto_pagado = data.get('monto_pagado')
             metodo_pago = data.get('metodo_pago')
             referencia = data.get('referencia', '')
             
-            cuenta = get_object_or_404(CuentaPorCobrar, id=cuenta_id)
+            print(f"🔍 DEBUG: Procesando pago - cuenta_id={cuenta_id}, monto={monto_pagado}, metodo={metodo_pago}, referencia={referencia}")
             
-            if monto_pagado <= 0:
-                return JsonResponse({'error': 'El monto debe ser mayor a 0'}, status=400)
+            # Validar datos requeridos
+            if not cuenta_id or not monto_pagado or not metodo_pago:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Faltan datos requeridos: cuenta_id, monto_pagado, metodo_pago'
+                }, status=400)
             
-            if monto_pagado > cuenta.saldo_pendiente:
-                return JsonResponse({'error': 'El monto excede el saldo pendiente'}, status=400)
+            # Obtener la cuenta por cobrar
+            try:
+                cuenta = CuentaPorCobrar.objects.get(id=cuenta_id)
+                print(f"🔍 DEBUG: Cuenta encontrada - ID: {cuenta.id}, Saldo pendiente: {cuenta.saldo_pendiente}, Estado: {cuenta.estado}")
+            except CuentaPorCobrar.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Cuenta por cobrar con ID {cuenta_id} no existe'
+                }, status=404)
             
-            # Crear registro de pago
-            pago = PagoCuentaCobrar(
-                cuenta=cuenta,
-                monto_pagado=monto_pagado,
-                fecha_pago=date.today(),
-                metodo_pago=metodo_pago,
-                observaciones=referencia
-            )
-            pago.save()
+            # Validar que la cuenta no esté pagada
+            if cuenta.estado == 'pagada':
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Esta cuenta ya está completamente pagada'
+                }, status=400)
             
-            # Actualizar saldo de la cuenta
-            cuenta.actualizar_saldo(monto_pagado)
+            # Validar que el monto no exceda el saldo pendiente
+            monto_pagado_decimal = Decimal(str(monto_pagado))
+            if monto_pagado_decimal > cuenta.saldo_pendiente:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'El monto pagado (${monto_pagado}) excede el saldo pendiente (${cuenta.saldo_pendiente})'
+                }, status=400)
             
-            return JsonResponse({
+            # CORRECCIÓN: Usar transacción atómica para garantizar la consistencia
+            from django.db import transaction
+            
+            with transaction.atomic():
+                print(f"🔍 DEBUG: Creando objeto PagoCuentaCobrar...")
+                
+                # Crear el pago - CORREGIDO: No establecer fecha_creacion manualmente
+                pago = PagoCuentaCobrar(
+                    cuenta=cuenta,
+                    monto_pagado=monto_pagado_decimal,
+                    metodo_pago=metodo_pago,
+                    observaciones=referencia,
+                    fecha_pago=date.today()
+                    # fecha_creacion se establecerá automáticamente por auto_now_add=True
+                )
+                
+                print(f"🔍 DEBUG: Objeto pago creado - ID: {pago.id}, Número Recibo: {pago.numero_recibo}")
+                
+                # Guardar el pago para que se genere el número de recibo automáticamente
+                pago.save()
+                print(f"🔍 DEBUG: Pago guardado - ID: {pago.id}, Número Recibo: {pago.numero_recibo}")
+                
+                # Actualizar el saldo pendiente de la cuenta
+                cuenta.saldo_pendiente -= monto_pagado_decimal
+                print(f"🔍 DEBUG: Saldo actualizado - Nuevo saldo: {cuenta.saldo_pendiente}")
+                
+                # Actualizar el estado de la cuenta según el saldo pendiente
+                if cuenta.saldo_pendiente == 0:
+                    cuenta.estado = 'pagada'
+                    print("🔍 DEBUG: Cuenta marcada como PAGADA")
+                else:
+                    # Si no está pagada completamente, verificar si está vencida
+                    if date.today() > cuenta.fecha_vencimiento:
+                        cuenta.estado = 'vencida'
+                        print("🔍 DEBUG: Cuenta marcada como VENCIDA")
+                    else:
+                        # Si tiene pagos parciales pero no está vencida
+                        cuenta.estado = 'parcial' if cuenta.pagos.exists() else 'pendiente'
+                        print(f"🔍 DEBUG: Cuenta marcada como {cuenta.estado}")
+                
+                cuenta.save()
+                print(f"🔍 DEBUG: Cuenta guardada - Estado final: {cuenta.estado}, Saldo final: {cuenta.saldo_pendiente}")
+            
+            # Preparar respuesta con información del pago
+            response_data = {
                 'success': True,
-                'nuevo_saldo': float(cuenta.saldo_pendiente),
-                'pago_id': pago.id
-            })
+                'message': 'Pago registrado exitosamente',
+                'pago': {
+                    'id': pago.id,
+                    'numero_recibo': pago.numero_recibo,
+                    'monto_pagado': float(pago.monto_pagado),
+                    'fecha_pago': pago.fecha_pago.strftime('%Y-%m-%d'),
+                    'metodo_pago': pago.metodo_pago,
+                    'referencia': pago.observaciones or '',
+                    'estado': pago.estado,
+                    'fecha_creacion': pago.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S') if pago.fecha_creacion else None
+                },
+                'cuenta_actualizada': {
+                    'id': cuenta.id,
+                    'saldo_pendiente': float(cuenta.saldo_pendiente),
+                    'estado': cuenta.estado
+                }
+            }
             
+            print(f"✅ Pago registrado exitosamente: Recibo #{pago.numero_recibo}, ID del pago: {pago.id}")
+            return JsonResponse(response_data)
+            
+        except json.JSONDecodeError as e:
+            print(f"❌ Error decodificando JSON: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'error': 'Error en el formato JSON',
+                'details': str(e)
+            }, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            print(f"❌ Error en POST: {str(e)}")
+            import traceback
+            print(traceback.format_exc())
+            return JsonResponse({
+                'success': False,
+                'error': f'Error interno del servidor: {str(e)}'
+            }, status=500)
+    
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': f'Método {request.method} no permitido. Use GET o POST.'
+        }, status=405)
+
+
 
 @csrf_exempt
-def api_cuentas_por_cobrar_delete(request, cuenta_id):
+def api_eliminar_cuenta(request, cuenta_id):
+    """Eliminar una cuenta por cobrar completamente pagada"""
     if request.method == 'DELETE':
         try:
             cuenta = get_object_or_404(CuentaPorCobrar, id=cuenta_id)
             
-            if cuenta.estado != 'pagada':
-                return JsonResponse({'error': 'Solo se pueden eliminar cuentas completamente pagadas'}, status=400)
+            # Verificar que la cuenta esté completamente pagada
+            if cuenta.saldo_pendiente > 0:
+                return JsonResponse({
+                    'error': 'No se puede eliminar una cuenta con saldo pendiente'
+                }, status=400)
             
-            # Eliminar los pagos asociados primero
-            cuenta.pagos.all().delete()
+            # Verificar que no tenga pagos asociados (o los eliminamos también)
+            if cuenta.pagos.exists():
+                cuenta.pagos.all().delete()
+            
+            # Eliminar la cuenta
             cuenta.delete()
             
-            return JsonResponse({'success': True})
+            return JsonResponse({
+                'success': True,
+                'message': 'Cuenta eliminada exitosamente'
+            })
             
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 def obtener_pagos_cuenta(request, cuenta_id):
     """Obtiene todos los pagos de una cuenta específica"""
@@ -1199,10 +1412,12 @@ def obtener_pagos_cuenta(request, cuenta_id):
         for pago in pagos:
             pagos_data.append({
                 'id': pago.id,
+                'numero_recibo': pago.numero_recibo or 'N/A',
                 'monto_pagado': float(pago.monto_pagado),
                 'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
                 'metodo_pago': pago.get_metodo_pago_display(),
-                'referencia': pago.observaciones or 'N/A'
+                'referencia': pago.observaciones or 'N/A',
+                'estado': pago.estado
             })
         
         return JsonResponse({
@@ -1218,20 +1433,248 @@ def obtener_pagos_cuenta(request, cuenta_id):
         return JsonResponse({'error': str(e)}, status=500)
 
 def generar_comprobante_pago(request, pago_id):
-    """Genera un PDF con el comprobante de pago"""
+    """Genera un PDF con el comprobante de pago - CORREGIDO para devolver PDF directamente"""
     try:
         pago = get_object_or_404(PagoCuentaCobrar, id=pago_id)
         cuenta = pago.cuenta
         
-        # Crear el PDF
-        buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        elements = []
+        # Determinar si es formato 80mm basado en la URL
+        is_80mm = '80mm' in request.path
         
+        # Crear el buffer para el PDF
+        buffer = BytesIO()
+        
+        # Configurar el tamaño de página según el formato
+        if is_80mm:
+            # Formato 80mm (226.77 puntos de ancho)
+            width = 226.77
+            height = 550
+            page_size = (width, height)
+            doc = SimpleDocTemplate(buffer, pagesize=page_size, 
+                                  topMargin=10, bottomMargin=10, 
+                                  leftMargin=5, rightMargin=5)
+        else:
+            # Formato normal (A4)
+            page_size = A4
+            doc = SimpleDocTemplate(buffer, pagesize=page_size,
+                                  topMargin=20, bottomMargin=20,
+                                  leftMargin=20, rightMargin=20)
+        
+        elements = []
         styles = getSampleStyleSheet()
         
+        # Crear estilos personalizados según el formato
+        if is_80mm:
+            styles.add(ParagraphStyle(
+                name='Center80', 
+                alignment=TA_CENTER, 
+                fontSize=10, 
+                spaceAfter=6, 
+                fontName='Helvetica-Bold'
+            ))
+            styles.add(ParagraphStyle(
+                name='Left80', 
+                alignment=TA_LEFT, 
+                fontSize=8, 
+                spaceAfter=4
+            ))
+            styles.add(ParagraphStyle(
+                name='Right80', 
+                alignment=TA_RIGHT, 
+                fontSize=8, 
+                spaceAfter=4
+            ))
+            styles.add(ParagraphStyle(
+                name='SmallCenter80', 
+                alignment=TA_CENTER, 
+                fontSize=8, 
+                spaceAfter=4
+            ))
+            styles.add(ParagraphStyle(
+                name='Bold80', 
+                alignment=TA_LEFT, 
+                fontSize=8, 
+                spaceAfter=4,
+                fontName='Helvetica-Bold'
+            ))
+            
+            title = Paragraph("COMPROBANTE DE PAGO", styles['Center80'])
+        else:
+            styles.add(ParagraphStyle(
+                name='Center', 
+                alignment=TA_CENTER, 
+                fontSize=16, 
+                spaceAfter=12, 
+                fontName='Helvetica-Bold'
+            ))
+            styles.add(ParagraphStyle(
+                name='Left', 
+                alignment=TA_LEFT, 
+                fontSize=10, 
+                spaceAfter=6
+            ))
+            styles.add(ParagraphStyle(
+                name='Right', 
+                alignment=TA_RIGHT, 
+                fontSize=10, 
+                spaceAfter=6
+            ))
+            styles.add(ParagraphStyle(
+                name='Bold', 
+                alignment=TA_LEFT, 
+                fontSize=10, 
+                spaceAfter=6,
+                fontName='Helvetica-Bold'
+            ))
+            
+            title = Paragraph("COMPROBANTE DE PAGO", styles['Center'])
+        
+        elements.append(title)
+        elements.append(Spacer(1, 12))
+        
+        # Información del cliente
+        client_name = getattr(cuenta.cliente, 'nombre', 'Cliente no disponible')
+        client_phone = getattr(cuenta.cliente, 'telefono1', 'No disponible')
+        
+        # Calcular saldos
+        saldo_anterior = cuenta.saldo_pendiente + pago.monto_pagado
+        saldo_actual = cuenta.saldo_pendiente
+        
+        # Información del pago
+        data = [
+            ['Número de Recibo:', pago.numero_recibo or 'N/A'],
+            ['Fecha de Pago:', pago.fecha_pago.strftime('%d/%m/%Y')],
+            ['Cliente:', client_name],
+            ['Teléfono:', client_phone],
+            ['Factura:', f"FAC-{cuenta.venta.id:05d}" if cuenta.venta else f"CTA-{cuenta.id:05d}"],
+            ['Monto Total Factura:', f"RD$ {float(cuenta.monto_total):,.2f}"],
+            ['Saldo Anterior:', f"RD$ {float(saldo_anterior):,.2f}"],
+            ['Monto Pagado:', f"RD$ {float(pago.monto_pagado):,.2f}"],
+            ['Nuevo Saldo:', f"RD$ {float(saldo_actual):,.2f}"],
+            ['Método de Pago:', pago.get_metodo_pago_display()],
+            ['Referencia:', pago.observaciones or 'N/A'],
+        ]
+        
+        # Crear tabla según el formato
+        if is_80mm:
+            table = Table(data, colWidths=[80, 120])
+            table.setStyle(TableStyle([
+                ('FONT', (0, 0), (-1, -1), 'Helvetica', 7),
+                ('FONT', (0, 0), (0, 0), 'Helvetica-Bold', 7),
+                ('FONT', (1, 0), (1, 0), 'Helvetica-Bold', 7),
+                ('FONT', (0, 5), (0, 8), 'Helvetica-Bold', 7),
+                ('FONT', (1, 5), (1, 8), 'Helvetica-Bold', 7),
+                ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+                ('LINEABOVE', (0, 0), (-1, 0), 1, colors.black),
+                ('LINEABOVE', (0, 5), (-1, 5), 1, colors.black),
+                ('LINEBELOW', (0, 8), (-1, 8), 1, colors.black),
+            ]))
+        else:
+            table = Table(data, colWidths=[120, 400])
+            table.setStyle(TableStyle([
+                ('FONT', (0, 0), (-1, -1), 'Helvetica', 10),
+                ('FONT', (0, 0), (0, 0), 'Helvetica-Bold', 10),
+                ('FONT', (1, 0), (1, 0), 'Helvetica-Bold', 10),
+                ('FONT', (0, 5), (0, 8), 'Helvetica-Bold', 10),
+                ('FONT', (1, 5), (1, 8), 'Helvetica-Bold', 10),
+                ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+                ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                ('BACKGROUND', (0, 5), (-1, 8), colors.lightgrey),
+            ]))
+        
+        elements.append(table)
+        elements.append(Spacer(1, 15))
+        
+        # Estado de la cuenta
+        estado_texto = "CUENTA PAGADA COMPLETAMENTE" if saldo_actual == 0 else f"SALDO PENDIENTE: RD$ {float(saldo_actual):,.2f}"
+        
+        if is_80mm:
+            estado_style = styles['Center80'] if saldo_actual == 0 else styles['Bold80']
+            elements.append(Paragraph(estado_texto, estado_style))
+            elements.append(Spacer(1, 10))
+            elements.append(Paragraph("_________________________", styles['SmallCenter80']))
+            elements.append(Paragraph("Firma del Cliente", styles['SmallCenter80']))
+            elements.append(Spacer(1, 10))
+            elements.append(Paragraph("¡Gracias por su pago!", styles['SmallCenter80']))
+        else:
+            estado_style = styles['Center'] if saldo_actual == 0 else styles['Bold']
+            elements.append(Paragraph(estado_texto, estado_style))
+            elements.append(Spacer(1, 20))
+            elements.append(Paragraph("_________________________", styles['Center']))
+            elements.append(Paragraph("Firma del Cliente", styles['Center']))
+        
+        # Construir el PDF
+        doc.build(elements)
+        
+        buffer.seek(0)
+        
+        # CORREGIDO: Devolver el PDF directamente
+        response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+        filename = f"comprobante_pago_{pago.numero_recibo or pago.id}.pdf"
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        import traceback
+        print(f"Error al generar comprobante: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({'error': f'Error al generar comprobante: {str(e)}'}, status=500)
+
+def generar_comprobante_pago_normal(request, pago_id):
+    """Genera un PDF con el comprobante de pago en formato normal"""
+    try:
+        pago = get_object_or_404(PagoCuentaCobrar, id=pago_id)
+        cuenta = pago.cuenta
+        
+        # Crear el buffer para el PDF
+        buffer = BytesIO()
+        
+        # Configurar el tamaño de página A4
+        doc = SimpleDocTemplate(buffer, pagesize=A4,
+                              topMargin=20, bottomMargin=20,
+                              leftMargin=20, rightMargin=20)
+        
+        elements = []
+        styles = getSampleStyleSheet()
+        
+        # Crear estilos personalizados
+        styles.add(ParagraphStyle(
+            name='Center', 
+            alignment=TA_CENTER, 
+            fontSize=16, 
+            spaceAfter=12, 
+            fontName='Helvetica-Bold'
+        ))
+        styles.add(ParagraphStyle(
+            name='Left', 
+            alignment=TA_LEFT, 
+            fontSize=10, 
+            spaceAfter=6
+        ))
+        styles.add(ParagraphStyle(
+            name='Right', 
+            alignment=TA_RIGHT, 
+            fontSize=10, 
+            spaceAfter=6
+        ))
+        styles.add(ParagraphStyle(
+            name='Bold', 
+            alignment=TA_LEFT, 
+            fontSize=10, 
+            spaceAfter=6,
+            fontName='Helvetica-Bold'
+        ))
+        
         # Título
-        title = Paragraph("COMPROBANTE DE PAGO", styles['Title'])
+        title = Paragraph("COMPROBANTE DE PAGO", styles['Center'])
         elements.append(title)
         elements.append(Spacer(1, 20))
         
@@ -1239,50 +1682,69 @@ def generar_comprobante_pago(request, pago_id):
         client_name = getattr(cuenta.cliente, 'nombre', 'Cliente no disponible')
         client_phone = getattr(cuenta.cliente, 'telefono1', 'No disponible')
         
+        # Calcular saldos
+        saldo_anterior = cuenta.saldo_pendiente + pago.monto_pagado
+        saldo_actual = cuenta.saldo_pendiente
+        
         # Información del pago
         data = [
-            ['Número de Comprobante:', f"CP-{pago.id:05d}"],
+            ['Número de Recibo:', pago.numero_recibo or 'N/A'],
             ['Fecha de Pago:', pago.fecha_pago.strftime('%d/%m/%Y')],
             ['Cliente:', client_name],
             ['Teléfono:', client_phone],
             ['Factura:', f"FAC-{cuenta.venta.id:05d}" if cuenta.venta else f"CTA-{cuenta.id:05d}"],
-            ['Monto Pagado:', f"RD$ {pago.monto_pagado:,.2f}"],
+            ['Monto Total Factura:', f"RD$ {float(cuenta.monto_total):,.2f}"],
+            ['Saldo Anterior:', f"RD$ {float(saldo_anterior):,.2f}"],
+            ['Monto Pagado:', f"RD$ {float(pago.monto_pagado):,.2f}"],
+            ['Nuevo Saldo:', f"RD$ {float(saldo_actual):,.2f}"],
             ['Método de Pago:', pago.get_metodo_pago_display()],
             ['Referencia:', pago.observaciones or 'N/A'],
-            ['Saldo Anterior:', f"RD$ {(float(cuenta.saldo_pendiente) + float(pago.monto_pagado)):,.2f}"],
-            ['Nuevo Saldo:', f"RD$ {cuenta.saldo_pendiente:,.2f}"],
         ]
         
-        table = Table(data, colWidths=[200, 200])
+        # Crear tabla
+        table = Table(data, colWidths=[120, 400])
         table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ('FONT', (0, 0), (-1, -1), 'Helvetica', 10),
+            ('FONT', (0, 0), (0, 0), 'Helvetica-Bold', 10),
+            ('FONT', (1, 0), (1, 0), 'Helvetica-Bold', 10),
+            ('FONT', (0, 5), (0, 8), 'Helvetica-Bold', 10),
+            ('FONT', (1, 5), (1, 8), 'Helvetica-Bold', 10),
+            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+            ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+            ('BACKGROUND', (0, 5), (-1, 8), colors.lightgrey),
         ]))
         
         elements.append(table)
-        elements.append(Spacer(1, 30))
+        elements.append(Spacer(1, 20))
         
-        # Mensaje de agradecimiento
-        thank_you = Paragraph("¡Gracias por su pago!", styles['Normal'])
-        elements.append(thank_you)
+        # Estado de la cuenta
+        estado_texto = "CUENTA PAGADA COMPLETAMENTE" if saldo_actual == 0 else f"SALDO PENDIENTE: RD$ {float(saldo_actual):,.2f}"
+        estado_style = styles['Center'] if saldo_actual == 0 else styles['Bold']
+        elements.append(Paragraph(estado_texto, estado_style))
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph("_________________________", styles['Center']))
+        elements.append(Paragraph("Firma del Cliente", styles['Center']))
         
+        # Construir el PDF
         doc.build(elements)
         
         buffer.seek(0)
-        response = HttpResponse(buffer, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="comprobante_pago_{pago.id}.pdf"'
+        
+        # CORREGIDO: Devolver el PDF directamente
+        response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+        filename = f"comprobante_pago_{pago.numero_recibo or pago.id}.pdf"
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
         
         return response
         
     except Exception as e:
+        import traceback
+        print(f"Error al generar comprobante normal: {str(e)}")
+        print(traceback.format_exc())
         return JsonResponse({'error': f'Error al generar comprobante: {str(e)}'}, status=500)
 
 def obtener_ultimo_pago(request, cuenta_id):
@@ -1298,3 +1760,1152 @@ def obtener_ultimo_pago(request, cuenta_id):
             
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def api_obtener_detalles_cliente(request, cliente_id):
+    """Obtiene todos los detalles de las cuentas por cobrar de un cliente"""
+    try:
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        cuentas = CuentaPorCobrar.objects.filter(cliente=cliente).select_related('venta').prefetch_related('pagos')
+        
+        datos_cliente = {
+            'id': cliente.id,
+            'nombre': cliente.nombre,
+            'telefono': cliente.telefono1,
+            'cuentas': []
+        }
+        
+        for cuenta in cuentas:
+            # Obtener productos de la venta
+            productos = []
+            if cuenta.venta and hasattr(cuenta.venta, 'detalles'):
+                for detalle in cuenta.venta.detalles.all():
+                    productos.append({
+                        'nombre': detalle.producto.producto.nombre if detalle.producto and detalle.producto.producto else 'Producto no disponible',
+                        'cantidad': float(detalle.cantidad),
+                        'precio': float(detalle.precio_unitario),
+                        'subtotal': float(detalle.subtotal)
+                    })
+            
+            # Obtener pagos
+            pagos = []
+            for pago in cuenta.pagos.all().order_by('-fecha_pago'):
+                pagos.append({
+                    'id': pago.id,
+                    'numero_recibo': pago.numero_recibo or 'N/A',
+                    'monto_pagado': float(pago.monto_pagado),
+                    'fecha_pago': pago.fecha_pago.strftime('%d/%m/%Y'),
+                    'metodo_pago': pago.get_metodo_pago_display(),
+                    'referencia': pago.observaciones or 'N/A',
+                    'estado': pago.estado
+                })
+            
+            datos_cliente['cuentas'].append({
+                'id': cuenta.id,
+                'factura': f"FAC-{cuenta.venta.id:05d}" if cuenta.venta else f"CTA-{cuenta.id:05d}",
+                'fecha_emision': cuenta.fecha_emision.strftime('%d/%m/%Y'),
+                'fecha_vencimiento': cuenta.fecha_vencimiento.strftime('%d/%m/%Y'),
+                'monto_total': float(cuenta.monto_total),
+                'monto_pagado': float(cuenta.monto_total - cuenta.saldo_pendiente),
+                'saldo_pendiente': float(cuenta.saldo_pendiente),
+                'estado': cuenta.estado,
+                'productos': productos,
+                'pagos': pagos
+            })
+        
+        return JsonResponse(datos_cliente)
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+
+
+def anulacionesdefactura(request):
+    return render(request, "facturacion/anulacionesdefactura.html")
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def buscar_factura_ajax(request):
+    """Vista AJAX para buscar una factura por número"""
+    try:
+        data = json.loads(request.body)
+        numero_factura = data.get('numero_factura', '').strip()
+        
+        # Limpiar y formatear el número de factura
+        numero_factura = numero_factura.upper().replace('FAC-', 'F-')
+        
+        try:
+            # Buscar por número de factura exacto
+            venta = Venta.objects.get(numero_factura=numero_factura)
+        except Venta.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': f'No se encontró la factura {numero_factura}'
+            })
+        
+        # Verificar si la venta tiene el campo estado y si está anulada
+        if hasattr(venta, 'estado') and venta.estado == 'anulada':
+            return JsonResponse({
+                'success': False,
+                'error': 'Esta factura ya ha sido anulada'
+            })
+        
+        # Obtener detalles de la venta
+        detalles = DetalleVenta.objects.filter(venta=venta)
+        detalles_data = []
+        for detalle in detalles:
+            detalles_data.append({
+                'producto': detalle.producto.producto if detalle.producto and hasattr(detalle.producto, 'producto') else 'Producto no disponible',
+                'cantidad': float(detalle.cantidad),
+                'precio_unitario': float(detalle.precio_unitario),
+                'subtotal': float(detalle.subtotal)
+            })
+        
+        # Verificar si tiene cuenta por cobrar
+        cuenta_por_cobrar = None
+        if venta.tipo_venta == 'credito':
+            try:
+                cuenta = CuentaPorCobrar.objects.get(venta=venta)
+                # Verificar si la cuenta por cobrar ya está anulada
+                if cuenta.estado == 'anulada':
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'La cuenta por cobrar asociada ya está anulada'
+                    })
+                    
+                cuenta_por_cobrar = {
+                    'id': cuenta.id,
+                    'saldo_pendiente': float(cuenta.saldo_pendiente),
+                    'estado': cuenta.estado
+                }
+            except CuentaPorCobrar.DoesNotExist:
+                pass
+        
+        # Obtener el estado de la venta (si existe el campo)
+        estado_venta = getattr(venta, 'estado', 'activa')
+        
+        response_data = {
+            'success': True,
+            'factura': {
+                'id': venta.id,
+                'numero': venta.numero_factura,  # Usar el número real de la base de datos
+                'fecha': venta.fecha.strftime('%d/%m/%Y'),
+                'cliente': venta.cliente.nombre if venta.cliente else (venta.cliente_nombre or 'Cliente no especificado'),
+                'total': float(venta.total),
+                'tipo': venta.get_tipo_venta_display(),
+                'estado': estado_venta,
+                'metodo_pago': venta.get_metodo_pago_display(),
+            },
+            'detalles': detalles_data,
+            'cuenta_por_cobrar': cuenta_por_cobrar
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al buscar la factura: {str(e)}'
+        })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def anular_factura_ajax(request):
+    """Vista AJAX para anular una factura"""
+    try:
+        data = json.loads(request.body)
+        factura_id = data.get('factura_id')
+        motivo = data.get('motivo')
+        observaciones = data.get('observaciones', '')
+        
+        venta = Venta.objects.get(id=factura_id)
+        
+        # Verificar si la venta ya está anulada (si tiene el campo estado)
+        if hasattr(venta, 'estado') and venta.estado == 'anulada':
+            return JsonResponse({
+                'success': False,
+                'error': 'Esta factura ya ha sido anulada'
+            })
+        
+        # Anular la venta (si tiene el campo estado)
+        if hasattr(venta, 'estado'):
+            venta.estado = 'anulada'
+            venta.save()
+        
+        # Si es venta a crédito, anular la cuenta por cobrar
+        if venta.tipo_venta == 'credito':
+            try:
+                cuenta = CuentaPorCobrar.objects.get(venta=venta)
+                cuenta.estado = 'anulada'
+                cuenta.saldo_pendiente = 0  # Importante: establecer saldo en 0
+                cuenta.observaciones = f"Anulada por: {motivo}. {observaciones}"
+                cuenta.save()
+                
+                # Mensaje adicional para indicar que la cuenta por cobrar fue anulada
+                message = 'Factura y cuenta por cobrar anuladas exitosamente'
+            except CuentaPorCobrar.DoesNotExist:
+                message = 'Factura anulada exitosamente (no tenía cuenta por cobrar asociada)'
+        else:
+            message = 'Factura anulada exitosamente'
+        
+        return JsonResponse({
+            'success': True,
+            'message': message
+        })
+        
+    except Venta.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Factura no encontrada'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al anular la factura: {str(e)}'
+        })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def buscar_ultima_factura(request):
+    """Vista AJAX para buscar la última factura emitida"""
+    try:
+        data = json.loads(request.body)
+        tipo_venta = data.get('tipo_venta', '')  # 'credito' o 'contado'
+        
+        # Buscar la última venta activa del tipo especificado
+        # Si el campo estado existe, filtrar por estado activa
+        if hasattr(Venta, 'estado'):
+            filtros = {'estado': 'activa'}
+        else:
+            filtros = {}
+            
+        if tipo_venta:
+            filtros['tipo_venta'] = tipo_venta
+            
+        ultima_venta = Venta.objects.filter(**filtros).order_by('-id').first()
+        
+        if not ultima_venta:
+            tipo_desc = 'del tipo especificado' if tipo_venta else ''
+            return JsonResponse({
+                'success': False,
+                'error': f'No se encontraron facturas activas {tipo_desc}'
+            })
+        
+        # Obtener detalles de la venta
+        detalles = DetalleVenta.objects.filter(venta=ultima_venta)
+        detalles_data = []
+        for detalle in detalles:
+            detalles_data.append({
+                'producto': detalle.producto.producto if detalle.producto and hasattr(detalle.producto, 'producto') else 'Producto no disponible',
+                'cantidad': float(detalle.cantidad),
+                'precio_unitario': float(detalle.precio_unitario),
+                'subtotal': float(detalle.subtotal)
+            })
+        
+        # Verificar si tiene cuenta por cobrar
+        cuenta_por_cobrar = None
+        if ultima_venta.tipo_venta == 'credito':
+            try:
+                cuenta = CuentaPorCobrar.objects.get(venta=ultima_venta)
+                # Verificar si la cuenta por cobrar está anulada
+                if cuenta.estado != 'anulada':
+                    cuenta_por_cobrar = {
+                        'id': cuenta.id,
+                        'saldo_pendiente': float(cuenta.saldo_pendiente),
+                        'estado': cuenta.estado
+                    }
+            except CuentaPorCobrar.DoesNotExist:
+                pass
+        
+        # Obtener el estado de la venta (si existe el campo)
+        estado_venta = getattr(ultima_venta, 'estado', 'activa')
+        
+        response_data = {
+            'success': True,
+            'factura': {
+                'id': ultima_venta.id,
+                'numero': ultima_venta.numero_factura,  # Usar el número real de la base de datos
+                'fecha': ultima_venta.fecha.strftime('%d/%m/%Y'),
+                'cliente': ultima_venta.cliente.nombre if ultima_venta.cliente else (ultima_venta.cliente_nombre or 'Cliente no especificado'),
+                'total': float(ultima_venta.total),
+                'tipo': ultima_venta.get_tipo_venta_display(),
+                'estado': estado_venta,
+                'metodo_pago': ultima_venta.get_metodo_pago_display(),
+            },
+            'detalles': detalles_data,
+            'cuenta_por_cobrar': cuenta_por_cobrar
+        }
+        
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al buscar la última factura: {str(e)}'
+        })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def buscar_recibo_ajax(request):
+    """Vista AJAX para buscar un recibo de pago"""
+    try:
+        data = json.loads(request.body)
+        numero_recibo = data.get('numero_recibo', '').strip()
+        
+        if not numero_recibo:
+            return JsonResponse({
+                'success': False,
+                'error': 'Por favor, ingrese un número de recibo'
+            })
+        
+        # Buscar el recibo
+        try:
+            recibo = PagoCuentaCobrar.objects.select_related('cuenta', 'cuenta__cliente').get(
+                numero_recibo=numero_recibo,
+                estado='activo'
+            )
+        except PagoCuentaCobrar.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Recibo no encontrado. Verifique el número o el recibo ya ha sido anulado.'
+            })
+        
+        cuenta = recibo.cuenta
+        
+        return JsonResponse({
+            'success': True,
+            'recibo': {
+                'id': recibo.id,
+                'numero': recibo.numero_recibo,
+                'monto_pagado': float(recibo.monto_pagado),
+                'fecha_pago': recibo.fecha_pago.strftime('%d/%m/%Y'),
+                'metodo_pago': recibo.get_metodo_pago_display(),
+                'observaciones': recibo.observaciones,
+                'estado': recibo.estado,
+            },
+            'cuenta': {
+                'id': cuenta.id,
+                'cliente': cuenta.cliente.nombre,
+                'saldo_actual': float(cuenta.saldo_pendiente),
+                'saldo_original': float(cuenta.monto_total),
+                'estado': cuenta.estado,
+            }
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al buscar el recibo: {str(e)}'
+        })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def anular_recibo_ajax(request):
+    """Vista AJAX para anular un recibo de pago"""
+    try:
+        data = json.loads(request.body)
+        recibo_id = data.get('recibo_id')
+        motivo = data.get('motivo')
+        observaciones = data.get('observaciones', '')
+        
+        if not recibo_id:
+            return JsonResponse({
+                'success': False,
+                'error': 'ID de recibo no proporcionado'
+            })
+        
+        if not motivo:
+            return JsonResponse({
+                'success': False,
+                'error': 'Debe seleccionar un motivo de anulación'
+            })
+        
+        # Buscar y anular el recibo
+        try:
+            recibo = PagoCuentaCobrar.objects.get(id=recibo_id, estado='activo')
+        except PagoCuentaCobrar.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Recibo no encontrado o ya ha sido anulado'
+            })
+        
+        if recibo.anular():
+            # Registrar la anulación
+            observaciones_anulacion = f"ANULADO - Motivo: {motivo}"
+            if observaciones:
+                observaciones_anulacion += f". {observaciones}"
+            
+            recibo.observaciones = observaciones_anulacion
+            recibo.save()
+            
+            nuevo_saldo = recibo.cuenta.saldo_pendiente
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Recibo {recibo.numero_recibo} anulado exitosamente. La deuda ha sido restaurada a RD$ {nuevo_saldo:,.2f}'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'No se pudo anular el recibo. Puede que ya esté anulado.'
+            })
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al anular el recibo: {str(e)}'
+        })
+
+
+
+def devoluciones(request):
+    return render(request, "facturacion/devoluciones.html")
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def buscar_factura_devolucion(request):
+    try:
+        data = json.loads(request.body)
+        invoice_number = data.get('invoiceNumber', '').strip()
+        print(f"🔍 Buscando factura: {invoice_number}")
+        
+        # Buscar la venta por diferentes formatos
+        venta = None
+        
+        try:
+            # Intentar buscar por número de factura exacto (nuevo formato F-000001)
+            if invoice_number.startswith('F-'):
+                venta = Venta.objects.get(numero_factura=invoice_number)
+                print(f"✅ Venta encontrada por número_factura: {venta.id}")
+            
+            # Intentar buscar por formato antiguo FAC-2024-001
+            elif invoice_number.startswith('FAC-'):
+                parts = invoice_number.split('-')
+                if len(parts) >= 3:
+                    venta_id = int(parts[2])
+                    venta = Venta.objects.get(id=venta_id)
+                    print(f"✅ Venta encontrada por ID (formato FAC): {venta.id}")
+            
+            # Intentar buscar por ID directo
+            else:
+                try:
+                    venta_id = int(invoice_number)
+                    venta = Venta.objects.get(id=venta_id)
+                    print(f"✅ Venta encontrada por ID directo: {venta.id}")
+                except ValueError:
+                    # Si no es número, buscar por número de factura
+                    venta = Venta.objects.get(numero_factura=invoice_number)
+                    print(f"✅ Venta encontrada por número_factura: {venta.id}")
+                    
+        except Venta.DoesNotExist:
+            print(f"❌ No se encontró venta con: {invoice_number}")
+            return JsonResponse({
+                'success': False,
+                'error': 'No se encontró ninguna factura con ese número'
+            })
+        
+        # VERIFICAR SI LA FACTURA ESTÁ ANULADA
+        if venta.estado == 'anulada':
+            return JsonResponse({
+                'success': False,
+                'error': '❌ Esta factura ha sido ANULADA y no se pueden procesar devoluciones sobre facturas anuladas.'
+            })
+        
+        # Verificar que la venta tenga detalles
+        if not venta.detalles.exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'La factura no tiene productos asociados'
+            })
+        
+        # Construir respuesta con datos reales - USANDO FLOAT PARA JSON
+        items = []
+        for detalle in venta.detalles.all():
+            items.append({
+                'code': detalle.producto.codigo,
+                'description': detalle.producto.producto,
+                'quantity': float(detalle.cantidad),
+                'unitPrice': float(detalle.precio_unitario),
+                'total': float(detalle.subtotal),
+                'max_quantity': float(detalle.cantidad)  # Cantidad máxima que se puede devolver
+            })
+        
+        # Determinar estado para la interfaz
+        if venta.estado == 'anulada':
+            status = 'overdue'
+            status_text = 'Anulada'
+        elif venta.tipo_venta == 'contado':
+            status = 'paid'
+            status_text = 'Pagada'
+        else:
+            status = 'pending'
+            status_text = 'Pendiente'
+        
+        # Usar el número de factura real del modelo
+        invoice_data = {
+            'id': venta.id,
+            'number': venta.numero_factura,
+            'client': {
+                'name': venta.cliente.nombre if venta.cliente else (venta.cliente_nombre or 'Cliente General'),
+                'email': venta.cliente.correo_electronico if venta.cliente and hasattr(venta.cliente, 'correo_electronico') else '',
+                'phone': venta.cliente.telefono if venta.cliente and hasattr(venta.cliente, 'telefono') else ''
+            },
+            'date': venta.fecha.strftime('%d/%m/%Y'),
+            'dueDate': venta.fecha.strftime('%d/%m/%Y'),
+            'paymentMethod': venta.get_metodo_pago_display(),
+            'status': status,
+            'status_text': status_text,
+            'subtotal': float(venta.subtotal),
+            'tax': 0,
+            'total': float(venta.total),
+            'items': items
+        }
+        
+        return JsonResponse({
+            'success': True,
+            'invoice': invoice_data
+        })
+            
+    except Exception as e:
+        print(f"❌ Error general en buscar_factura_devolucion: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al buscar la factura: {str(e)}'
+        })
+
+
+
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+@transaction.atomic
+def procesar_devolucion(request):
+    try:
+        data = json.loads(request.body)
+        print(f"🔄 Procesando devolución: {data}")
+        
+        # Validar datos requeridos
+        required_fields = ['invoiceNumber', 'items', 'reason', 'totalAmount']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Campo requerido faltante: {field}'
+                })
+        
+        # Buscar la venta por diferentes formatos
+        venta = None
+        invoice_number = data['invoiceNumber']
+        
+        try:
+            # Intentar buscar por número de factura exacto (nuevo formato F-000001)
+            if invoice_number.startswith('F-'):
+                venta = Venta.objects.get(numero_factura=invoice_number)
+                print(f"✅ Venta encontrada por número_factura: {venta.id}")
+            
+            # Intentar buscar por formato antiguo FAC-2024-001
+            elif invoice_number.startswith('FAC-'):
+                parts = invoice_number.split('-')
+                if len(parts) >= 3:
+                    venta_id = int(parts[2])
+                    venta = Venta.objects.get(id=venta_id)
+                    print(f"✅ Venta encontrada por ID (formato FAC): {venta.id}")
+            
+            # Intentar buscar por ID directo
+            else:
+                try:
+                    venta_id = int(invoice_number)
+                    venta = Venta.objects.get(id=venta_id)
+                    print(f"✅ Venta encontrada por ID directo: {venta.id}")
+                except ValueError:
+                    # Si no es número, buscar por número de factura
+                    venta = Venta.objects.get(numero_factura=invoice_number)
+                    print(f"✅ Venta encontrada por número_factura: {venta.id}")
+                    
+        except Venta.DoesNotExist:
+            print(f"❌ Error al buscar venta: {invoice_number}")
+            return JsonResponse({
+                'success': False,
+                'error': 'La factura no existe'
+            })
+        
+        # Verificar que la venta no esté anulada (doble verificación)
+        if venta.estado == 'anulada':
+            return JsonResponse({
+                'success': False,
+                'error': 'No se puede procesar devolución para una factura anulada'
+            })
+        
+        # Crear la devolución
+        devolucion = Devolucion(
+            venta=venta,
+            motivo=data['reason'],
+            comentarios=data.get('comments', ''),
+            total_devolucion=data['totalAmount'],
+            estado='procesada'
+        )
+        devolucion.save()
+        print(f"✅ Devolución creada: {devolucion.numero_devolucion}")
+        
+        # Procesar los items de devolución
+        items_procesados = 0
+        productos_actualizados = []
+        
+        for item_data in data['items']:
+            try:
+                print(f"📦 Procesando item: {item_data}")
+                
+                # Buscar el producto en el inventario por código
+                producto = EntradaProducto.objects.get(codigo=item_data['code'])
+                print(f"✅ Producto encontrado: {producto.codigo} - {producto.producto}")
+                print(f"📊 Cantidad actual en inventario: {producto.cantidad}")
+                
+                # Buscar el detalle de venta original
+                detalle_venta = DetalleVenta.objects.get(
+                    venta=venta,
+                    producto=producto
+                )
+                print(f"✅ Detalle de venta encontrado: {detalle_venta.id}")
+                
+                # Verificar que la cantidad a devolver no exceda la cantidad vendida
+                cantidad_float = min(float(item_data['quantity']), float(detalle_venta.cantidad))
+                
+                # CONVERTIR A DECIMAL
+                from decimal import Decimal
+                cantidad_devuelta = Decimal(str(cantidad_float))
+                
+                print(f"📦 Cantidad a devolver: {cantidad_devuelta} (tipo: {type(cantidad_devuelta)})")
+                
+                if cantidad_devuelta > 0:
+                    # Crear item de devolución
+                    item_devolucion = ItemDevolucion(
+                        devolucion=devolucion,
+                        detalle_venta=detalle_venta,
+                        producto=producto,
+                        cantidad=cantidad_devuelta,
+                        precio_unitario=Decimal(str(item_data['unitPrice']))
+                    )
+                    item_devolucion.save()
+                    print(f"✅ Item de devolución guardado: {item_devolucion.id}")
+                    
+                    # REPONER EN INVENTARIO
+                    producto.cantidad += cantidad_devuelta
+                    producto.save()
+                    
+                    productos_actualizados.append({
+                        'producto': producto.codigo,
+                        'cantidad_agregada': float(cantidad_devuelta),
+                        'nueva_cantidad': float(producto.cantidad)
+                    })
+                    print(f"📊 Nueva cantidad en inventario: {producto.cantidad}")
+                    
+                    items_procesados += 1
+                else:
+                    print("⚠️ Cantidad a devolver es 0, saltando item")
+                
+            except EntradaProducto.DoesNotExist:
+                print(f"❌ Producto no encontrado con código: {item_data['code']}")
+                continue
+            except DetalleVenta.DoesNotExist:
+                print(f"❌ Detalle de venta no encontrado para producto: {item_data['code']}")
+                continue
+            except Exception as e:
+                print(f"❌ Error al procesar item {item_data['code']}: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
+        
+        print(f"📊 Items procesados: {items_procesados}")
+        print(f"📊 Productos actualizados: {productos_actualizados}")
+        
+        if items_procesados == 0:
+            # Si no se procesó ningún item, eliminar la devolución
+            devolucion.delete()
+            return JsonResponse({
+                'success': False,
+                'error': 'No se pudo procesar ningún item. Verifique que los productos existan en el inventario.'
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'devolucion_numero': devolucion.numero_devolucion,
+            'message': f'Devolución procesada correctamente. Número: {devolucion.numero_devolucion}. Se repusieron {items_procesados} productos en el inventario.',
+            'productos_actualizados': productos_actualizados
+        })
+        
+    except Exception as e:
+        print(f"❌ Error general en procesar_devolucion: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al procesar la devolución: {str(e)}'
+        })
+
+
+
+def estadodecuenta(request):    
+    clientes = Cliente.objects.all().values('id', 'cedula', 'nombre', 'telefono1', 'direccion')
+    
+    context = {
+        'clientes': list(clientes),
+        'search_url': reverse('buscar_clientes_estado_cuenta'),
+        'data_url_pattern': '/cliente/{id}/datos-estado-cuenta/',
+        'pdf_url_pattern': '/cliente/{id}/pdf-estado-cuenta/'
+    }
+    return render(request, "facturacion/estadodecuenta.html", context)
+
+def buscar_clientes_estado_cuenta(request):
+    """Vista para búsqueda de clientes via AJAX específica para estado de cuenta"""
+    if request.method == 'GET' and 'q' in request.GET:
+        query = request.GET.get('q', '').strip()
+        
+        if query:
+            # Buscar por nombre o cédula
+            clientes = Cliente.objects.filter(
+                Q(nombre__icontains=query) | Q(cedula__icontains=query)
+            ).values('id', 'cedula', 'nombre', 'telefono1', 'direccion')[:10]
+            
+            return JsonResponse(list(clientes), safe=False)
+    
+    return JsonResponse([], safe=False)
+
+def obtener_datos_estado_cuenta(request, cliente_id):
+    """Obtiene los datos del cliente y sus cuentas por cobrar para estado de cuenta"""
+    try:
+        print(f"Buscando cliente con ID: {cliente_id}")
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        print(f"Cliente encontrado: {cliente.nombre}")
+        
+        # Obtener cuentas por cobrar - SOLUCIÓN: Manejar el caso donde estado pueda ser None
+        cuentas = CuentaPorCobrar.objects.filter(cliente=cliente)
+        
+        # Excluir cuentas anuladas de manera segura
+        cuentas = cuentas.exclude(estado='anulada') if cuentas.exists() else cuentas
+        
+        print(f"Cuentas encontradas: {cuentas.count()}")
+        
+        # Si no hay cuentas, retornar datos vacíos
+        if not cuentas.exists():
+            data = {
+                'cliente': {
+                    'id': cliente.id,
+                    'cedula': cliente.cedula,
+                    'nombre': cliente.nombre,
+                    'telefono': cliente.telefono1 or '-',
+                    'direccion': cliente.direccion or '-',
+                    'limite_credito': float(cliente.limite_credito) if cliente.limite_credito else 0.0
+                },
+                'resumen': {
+                    'total_facturas': 0,
+                    'monto_total': 0.0,
+                    'saldo_pendiente': 0.0,
+                    'monto_pagado': 0.0
+                },
+                'cuentas': []
+            }
+            return JsonResponse(data)
+        
+        # Calcular totales
+        total_facturas = cuentas.count()
+        monto_total = cuentas.aggregate(total=Sum('monto_total'))['total'] or Decimal('0.00')
+        saldo_pendiente = cuentas.aggregate(total=Sum('saldo_pendiente'))['total'] or Decimal('0.00')
+        monto_pagado = monto_total - saldo_pendiente
+        
+        print(f"Resumen - Total: {monto_total}, Pendiente: {saldo_pendiente}, Pagado: {monto_pagado}")
+        
+        # Preparar datos de las cuentas
+        cuentas_data = []
+        for cuenta in cuentas:
+            numero_factura = f"CTE-{cuenta.id}"
+            # Verificar si existe la relación venta de manera segura
+            try:
+                if hasattr(cuenta, 'venta') and cuenta.venta and hasattr(cuenta.venta, 'numero_factura'):
+                    numero_factura = cuenta.venta.numero_factura
+            except Exception as e:
+                print(f"Error obteniendo número de factura para cuenta {cuenta.id}: {e}")
+            
+            dias_vencimiento = 0
+            if cuenta.fecha_vencimiento and cuenta.fecha_vencimiento < date.today():
+                dias_vencimiento = (date.today() - cuenta.fecha_vencimiento).days
+                
+            cuentas_data.append({
+                'id': cuenta.id,
+                'numero_factura': numero_factura,
+                'fecha_emision': cuenta.fecha_emision.isoformat() if cuenta.fecha_emision else None,
+                'fecha_vencimiento': cuenta.fecha_vencimiento.isoformat() if cuenta.fecha_vencimiento else None,
+                'monto_total': float(cuenta.monto_total) if cuenta.monto_total else 0.0,
+                'saldo_pendiente': float(cuenta.saldo_pendiente) if cuenta.saldo_pendiente else 0.0,
+                'estado': cuenta.estado or 'pendiente',  # Asegurar que estado no sea None
+                'estado_display': cuenta.get_estado_display() if cuenta.estado else 'Pendiente',
+                'dias_vencimiento': dias_vencimiento
+            })
+        
+        data = {
+            'cliente': {
+                'id': cliente.id,
+                'cedula': cliente.cedula,
+                'nombre': cliente.nombre,
+                'telefono': cliente.telefono1 or '-',
+                'direccion': cliente.direccion or '-',
+                'limite_credito': float(cliente.limite_credito) if cliente.limite_credito else 0.0
+            },
+            'resumen': {
+                'total_facturas': total_facturas,
+                'monto_total': float(monto_total),
+                'saldo_pendiente': float(saldo_pendiente),
+                'monto_pagado': float(monto_pagado)
+            },
+            'cuentas': cuentas_data
+        }
+        
+        print(f"Datos preparados exitosamente")
+        return JsonResponse(data)
+        
+    except Exception as e:
+        print(f"Error completo: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+def generar_pdf_estado_cuenta(request, cliente_id):
+    """Genera un PDF con el estado de cuenta del cliente optimizado para A4"""
+    try:
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        
+        # Obtener todas las cuentas por cobrar del cliente
+        cuentas = CuentaPorCobrar.objects.filter(cliente=cliente)
+        
+        # Excluir cuentas anuladas
+        cuentas = cuentas.exclude(estado='anulada')
+        
+        # Preparar datos de las cuentas para el PDF
+        cuentas_data = []
+        for cuenta in cuentas:
+            numero_factura = f"CTE-{cuenta.id}"
+            try:
+                if hasattr(cuenta, 'venta') and cuenta.venta and hasattr(cuenta.venta, 'numero_factura'):
+                    numero_factura = cuenta.venta.numero_factura
+            except Exception:
+                pass
+            
+            dias_vencimiento = 0
+            if cuenta.fecha_vencimiento and cuenta.fecha_vencimiento < date.today():
+                dias_vencimiento = (date.today() - cuenta.fecha_vencimiento).days
+                
+            cuentas_data.append({
+                'numero_factura': numero_factura,
+                'fecha_emision': cuenta.fecha_emision,
+                'fecha_vencimiento': cuenta.fecha_vencimiento,
+                'monto_total': cuenta.monto_total or Decimal('0.00'),
+                'saldo_pendiente': cuenta.saldo_pendiente or Decimal('0.00'),
+                'estado': cuenta.estado or 'pendiente',
+                'estado_display': cuenta.get_estado_display() if cuenta.estado else 'Pendiente',
+                'dias_vencimiento': dias_vencimiento
+            })
+        
+        # Calcular totales
+        total_facturas = cuentas.count()
+        monto_total = cuentas.aggregate(total=Sum('monto_total'))['total'] or Decimal('0.00')
+        saldo_pendiente = cuentas.aggregate(total=Sum('saldo_pendiente'))['total'] or Decimal('0.00')
+        monto_pagado = monto_total - saldo_pendiente
+        
+        # Contexto para el template
+        context = {
+            'cliente': cliente,
+            'cuentas': cuentas_data,
+            'total_facturas': total_facturas,
+            'monto_total': monto_total,
+            'saldo_pendiente': saldo_pendiente,
+            'monto_pagado': monto_pagado,
+            'fecha_actual': datetime.now(),
+        }
+        
+        # Crear el PDF
+        template_path = 'facturacion/estado_cuenta_pdf.html'
+        template = get_template(template_path)
+        html = template.render(context)
+        
+        response = HttpResponse(content_type='application/pdf')
+        filename = f"estado_cuenta_{cliente.cedula}_{date.today().strftime('%Y%m%d')}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        # Configuración para PDF A4
+        pdf_options = {
+            'page-size': 'A4',
+            'margin-top': '1.5cm',
+            'margin-right': '1.5cm',
+            'margin-bottom': '1.5cm',
+            'margin-left': '1.5cm',
+            'encoding': "UTF-8",
+            'no-outline': None
+        }
+        
+        # Generar PDF
+        pisa_status = pisa.CreatePDF(
+            html, 
+            dest=response,
+            **pdf_options
+        )
+        
+        if pisa_status.err:
+            return HttpResponse('Error al generar el PDF', status=500)
+        
+        return response
+        
+    except Exception as e:
+        import traceback
+        print(f"Error generando PDF: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return HttpResponse(f'Error al generar el PDF: {str(e)}', status=500)
+    
+
+
+
+def generar_pdf_estado_cuenta(request, cliente_id):
+    """Genera un PDF con el estado de cuenta del cliente"""
+    try:
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+        
+        # Obtener todas las cuentas por cobrar del cliente
+        cuentas = CuentaPorCobrar.objects.filter(cliente=cliente)
+        
+        # Excluir cuentas anuladas de manera segura
+        cuentas = cuentas.exclude(estado='anulada') if cuentas.exists() else cuentas
+        
+        # Preparar datos de las cuentas para el PDF
+        cuentas_data = []
+        for cuenta in cuentas:
+            numero_factura = f"CTE-{cuenta.id}"
+            try:
+                if hasattr(cuenta, 'venta') and cuenta.venta and hasattr(cuenta.venta, 'numero_factura'):
+                    numero_factura = cuenta.venta.numero_factura
+            except Exception as e:
+                print(f"Error obteniendo número de factura para cuenta {cuenta.id}: {e}")
+            
+            dias_vencimiento = 0
+            if cuenta.fecha_vencimiento and cuenta.fecha_vencimiento < date.today():
+                dias_vencimiento = (date.today() - cuenta.fecha_vencimiento).days
+                
+            cuentas_data.append({
+                'numero_factura': numero_factura,
+                'fecha_emision': cuenta.fecha_emision,
+                'fecha_vencimiento': cuenta.fecha_vencimiento,
+                'monto_total': cuenta.monto_total or Decimal('0.00'),
+                'saldo_pendiente': cuenta.saldo_pendiente or Decimal('0.00'),
+                'estado': cuenta.estado or 'pendiente',
+                'estado_display': cuenta.get_estado_display() if cuenta.estado else 'Pendiente',
+                'dias_vencimiento': dias_vencimiento
+            })
+        
+        # Calcular totales
+        total_facturas = cuentas.count()
+        monto_total = cuentas.aggregate(total=Sum('monto_total'))['total'] or Decimal('0.00')
+        saldo_pendiente = cuentas.aggregate(total=Sum('saldo_pendiente'))['total'] or Decimal('0.00')
+        monto_pagado = monto_total - saldo_pendiente
+        
+        # Contexto para el template
+        context = {
+            'cliente': cliente,
+            'cuentas': cuentas_data,  # Usar los datos preparados
+            'total_facturas': total_facturas,
+            'monto_total': monto_total,
+            'saldo_pendiente': saldo_pendiente,
+            'monto_pagado': monto_pagado,
+            'fecha_actual': datetime.now(),  # Usar datetime para incluir hora
+        }
+        
+        # Crear el PDF
+        template_path = 'facturacion/estado_cuenta_pdf.html'
+        template = get_template(template_path)
+        html = template.render(context)
+        
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="estado_cuenta_{cliente.cedula}_{date.today()}.pdf"'
+        
+        # Generar PDF
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        
+        if pisa_status.err:
+            return HttpResponse('Error al generar el PDF', status=500)
+        
+        return response
+    except Exception as e:
+        import traceback
+        print(f"Error generando PDF: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return HttpResponse(f'Error: {str(e)}', status=500)
+
+
+
+
+
+
+def dashboard(request):
+    # Obtener la fecha actual y rangos de fechas
+    hoy = timezone.now().date()
+    inicio_mes = hoy.replace(day=1)
+    inicio_semana = hoy - timedelta(days=hoy.weekday())
+    
+    # Ventas del día actual usando pandas
+    ventas_hoy = Venta.objects.filter(fecha__date=hoy)
+    df_ventas_hoy = pd.DataFrame(list(ventas_hoy.values('total')))
+    ventas_hoy_total = df_ventas_hoy['total'].sum() if not df_ventas_hoy.empty else 0
+    
+    # Ventas del mes actual
+    ventas_mes = Venta.objects.filter(fecha__date__gte=inicio_mes)
+    df_ventas_mes = pd.DataFrame(list(ventas_mes.values('total')))
+    ventas_mes_total = df_ventas_mes['total'].sum() if not df_ventas_mes.empty else 0
+    
+    # Total de créditos pendientes
+    creditos_pendientes = CuentaPorCobrar.objects.filter(estado__in=['pendiente', 'parcial'])
+    df_creditos = pd.DataFrame(list(creditos_pendientes.values('saldo_pendiente')))
+    total_creditos = df_creditos['saldo_pendiente'].sum() if not df_creditos.empty else 0
+    
+    # Calcular ganancia (simplificado - diferencia entre precio venta y costo)
+    detalles_mes = DetalleVenta.objects.filter(venta__fecha__date__gte=inicio_mes)
+    
+    if detalles_mes.exists():
+        df_detalles = pd.DataFrame(list(
+            detalles_mes.annotate(
+                costo=F('producto__precio_unitario'),
+                ganancia_unitaria=F('precio_unitario') - F('producto__precio_unitario')
+            ).values('cantidad', 'ganancia_unitaria')
+        ))
+        df_detalles['ganancia_total'] = df_detalles['cantidad'] * df_detalles['ganancia_unitaria']
+        ganancia_total = df_detalles['ganancia_total'].sum()
+    else:
+        ganancia_total = 0
+    
+    # Valor del inventario
+    inventario = EntradaProducto.objects.all()
+    df_inventario = pd.DataFrame(list(inventario.values('cantidad', 'precio_unitario')))
+    if not df_inventario.empty:
+        df_inventario['valor_total'] = df_inventario['cantidad'] * df_inventario['precio_unitario']
+        valor_inventario = df_inventario['valor_total'].sum()
+    else:
+        valor_inventario = 0
+    
+    # Datos para gráfico semanal
+    fecha_7_dias = hoy - timedelta(days=6)
+    ventas_semanales = Venta.objects.filter(fecha__date__gte=fecha_7_dias)
+    
+    # Crear DataFrame con ventas de la semana
+    df_semana = pd.DataFrame(list(
+        ventas_semanales.extra({'fecha_simple': "date(fecha)"}).values('fecha_simple', 'total')
+    ))
+    
+    if not df_semana.empty:
+        # Agrupar por día y sumar ventas
+        ventas_por_dia = df_semana.groupby('fecha_simple')['total'].sum()
+        
+        # Crear rango completo de días de la semana
+        dias_semana = [hoy - timedelta(days=i) for i in range(6, -1, -1)]
+        ventas_semana_completa = []
+        
+        for dia in dias_semana:
+            venta_dia = ventas_por_dia.get(dia, 0)
+            ventas_semana_completa.append(float(venta_dia))
+        
+        labels_semana = [dia.strftime('%a') for dia in dias_semana]
+    else:
+        ventas_semana_completa = [0] * 7
+        labels_semana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+    
+    # Datos para gráfico mensual (últimos 6 meses)
+    meses_data = []
+    labels_meses = []
+    
+    for i in range(5, -1, -1):
+        mes_fecha = hoy.replace(day=1) - timedelta(days=30*i)
+        inicio_mes_calc = mes_fecha.replace(day=1)
+        
+        if i == 0:
+            fin_mes_calc = hoy
+        else:
+            siguiente_mes = inicio_mes_calc + timedelta(days=32)
+            fin_mes_calc = siguiente_mes.replace(day=1) - timedelta(days=1)
+        
+        ventas_mes_calc = Venta.objects.filter(
+            fecha__date__gte=inicio_mes_calc, 
+            fecha__date__lte=fin_mes_calc
+        )
+        
+        df_mes_calc = pd.DataFrame(list(ventas_mes_calc.values('total')))
+        total_mes = df_mes_calc['total'].sum() if not df_mes_calc.empty else 0
+        
+        meses_data.append(float(total_mes))
+        labels_meses.append(inicio_mes_calc.strftime('%b'))
+    
+    # Productos más vendidos (últimos 30 días)
+    fecha_30_dias = hoy - timedelta(days=30)
+    top_productos = DetalleVenta.objects.filter(
+        venta__fecha__date__gte=fecha_30_dias
+    ).values(
+        'producto__producto'
+    ).annotate(
+        total_vendido=Sum('cantidad')
+    ).order_by('-total_vendido')[:5]
+    
+    productos_data = []
+    for producto in top_productos:
+        productos_data.append({
+            'name': producto['producto__producto'],
+            'sales': int(producto['total_vendido'])
+        })
+    
+    # Si no hay productos, usar datos de ejemplo
+    if not productos_data:
+        productos_data = [
+            {'name': 'Fertilizante NPK 15-15-15', 'sales': 45},
+            {'name': 'Urea 46%', 'sales': 38},
+            {'name': 'Sulfato de Amonio', 'sales': 32},
+            {'name': 'Herbicida Glifosato', 'sales': 28},
+            {'name': 'Insecticida Cipermetrina', 'sales': 25}
+        ]
+    
+    # Últimas ventas (hoy)
+    ultimas_ventas = DetalleVenta.objects.filter(
+        venta__fecha__date=hoy
+    ).select_related('venta', 'producto')[:5]
+    
+    # Preparar datos para el template
+    dashboard_data = {
+        'sales': {
+            'daily': float(ventas_hoy_total),
+            'monthly': float(ventas_mes_total),
+            'credits': float(total_creditos),
+            'profit': float(ganancia_total),
+            'weekly': ventas_semana_completa,
+            'weekLabels': labels_semana,
+            'monthlyTrend': meses_data,
+            'monthLabels': labels_meses,
+            'inventory': float(valor_inventario)
+        },
+        'topProducts': productos_data
+    }
+    
+    # Formatear los valores numéricos con comas
+    ventas_hoy_formatted = intcomma(int(ventas_hoy_total))
+    ventas_mes_formatted = intcomma(int(ventas_mes_total))
+    total_creditos_formatted = intcomma(int(total_creditos))
+    ganancia_total_formatted = intcomma(int(ganancia_total))
+    valor_inventario_formatted = intcomma(int(valor_inventario))
+    
+    context = {
+        'dashboard_data': dashboard_data,
+        'ultimas_ventas': ultimas_ventas,
+        'ventas_hoy_formatted': ventas_hoy_formatted,
+        'ventas_mes_formatted': ventas_mes_formatted,
+        'total_creditos_formatted': total_creditos_formatted,
+        'ganancia_total_formatted': ganancia_total_formatted,
+        'valor_inventario_formatted': valor_inventario_formatted,
+    }
+    
+    return render(request, "facturacion/dashboard.html", context)

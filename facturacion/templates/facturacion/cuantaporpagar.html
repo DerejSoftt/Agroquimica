@@ -568,62 +568,117 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-        <ul class="sidebar-menu">
-            <li>
-                <a href="inventario.html">
-                    <i class='bx bx-archive'></i>
-                    <span>Inventario</span>
+          <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'inventario' %}" class="">
+                        <i class='bx bx-package'></i>
+                        Inventario
+                    </a>
+                </li>
+                <li>
+                    <a href=" {% url 'facturacion' %}  ">
+                        <i class='bx bx-receipt'></i>
+                        Facturación
+                    </a>
+                </li>
+                <li>
+                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
                 </a>
-            </li>
-            <li>
-                <a href="entrada-productos.html">
+                </li>
+
+                 <li>
+                    <a href="{% url 'registrodeclientes' %}" class="">
+                        <i class='bx bx-user-plus'></i>
+                        <span>Registro de Clientes</span>
+                    </a>
+                </li>
+
+                 <li>
+                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-user-plus'></i>
+            <span>Registro Suplidores</span>
+        </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-buildings'></i>
+            <span>Gestión Suplidores</span>
+        </a>
+        </li>
+
+                <li>
+                    <a href=" {% url 'gestiondeclientes' %} ">
+                        <i class='bx bx-group'></i>
+                        Clientes
+                    </a>
+                </li>
+
+                 <li>
+                <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
-            <li>
-                <a href="registro-clientes.html">
-                    <i class='bx bx-user-plus'></i>
-                    <span>Registro de Clientes</span>
+
+             <li>
+                <a href="{% url 'estadodecuenta' %}" class="">
+                    <i class='bx bx-file-blank'></i>
+                    <span>Estado de Cuenta</span>
                 </a>
             </li>
-            <li>
-                <a href="gestion-clientes.html">
-                    <i class='bx bx-group'></i>
-                    <span>Gestión de Clientes</span>
+
+             <li>
+                <a href="{% url 'anulacionesdefactura' %}" class="">
+                    <i class='bx bx-x-circle'></i>
+                    <span>Anulación</span>
                 </a>
             </li>
-            <li>
-                <a href="cuentas-por-cobrar.html">
-                    <i class='bx bx-money'></i>
-                    <span>Cuentas por Cobrar</span>
+
+
+             <li>
+                <a href="{% url 'cuantaporpagar' %}" class="active">
+                     <i class='bx bx-credit-card'></i>
+                    <span>Cuentas por Pagar</span>
                 </a>
             </li>
+
             <li>
-                <a href="cuentas-por-pagar-registro.html">
-                    <i class='bx bx-receipt'></i>
-                    <span>Registro Cuentas por Pagar</span>
+                <a href="{% url 'compras' %}">
+                    <i class='bx bx-store'></i>
+                    <span>Compras </span>
                 </a>
             </li>
-            <li>
-                <a href="cuentas-por-pagar-gestion.html" class="active">
-                    <i class='bx bx-credit-card'></i>
-                    <span>Gestión Cuentas por Pagar</span>
-                </a>
-            </li>
-            <li>
+
+             <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
-            <li>
-                <a href="devoluciones.html">
+
+             <li>
+                <a href="{% url 'devoluciones' %}">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-        </ul>
+             <li>
+                <a href="{% url 'dashboard' %}">
+                    <i class='bx bx-grid-alt'></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+                
+                <li>
+                    <a href="#">
+                        <i class='bx bx-cog'></i>
+                        Configuración
+                    </a>
+                </li>
+            </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>

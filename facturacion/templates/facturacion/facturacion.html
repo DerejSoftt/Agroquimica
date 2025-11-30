@@ -368,6 +368,16 @@
             display: block;
         }
 
+        /* Nombre de Cliente para Contado (oculto por defecto) */
+        .client-name-field {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .client-name-field.active {
+            display: block;
+        }
+
         /* Métodos de pago */
         .payment-methods {
             display: grid;
@@ -620,43 +630,35 @@
             }
         }
 
-
-
         /* Estilos para el autocompletado de clientes */
-.client-search {
-    position: relative;
-}
+        .client-search .autocomplete-container {
+            position: relative;
+        }
 
-.client-search .autocomplete-container {
-    position: relative;
-}
+        .client-search .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+        }
 
-.client-search .autocomplete-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 2px solid var(--color-primary);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    display: none;
-}
+        .client-search .autocomplete-dropdown.active {
+            display: block;
+        }
 
-.client-search .autocomplete-dropdown.active {
-    display: block;
-}
-
-/* Asegurar que el panel lateral tenga un ancho definido */
-.side-panel {
-    min-width: 0; /* Previene que se expanda demasiado */
-}
-
-
+        /* Asegurar que el panel lateral tenga un ancho definido */
+        .side-panel {
+            min-width: 0; /* Previene que se expanda demasiado */
+        }
     </style>
 </head>
 <body>
@@ -669,56 +671,117 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-        <ul class="sidebar-menu">
-            <li>
-                <a href="inventario.html">
-                    <i class='bx bx-archive'></i>
-                    <span>Inventario</span>
+         <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'inventario' %}" class="">
+                        <i class='bx bx-package'></i>
+                        Inventario
+                    </a>
+                </li>
+                <li>
+                    <a href=" {% url 'facturacion' %}" class="active">
+                        <i class='bx bx-receipt'></i>
+                        Facturación
+                    </a>
+                </li>
+                <li>
+                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
                 </a>
-            </li>
-            <li>
-                <a href="entrada-productos.html">
+                </li>
+
+                 <li>
+                    <a href="{% url 'registrodeclientes' %}" class="">
+                        <i class='bx bx-user-plus'></i>
+                        <span>Registro de Clientes</span>
+                    </a>
+                </li>
+
+                 <li>
+                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-user-plus'></i>
+            <span>Registro Suplidores</span>
+        </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-buildings'></i>
+            <span>Gestión Suplidores</span>
+        </a>
+        </li>
+
+                <li>
+                    <a href=" {% url 'gestiondeclientes' %} ">
+                        <i class='bx bx-group'></i>
+                        Clientes
+                    </a>
+                </li>
+
+                 <li>
+                <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
-            <li>
-                <a href="registro-clientes.html">
-                    <i class='bx bx-user-plus'></i>
-                    <span>Registro de Clientes</span>
+
+             <li>
+                <a href="{% url 'estadodecuenta' %}" class="">
+                    <i class='bx bx-file-blank'></i>
+                    <span>Estado de Cuenta</span>
                 </a>
             </li>
-            <li>
-                <a href="gestion-clientes.html">
-                    <i class='bx bx-group'></i>
-                    <span>Gestión de Clientes</span>
+
+             <li>
+                <a href="{% url 'anulacionesdefactura' %}" class="">
+                    <i class='bx bx-x-circle'></i>
+                    <span>Anulación</span>
                 </a>
             </li>
+
+
+             <li>
+                <a href="{% url 'cuantaporpagar' %}" class="">
+                     <i class='bx bx-credit-card'></i>
+                    <span>Cuentas por Pagar</span>
+                </a>
+            </li>
+
             <li>
-                <a href="registro-suplidores.html">
+                <a href=" {% url 'compras' %} ">
                     <i class='bx bx-store'></i>
-                    <span>Registro de Suplidores</span>
+                    <span>Compras </span>
                 </a>
             </li>
-            <li>
-                <a href="gestion-suplidores.html">
-                    <i class='bx bx-buildings'></i>
-                    <span>Gestión de Suplidores</span>
+
+             <li>
+                <a href="roles-usuarios.html">
+                    <i class='bx bx-user-circle'></i>
+                    <span>Roles y Usuarios</span>
                 </a>
             </li>
-            <li>
-                <a href="facturacion.html" class="active">
-                    <i class='bx bx-receipt'></i>
-                    <span>Facturación</span>
+
+             <li>
+                <a href=" {% url 'devoluciones' %} ">
+                    <i class='bx bx-undo'></i>
+                    <span>Devoluciones</span>
                 </a>
             </li>
-            <li>
-                <a href="cuentas-por-cobrar.html">
-                    <i class='bx bx-money'></i>
-                    <span>Cuentas por Cobrar</span>
+             <li>
+                <a href=" {% url 'dashboard' %} " class="">
+                    <i class='bx bx-grid-alt'></i>
+                    <span>Dashboard</span>
                 </a>
             </li>
-        </ul>
+                
+                <li>
+                    <a href="#">
+                        <i class='bx bx-cog'></i>
+                        Configuración
+                    </a>
+                </li>
+            </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -810,9 +873,18 @@
 
                         <!-- Búsqueda de Cliente (solo visible en crédito) -->
                         <div class="client-search" id="clientSearch">
-                            <div class="form-group">
+                            <div class="form-group autocomplete-container">
                                 <label for="clientSearchInput">Buscar Cliente</label>
                                 <input type="text" id="clientSearchInput" class="form-input" placeholder="Nombre o teléfono del cliente...">
+                                <div class="autocomplete-dropdown" id="clientSearchDropdown"></div>
+                            </div>
+                        </div>
+
+                        <!-- Nombre de Cliente para Contado (solo visible en contado) -->
+                        <div class="client-name-field active" id="clientNameField">
+                            <div class="form-group">
+                                <label for="clientNameInput">Nombre del Cliente (Opcional)</label>
+                                <input type="text" id="clientNameInput" class="form-input" placeholder="Nombre del cliente para factura...">
                             </div>
                         </div>
                     </div>
@@ -837,9 +909,9 @@
                         </div>
 
                          <div class="form-group">
-    <label for="observacion">Observación</label>
-    <input type="text" class="form-input" id="observacion">
-</div>
+                            <label for="observacion">Observación</label>
+                            <input type="text" class="form-input" id="observacion">
+                        </div>
                     </div>
 
                     <!-- Método de Pago -->
@@ -915,6 +987,7 @@
     let saleType = 'contado';
     let paymentMethod = 'efectivo';
     let selectedClient = null;
+    let clienteNombre = '';
 
     function handleAutocomplete() {
         const searchInput = document.getElementById('productSearch');
@@ -987,17 +1060,6 @@
     function mostrarResultadosClientes(clientes) {
         const dropdown = document.getElementById('clientSearchDropdown');
         
-        if (!dropdown) {
-            // Crear dropdown si no existe
-            const clientSearchContainer = document.querySelector('.client-search');
-            const newDropdown = document.createElement('div');
-            newDropdown.id = 'clientSearchDropdown';
-            newDropdown.className = 'autocomplete-dropdown';
-            clientSearchContainer.appendChild(newDropdown);
-        }
-
-        const dropdownElement = document.getElementById('clientSearchDropdown');
-        
         if (clientes.length > 0) {
             let html = '';
             clientes.forEach(cliente => {
@@ -1010,11 +1072,11 @@
                     </div>
                 `;
             });
-            dropdownElement.innerHTML = html;
-            dropdownElement.classList.add('active');
+            dropdown.innerHTML = html;
+            dropdown.classList.add('active');
         } else {
-            dropdownElement.innerHTML = '<div class="autocomplete-no-results">No se encontraron clientes</div>';
-            dropdownElement.classList.add('active');
+            dropdown.innerHTML = '<div class="autocomplete-no-results">No se encontraron clientes</div>';
+            dropdown.classList.add('active');
         }
     }
 
@@ -1171,12 +1233,20 @@
         });
         event.target.closest('.sale-type-btn').classList.add('active');
 
-        // Mostrar/ocultar búsqueda de cliente
+        // Mostrar/ocultar búsqueda de cliente y campo de nombre
         const clientSearch = document.getElementById('clientSearch');
+        const clientNameField = document.getElementById('clientNameField');
+        
         if (type === 'credito') {
             clientSearch.classList.add('active');
+            clientNameField.classList.remove('active');
+            // Limpiar campo de nombre
+            document.getElementById('clientNameInput').value = '';
+            clienteNombre = '';
         } else {
             clientSearch.classList.remove('active');
+            clientNameField.classList.add('active');
+            // Limpiar búsqueda de cliente
             selectedClient = null;
             document.getElementById('clientSearchInput').value = '';
         }
@@ -1205,11 +1275,17 @@
             return;
         }
 
+        // Obtener nombre del cliente para ventas al contado
+        if (saleType === 'contado') {
+            clienteNombre = document.getElementById('clientNameInput').value.trim();
+        }
+
         const totals = calculateTotals();
         const observacion = document.getElementById('observacion').value;
 
         const ventaData = {
             cliente_id: selectedClient,
+            cliente_nombre: clienteNombre,  // Nuevo campo
             tipo_venta: saleType,
             metodo_pago: paymentMethod,
             subtotal: totals.subtotal,
@@ -1224,7 +1300,7 @@
             }))
         };
 
-        console.log('Datos a enviar:', ventaData); // Para debug
+        console.log('Datos a enviar:', ventaData);
 
         if (confirm(`¿Confirmar venta por RD$ ${totals.total.toLocaleString('es-DO', {minimumFractionDigits: 2, maximumFractionDigits: 2})}?\nTipo: ${saleType === 'contado' ? 'Al Contado' : 'A Crédito'}\nMétodo de pago: ${paymentMethod}`)) {
             fetch('/procesar_venta/', {
@@ -1243,7 +1319,7 @@
             })
             .then(data => {
                 if (data.success) {
-                    alert('Venta procesada exitosamente');
+                    alert(`Venta procesada exitosamente\nNúmero de Factura: ${data.numero_factura}`);
                     if (data.redirect_url) {
                         window.location.href = data.redirect_url;
                     } else {
@@ -1296,8 +1372,10 @@
                 document.getElementById('discountType').value = 'none';
                 document.getElementById('discountValue').value = '';
                 document.getElementById('clientSearchInput').value = '';
+                document.getElementById('clientNameInput').value = '';
                 document.getElementById('observacion').value = '';
                 selectedClient = null;
+                clienteNombre = '';
                 renderInvoiceTable();
                 calculateTotals();
             }

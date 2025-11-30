@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.db.models import Max
 from datetime import date, timedelta
 
+from decimal import Decimal
+
 class Cliente(models.Model):
     cedula = models.CharField(max_length=13, unique=True)
     nombre = models.CharField(max_length=100)
@@ -231,14 +233,13 @@ class DetalleCompra(models.Model):
         }
 
 
-
-
 class CuentaPorCobrar(models.Model):
     ESTADO_CHOICES = [
         ('pendiente', 'Pendiente'),
         ('parcial', 'Parcialmente Pagada'),
         ('pagada', 'Pagada'),
         ('vencida', 'Vencida'),
+        ('anulada', 'Anulada'),  # Nuevo estado
     ]
     
     venta = models.ForeignKey('Venta', on_delete=models.CASCADE, related_name='cuentas_por_cobrar')
@@ -259,7 +260,7 @@ class CuentaPorCobrar(models.Model):
     
     def actualizar_saldo(self, monto_pagado):
         """Actualiza el saldo pendiente cuando se realiza un pago"""
-        if monto_pagado <= self.saldo_pendiente:
+        if monto_pagado <= self.saldo_pendiente and self.estado != 'anulada':
             self.saldo_pendiente -= monto_pagado
             
             if self.saldo_pendiente == 0:
@@ -273,7 +274,7 @@ class CuentaPorCobrar(models.Model):
     
     def verificar_vencimiento(self):
         """Verifica si la cuenta está vencida"""
-        if date.today() > self.fecha_vencimiento and self.estado != 'pagada':
+        if date.today() > self.fecha_vencimiento and self.estado not in ['pagada', 'anulada']:
             self.estado = 'vencida'
             self.save()
 
@@ -287,19 +288,85 @@ class PagoCuentaCobrar(models.Model):
         ('cheque', 'Cheque'),
     ]
     
+    ESTADO_PAGO_CHOICES = [
+        ('activo', 'Activo'),
+        ('anulado', 'Anulado'),
+    ]
+    
     cuenta = models.ForeignKey('CuentaPorCobrar', on_delete=models.CASCADE, related_name='pagos')
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_pago = models.DateField()
+    fecha_pago = models.DateField(default=timezone.now)  # CORREGIDO: default agregado
     metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES, default='efectivo')
+    numero_recibo = models.CharField(max_length=20, unique=True, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_PAGO_CHOICES, default='activo')
+    fecha_anulacion = models.DateTimeField(blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)  # CORREGIDO
     
     class Meta:
         db_table = 'pagos_cuentas_cobrar'
+        verbose_name = 'Pago de cuenta por cobrar'
+        verbose_name_plural = 'Pagos de cuentas por cobrar'
     
     def __str__(self):
-        return f"Pago de RD$ {self.monto_pagado} - {self.fecha_pago}"
-
-
+        return f"Recibo {self.numero_recibo} - RD$ {self.monto_pagado}"
+    
+    def save(self, *args, **kwargs):
+        # Generar número de recibo automáticamente si no existe
+        if not self.numero_recibo:
+            self.numero_recibo = self.generar_numero_recibo()
+            
+        # Asegurar que fecha_pago tenga un valor
+        if not self.fecha_pago:
+            self.fecha_pago = timezone.now().date()
+            
+        super().save(*args, **kwargs)
+    
+    def generar_numero_recibo(self):
+        """Genera un número de recibo único en formato REC-000001"""
+        from django.db.models import Max
+        
+        # Buscar el último número de recibo
+        ultimo_recibo = PagoCuentaCobrar.objects.filter(
+            numero_recibo__startswith='REC-'
+        ).aggregate(Max('numero_recibo'))
+        
+        if ultimo_recibo['numero_recibo__max']:
+            try:
+                ultimo_numero = int(ultimo_recibo['numero_recibo__max'].split('-')[1])
+                nuevo_numero = ultimo_numero + 1
+            except (ValueError, IndexError):
+                nuevo_numero = 1
+        else:
+            nuevo_numero = 1
+        
+        return f"REC-{nuevo_numero:06d}"
+    
+    def anular(self):
+        """Anula el pago y restaura el saldo pendiente"""
+        if self.estado == 'anulado':
+            return False
+            
+        # Restaurar el saldo pendiente en la cuenta
+        self.cuenta.saldo_pendiente += self.monto_pagado
+        
+        # Actualizar estado de la cuenta
+        if self.cuenta.saldo_pendiente > 0:
+            if self.cuenta.saldo_pendiente == self.cuenta.monto_total:
+                self.cuenta.estado = 'pendiente'
+            else:
+                self.cuenta.estado = 'parcial'
+        else:
+            self.cuenta.estado = 'pagada'
+            
+        self.cuenta.save()
+        
+        # Marcar el pago como anulado
+        self.estado = 'anulado'
+        self.fecha_anulacion = timezone.now()
+        self.save()
+        
+        return True
 
 # models.py
 class Venta(models.Model):
@@ -313,8 +380,14 @@ class Venta(models.Model):
         ('tarjeta', 'Tarjeta'),
         ('transferencia', 'Transferencia'),
     ]
+
+    ESTADO_CHOICES = [
+        ('activa', 'Activa'),
+        ('anulada', 'Anulada'),
+    ]
     
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
+    cliente_nombre = models.CharField(max_length=255, blank=True, null=True)  # Nuevo campo para cliente no registrado
     fecha = models.DateTimeField(auto_now_add=True)
     tipo_venta = models.CharField(max_length=10, choices=TIPO_VENTA_CHOICES)
     metodo_pago = models.CharField(max_length=15, choices=METODO_PAGO_CHOICES)
@@ -322,6 +395,8 @@ class Venta(models.Model):
     descuento = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=12, decimal_places=2)
     observacion = models.TextField(blank=True, null=True)
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='activa')
+    numero_factura = models.CharField(max_length=20, unique=True, blank=True, null=True)
     
     class Meta:
         db_table = 'ventas'
@@ -329,8 +404,24 @@ class Venta(models.Model):
         verbose_name_plural = 'Ventas'
     
     def __str__(self):
-        return f"Venta #{self.id} - {self.fecha.strftime('%Y-%m-%d')}"
+        return f"Factura #{self.numero_factura} - {self.fecha.strftime('%Y-%m-%d')}"
 
+    def save(self, *args, **kwargs):
+        if not self.numero_factura:
+            # Generar número de factura secuencial
+            ultima_factura = Venta.objects.order_by('-id').first()
+            if ultima_factura and ultima_factura.numero_factura:
+                try:
+                    ultimo_numero = int(ultima_factura.numero_factura.split('-')[1])
+                    nuevo_numero = ultimo_numero + 1
+                except (IndexError, ValueError):
+                    nuevo_numero = 1
+            else:
+                nuevo_numero = 1
+            
+            self.numero_factura = f"F-{nuevo_numero:06d}"
+        
+        super().save(*args, **kwargs)
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name='detalles')
     producto = models.ForeignKey(EntradaProducto, on_delete=models.CASCADE)
@@ -345,3 +436,63 @@ class DetalleVenta(models.Model):
     
     def __str__(self):
         return f"Detalle {self.id} - {self.producto.producto}"
+    
+
+
+
+
+# models.py
+class Devolucion(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('procesada', 'Procesada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    
+    MOTIVO_CHOICES = [
+        ('defective', 'Producto defectuoso'),
+        ('wrong_item', 'Artículo incorrecto'),
+        ('not_as_described', 'No coincide con la descripción'),
+        ('damaged', 'Producto dañado'),
+        ('customer_change', 'Cambio de opinión del cliente'),
+        ('other', 'Otro motivo'),
+    ]
+    
+    venta = models.ForeignKey('Venta', on_delete=models.CASCADE, related_name='devoluciones')
+    numero_devolucion = models.CharField(max_length=50, unique=True)
+    fecha_devolucion = models.DateTimeField(default=timezone.now)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    motivo = models.CharField(max_length=50, choices=MOTIVO_CHOICES)
+    comentarios = models.TextField(blank=True)
+    total_devolucion = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    
+    def save(self, *args, **kwargs):
+        if not self.numero_devolucion:
+            # Generar número de devolución automático
+            ultima_devolucion = Devolucion.objects.aggregate(Max('id'))['id__max'] or 0
+            self.numero_devolucion = f'DEV-{timezone.now().year}-{ultima_devolucion + 1:04d}'
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.numero_devolucion} - Venta #{self.venta.id}"
+    
+    class Meta:
+        verbose_name = "Devolución"
+        verbose_name_plural = "Devoluciones"
+
+
+class ItemDevolucion(models.Model):
+    devolucion = models.ForeignKey(Devolucion, on_delete=models.CASCADE, related_name='items')
+    detalle_venta = models.ForeignKey('DetalleVenta', on_delete=models.CASCADE)
+    producto = models.ForeignKey('EntradaProducto', on_delete=models.CASCADE)
+    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    total_linea = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    def save(self, *args, **kwargs):
+        # Calcular el total de la línea
+        self.total_linea = self.cantidad * self.precio_unitario
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.producto.codigo} - {self.cantidad}"

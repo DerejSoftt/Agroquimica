@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 15px;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        .moneda {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        .pagada { background: #d1fae5; color: #065f46; }
+        .pendiente { background: #fef3c7; color: #92400e; }
+        .parcial { background: #dbeafe; color: #1e40af; }
+        .vencida { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <table width="100%" style="border-bottom: 2px solid #2d5016; margin-bottom: 15px;">
+        <tr>
+            <td class="center">
+                <h1 style="color: #2d5016; margin: 5px 0; font-size: 16px;">AGROINVENTARIO</h1>
+                <p style="margin: 2px 0;">Sistema de Fertilizantes</p>
+                <div class="bold" style="color: #2d5016; font-size: 14px; margin: 8px 0;">ESTADO DE CUENTA</div>
+                <div>Fecha de Emisión: {{ fecha_actual|date:"d/m/Y" }}</div>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- INFO CLIENTE -->
+    <table width="100%" style="background: #f8f9fa; margin-bottom: 12px; border-left: 3px solid #2d5016;">
+        <tr>
+            <td style="padding: 10px;">
+                <table width="100%">
+                    <tr>
+                        <td><strong>Cliente:</strong> {{ cliente.nombre }}</td>
+                        <td><strong>Cédula/RNC:</strong> {{ cliente.cedula }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teléfono:</strong> {{ cliente.telefono1|default:"-" }}</td>
+                        <td><strong>Dirección:</strong> {{ cliente.direccion|default:"-" }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- RESÚMEN HORIZONTAL -->
+    <table width="100%" style="background: #f8f9fa; margin-bottom: 15px; border-collapse: collapse;">
+        <tr>
+            <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">
+                <div style="color: #666;">Total Facturas</div>
+                <div class="bold" style="color: #2d5016; font-size: 12px;">{{ total_facturas }}</div>
+            </td>
+            <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">
+                <div style="color: #666;">Monto Total</div>
+                <div class="bold moneda" style="color: #2d5016; font-size: 12px;">RD$ {{ monto_total|floatformat:2 }}</div>
+            </td>
+            <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">
+                <div style="color: #666;">Pagado</div>
+                <div class="bold moneda" style="color: #2d5016; font-size: 12px;">RD$ {{ monto_pagado|floatformat:2 }}</div>
+            </td>
+            <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">
+                <div style="color: #666;">Saldo Pendiente</div>
+                <div class="bold moneda" style="color: #2d5016; font-size: 12px;">RD$ {{ saldo_pendiente|floatformat:2 }}</div>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- TABLA DE FACTURAS -->
+    {% if cuentas %}
+    <table width="100%" style="margin-bottom: 20px;">
+        <thead>
+            <tr style="background: #2d5016; color: white;">
+                <th style="padding: 8px 5px; text-align: left;">N° Factura</th>
+                <th style="padding: 8px 5px; text-align: left;">Fecha Emisión</th>
+                <th style="padding: 8px 5px; text-align: left;">Fecha Venc.</th>
+                <th style="padding: 8px 5px; text-align: left;">Monto Total</th>
+                <th style="padding: 8px 5px; text-align: left;">Saldo Pendiente</th>
+                <th style="padding: 8px 5px; text-align: left;">Estado</th>
+                <th style="padding: 8px 5px; text-align: left;">Días Venc.</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cuenta in cuentas %}
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+                <td style="padding: 6px 5px;">{{ cuenta.numero_factura }}</td>
+                <td style="padding: 6px 5px;">{{ cuenta.fecha_emision|date:"d/m/Y" }}</td>
+                <td style="padding: 6px 5px;">{{ cuenta.fecha_vencimiento|date:"d/m/Y" }}</td>
+                <td style="padding: 6px 5px;" class="moneda text-right">RD$ {{ cuenta.monto_total|floatformat:2 }}</td>
+                <td style="padding: 6px 5px;" class="moneda text-right">RD$ {{ cuenta.saldo_pendiente|floatformat:2 }}</td>
+                <td style="padding: 6px 5px;" class="text-center">
+                    <span class="status-badge {{ cuenta.estado }}">{{ cuenta.estado_display }}</span>
+                </td>
+                <td style="padding: 6px 5px;" class="text-center">
+                    {% if cuenta.dias_vencimiento > 0 %}
+                        {{ cuenta.dias_vencimiento }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr style="background: #f8f9fa; font-weight: bold; border-top: 2px solid #2d5016;">
+                <td style="padding: 6px 5px;" colspan="3"><strong>TOTALES</strong></td>
+                <td style="padding: 6px 5px;" class="moneda text-right"><strong>RD$ {{ monto_total|floatformat:2 }}</strong></td>
+                <td style="padding: 6px 5px;" class="moneda text-right"><strong>RD$ {{ saldo_pendiente|floatformat:2 }}</strong></td>
+                <td style="padding: 6px 5px;" colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 20px; color: #666; font-style: italic;">
+        No hay facturas registradas para este cliente.
+    </div>
+    {% endif %}
+    
+    <!-- FIRMAS -->
+    <table width="100%" style="margin-top: 40px;">
+        <tr>
+            <td width="45%" style="text-align: center; border-top: 1px solid #000; padding-top: 40px;">
+                <div class="bold">FIRMA DE AGROINVENTARIO</div>
+                <div style="margin-top: 20px;">_________________________</div>
+                <div>Autorizado por</div>
+                <div>Fecha: ___________________</div>
+            </td>
+            <td width="10%"></td>
+            <td width="45%" style="text-align: center; border-top: 1px solid #000; padding-top: 40px;">
+                <div class="bold">FIRMA DEL CLIENTE</div>
+                <div style="margin-top: 20px;">{{ cliente.nombre }}</div>
+                <div>Cédula: {{ cliente.cedula }}</div>
+                <div>Fecha: ___________________</div>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- FOOTER -->
+    <table width="100%" style="margin-top: 15px; border-top: 1px solid #ddd;">
+        <tr>
+            <td class="center" style="padding-top: 8px; color: #666; font-size: 8px;">
+                <p>Este documento fue generado automáticamente el {{ fecha_actual|date:"d/m/Y" }} a las {{ fecha_actual|time:"H:i" }}</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Cuenta - AgroInventario</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #2d5016;
+            --color-primary-dark: #1a3009;
+            --color-primary-medium: #3d6b1f;
+            --color-primary-light: #f0f9f0;
+            --color-secondary: #fff8e1;
+            --color-accent: #ffd700;
+            --color-accent-dark: #ffb300;
+            --color-lime: #a3d977;
+            --color-bright-green: #03ff31e6;
+            --color-text: #1a1a1a;
+            --color-text-light: #6b7280;
+            --color-border: #e5e7eb;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-white: #ffffff;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #2d5016 0%, #1a3009 100%);
+            color: var(--color-white);
+            padding: 0;
+            z-index: 100;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: var(--color-lime);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            margin: 0.25rem 1rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu a.active {
+            background: #3d6b1f;
+            border-left: 4px solid var(--color-accent);
+        }
+
+        .sidebar-menu i {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Búsqueda de Cliente */
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .search-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .autocomplete-dropdown.show {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .autocomplete-item:hover {
+            background: var(--color-primary-light);
+        }
+
+        .autocomplete-item strong {
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .autocomplete-item small {
+            color: var(--color-text-light);
+        }
+
+        /* Información del Cliente */
+        .client-info {
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            border: 2px solid var(--color-accent);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .client-info.show {
+            display: block;
+        }
+
+        .client-info h3 {
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-item i {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+        }
+
+        .detail-item strong {
+            color: var(--color-text-light);
+            margin-right: 5px;
+        }
+
+        /* Pestañas */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .tab-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Contenido de Pestañas */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tarjetas de Resumen */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .summary-icon.total {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .summary-icon.paid {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .summary-icon.pending {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .summary-icon.overdue {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .summary-icon.activo {
+            background: linear-gradient(135deg, #1e40af 0%, #065f46 100%);
+            color: white;
+        }
+
+        .summary-info h4 {
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .summary-info p {
+            color: var(--color-text);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Tabla */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            padding: 20px 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-primary);
+            font-size: 0.9rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.pagada {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.parcial {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.vencida {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.activo {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.completado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.4);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text-light);
+        }
+
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-data h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class='bx bxs-leaf'></i>
+                AgroInventario
+            </h2>
+            <p>Sistema de Fertilizantes</p>
+        </div>
+         <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'inventario' %}" class="">
+                        <i class='bx bx-package'></i>
+                        Inventario
+                    </a>
+                </li>
+                <li>
+                    <a href=" {% url 'facturacion' %}  ">
+                        <i class='bx bx-receipt'></i>
+                        Facturación
+                    </a>
+                </li>
+                <li>
+                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
+                </a>
+                </li>
+
+                 <li>
+                    <a href="{% url 'registrodeclientes' %}" class="">
+                        <i class='bx bx-user-plus'></i>
+                        <span>Registro de Clientes</span>
+                    </a>
+                </li>
+
+                 <li>
+                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-user-plus'></i>
+            <span>Registro Suplidores</span>
+        </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-buildings'></i>
+            <span>Gestión Suplidores</span>
+        </a>
+        </li>
+
+                <li>
+                    <a href=" {% url 'gestiondeclientes' %} ">
+                        <i class='bx bx-group'></i>
+                        Clientes
+                    </a>
+                </li>
+
+                 <li>
+                <a href=" {% url 'entrada' %}">
+                    <i class='bx bx-package'></i>
+                    <span>Entrada de Productos</span>
+                </a>
+            </li>
+
+             <li>
+                <a href="{% url 'estadodecuenta' %}" class="active">
+                    <i class='bx bx-file-blank'></i>
+                    <span>Estado de Cuenta</span>
+                </a>
+            </li>
+
+             <li>
+                <a href="{% url 'anulacionesdefactura' %}" class="">
+                    <i class='bx bx-x-circle'></i>
+                    <span>Anulación</span>
+                </a>
+            </li>
+
+
+             <li>
+                <a href="{% url 'cuantaporpagar' %}" class="">
+                     <i class='bx bx-credit-card'></i>
+                    <span>Cuentas por Pagar</span>
+                </a>
+            </li>
+
+            <li>
+                <a href=" {% url 'compras' %} ">
+                    <i class='bx bx-store'></i>
+                    <span>Compras </span>
+                </a>
+            </li>
+
+             <li>
+                <a href="roles-usuarios.html">
+                    <i class='bx bx-user-circle'></i>
+                    <span>Roles y Usuarios</span>
+                </a>
+            </li>
+
+             <li>
+                <a href=" {% url 'devoluciones' %} ">
+                    <i class='bx bx-undo'></i>
+                    <span>Devoluciones</span>
+                </a>
+            </li>
+             <li>
+                <a href=" {% url 'dashboard' %} " class="">
+                    <i class='bx bx-grid-alt'></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+                
+                <li>
+                    <a href="#">
+                        <i class='bx bx-cog'></i>
+                        Configuración
+                    </a>
+                </li>
+            </ul>
+        <div class="sidebar-footer">
+            <p>© 2025 AgroInventario v1.0</p>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>
+                    <i class='bx bx-file-blank'></i>
+                    Estado de Cuenta
+                </h1>
+                <p>Consulta el historial de facturas y financiamiento de clientes</p>
+            </div>
+
+            <!-- Búsqueda de Cliente -->
+            <div class="search-section">
+                <h3>
+                    <i class='bx bx-search'></i>
+                    Buscar Cliente
+                </h3>
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="clientSearch" 
+                        class="form-input" 
+                        placeholder="Buscar por nombre o cédula..."
+                        autocomplete="off"
+                    >
+                    <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+                </div>
+            </div>
+
+            <!-- Información del Cliente -->
+            <div class="client-info" id="clientInfo">
+                <h3>
+                    <i class='bx bx-user-circle'></i>
+                    Información del Cliente
+                </h3>
+                <div class="client-details">
+                    <div class="detail-item">
+                        <i class='bx bx-id-card'></i>
+                        <span><strong>Cédula:</strong> <span id="clientCedula">-</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class='bx bx-user'></i>
+                        <span><strong>Nombre:</strong> <span id="clientNombre">-</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class='bx bx-phone'></i>
+                        <span><strong>Teléfono:</strong> <span id="clientTelefono">-</span></span>
+                    </div>
+                    <div class="detail-item">
+                        <i class='bx bx-map'></i>
+                        <span><strong>Dirección:</strong> <span id="clientDireccion">-</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestañas -->
+            <div class="tabs" id="tabsContainer" style="display: none;">
+                <button class="tab-btn active" onclick="switchTab('facturas')">
+                    <i class='bx bx-receipt'></i>
+                    Historial de Facturas
+                </button>
+                <button class="tab-btn" onclick="switchTab('financiamiento')">
+                    <i class='bx bx-dollar-circle'></i>
+                    Estado de Financiamiento
+                </button>
+            </div>
+
+            <!-- Contenido: Historial de Facturas -->
+            <div class="tab-content active" id="facturasTab">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon total">
+                            <i class='bx bx-receipt'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Total Facturas</h4>
+                            <p id="totalFacturas">0</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon paid">
+                            <i class='bx bx-check-circle'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Monto Total</h4>
+                            <p id="montoTotalFacturas">RD$ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon pending">
+                            <i class='bx bx-time-five'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Pendiente</h4>
+                            <p id="montoPendiente">RD$ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon paid">
+                            <i class='bx bx-dollar'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Pagado</h4>
+                            <p id="montoPagado">RD$ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>
+                            <i class='bx bx-list-ul'></i>
+                            Historial de Facturas
+                        </h3>
+                    </div>
+                    <div id="facturasTableContent">
+                        <div class="no-data">
+                            <i class='bx bx-search'></i>
+                            <h3>Seleccione un cliente</h3>
+                            <p>Busque y seleccione un cliente para ver su historial de facturas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="printFacturas()">
+                        <i class='bx bx-printer'></i>
+                        Imprimir Estado de Cuenta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido: Estado de Financiamiento -->
+            <div class="tab-content" id="financiamientoTab">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon total">
+                            <i class='bx bx-dollar-circle'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Monto Financiado</h4>
+                            <p id="montoFinanciado">RD$ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon paid">
+                            <i class='bx bx-check-double'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Pagos Realizados</h4>
+                            <p id="pagosRealizados">RD$ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon pending">
+                            <i class='bx bx-wallet'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Saldo Pendiente</h4>
+                            <p id="saldoPendiente">RD$ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon activo">
+                            <i class='bx bx-calendar'></i>
+                        </div>
+                        <div class="summary-info">
+                            <h4>Financiamientos Activos</h4>
+                            <p id="financiamientosActivos">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>
+                            <i class='bx bx-list-ul'></i>
+                            Historial de Financiamiento
+                        </h3>
+                    </div>
+                    <div id="financiamientoTableContent">
+                        <div class="no-data">
+                            <i class='bx bx-search'></i>
+                            <h3>Seleccione un cliente</h3>
+                            <p>Busque y seleccione un cliente para ver su estado de financiamiento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="printFinanciamiento()">
+                        <i class='bx bx-printer'></i>
+                        Imprimir Estado de Financiamiento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedClient = null;
+
+        // Búsqueda con autocompletado
+        const clientSearch = document.getElementById('clientSearch');
+        const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+
+        clientSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            if (searchTerm.length === 0) {
+                autocompleteDropdown.classList.remove('show');
+                return;
+            }
+
+            // Hacer petición AJAX para buscar clientes
+            fetch(`facturacion/buscar-clientes-estado-cuenta/?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(results => {
+                    if (results.length > 0) {
+                        let html = '';
+                        results.forEach(client => {
+                            html += `
+                                <div class="autocomplete-item" onclick="selectClient(${client.id})">
+                                    <strong>${client.nombre}</strong>
+                                    <small>Cédula: ${client.cedula}</small>
+                                </div>
+                            `;
+                        });
+                        autocompleteDropdown.innerHTML = html;
+                        autocompleteDropdown.classList.add('show');
+                    } else {
+                        autocompleteDropdown.innerHTML = '<div class="autocomplete-item">No se encontraron resultados</div>';
+                        autocompleteDropdown.classList.add('show');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    autocompleteDropdown.innerHTML = '<div class="autocomplete-item">Error en la búsqueda</div>';
+                    autocompleteDropdown.classList.add('show');
+                });
+        });
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-container')) {
+                autocompleteDropdown.classList.remove('show');
+            }
+        });
+
+        // Seleccionar cliente
+        function selectClient(clientId) {
+            // Obtener datos del cliente via AJAX
+            fetch(`/facturacion/cliente/${clientId}/datos-estado-cuenta/`)
+                .then(response => response.json())
+                .then(data => {
+                    selectedClient = data.cliente;
+                    
+                    // Mostrar información del cliente
+                    document.getElementById('clientCedula').textContent = selectedClient.cedula;
+                    document.getElementById('clientNombre').textContent = selectedClient.nombre;
+                    document.getElementById('clientTelefono').textContent = selectedClient.telefono;
+                    document.getElementById('clientDireccion').textContent = selectedClient.direccion;
+                    document.getElementById('clientInfo').classList.add('show');
+                    document.getElementById('tabsContainer').style.display = 'flex';
+
+                    // Actualizar búsqueda
+                    clientSearch.value = selectedClient.nombre;
+                    autocompleteDropdown.classList.remove('show');
+
+                    // Cargar datos de facturas
+                    loadFacturas(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar los datos del cliente');
+                });
+        }
+
+        // Cargar facturas del cliente
+        function loadFacturas(data) {
+            if (!data.cliente) return;
+
+            const facturas = data.cuentas;
+            const resumen = data.resumen;
+
+            // Actualizar resumen
+            document.getElementById('totalFacturas').textContent = resumen.total_facturas;
+            document.getElementById('montoTotalFacturas').textContent = `RD$ ${resumen.monto_total.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
+            document.getElementById('montoPendiente').textContent = `RD$ ${resumen.saldo_pendiente.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
+            document.getElementById('montoPagado').textContent = `RD$ ${resumen.monto_pagado.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
+
+            // Renderizar tabla
+            const tableContent = document.getElementById('facturasTableContent');
+            
+            if (facturas.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="no-data">
+                        <i class='bx bx-receipt'></i>
+                        <h3>No hay facturas</h3>
+                        <p>Este cliente no tiene facturas registradas</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Fecha Emisión</th>
+                            <th>Fecha Vencimiento</th>
+                            <th>Monto Total</th>
+                            <th>Saldo Pendiente</th>
+                            <th>Estado</th>
+                            <th>Días Venc.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            facturas.forEach(factura => {
+                html += `
+                    <tr>
+                        <td><strong>${factura.numero_factura}</strong></td>
+                        <td>${new Date(factura.fecha_emision).toLocaleDateString('es-DO')}</td>
+                        <td>${new Date(factura.fecha_vencimiento).toLocaleDateString('es-DO')}</td>
+                        <td><strong>RD$ ${parseFloat(factura.monto_total).toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong></td>
+                        <td><strong>RD$ ${parseFloat(factura.saldo_pendiente).toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong></td>
+                        <td><span class="status-badge ${factura.estado}">${factura.estado_display}</span></td>
+                        <td>${factura.dias_vencimiento > 0 ? factura.dias_vencimiento : '-'}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            tableContent.innerHTML = html;
+        }
+
+        // Cambiar pestaña
+        function switchTab(tab) {
+            // Actualizar botones
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+
+            // Actualizar contenido
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            if (tab === 'facturas') {
+                document.getElementById('facturasTab').classList.add('active');
+            } else {
+                document.getElementById('financiamientoTab').classList.add('active');
+            }
+        }
+
+        // Imprimir estado de cuenta de facturas (generar PDF)
+        function printFacturas() {
+            if (!selectedClient) {
+                alert('Debe seleccionar un cliente primero');
+                return;
+            }
+            // Redirigir a la URL de generación de PDF
+            window.open(`/facturacion/cliente/${selectedClient.id}/pdf-estado-cuenta/`, '_blank');
+        }
+
+        // Imprimir estado de financiamiento (placeholder)
+        function printFinanciamiento() {
+            if (!selectedClient) {
+                alert('Debe seleccionar un cliente primero');
+                return;
+            }
+            alert('Funcionalidad de financiamiento en desarrollo');
+        }
+    </script>
+</body>
+</html>

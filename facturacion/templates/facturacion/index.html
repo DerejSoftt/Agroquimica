@@ -225,6 +225,41 @@
             text-decoration: underline;
         }
 
+        /* Mensaje de error */
+        .error-message {
+            color: #ff6b6b;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            display: none;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #ff6b6b;
+        }
+
+        /* Indicador de carga */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFC107;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         /* RESPONSIVE DESIGN */
 
         /* Tablets (768px - 1024px) */
@@ -501,13 +536,15 @@
             <p class="logo-subtitle">Arroz y Fertilizantes</p>
         </div>
 
-        <form id="loginForm">
+        <form id="loginForm" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="username" class="form-label">Usuario</label>
                 <div class="input-wrapper">
                     <input 
                         type="text" 
                         id="username" 
+                        name="username"
                         class="form-input" 
                         placeholder="Ingrese su usuario"
                         required
@@ -522,12 +559,22 @@
                     <input 
                         type="password" 
                         id="password" 
+                        name="password"
                         class="form-input" 
                         placeholder="Ingrese su contraseña"
                         required
                     >
                     <i class='bx bx-lock-alt input-icon'></i>
                 </div>
+            </div>
+
+            <div id="errorMessage" class="error-message">
+                Usuario o contraseña incorrectos
+            </div>
+
+            <div id="loadingIndicator" class="loading">
+                <div class="loading-spinner"></div>
+                <span style="color: white; margin-left: 10px;">Verificando credenciales...</span>
             </div>
 
             <button type="submit" class="login-button">
@@ -542,18 +589,78 @@
 
     <script>
         const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingIndicator = document.getElementById('loadingIndicator');
 
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (username && password) {
-                alert('¡Inicio de sesión exitoso!\n\nUsuario: ' + username);
-                // Aquí iría la lógica de autenticación real
+            // Ocultar mensaje de error al intentar nuevamente
+            errorMessage.style.display = 'none';
+            
+            // Mostrar indicador de carga
+            loadingIndicator.style.display = 'block';
+            
+            // Deshabilitar el botón de login
+            const loginButton = document.querySelector('.login-button');
+            loginButton.disabled = true;
+
+            try {
+                // Enviar datos al servidor Django
+                const response = await fetch('/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: new URLSearchParams({
+                        'username': username,
+                        'password': password
+                    })
+                });
+
+                if (response.ok) {
+                    // Si la autenticación es exitosa, redirigir a inventario
+                    window.location.href = 'inventario';
+                } else {
+                    // Si hay error, mostrar mensaje
+                    errorMessage.style.display = 'block';
+                    
+                    // Agregar animación de sacudida al formulario
+                    loginForm.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        loginForm.style.animation = '';
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Error de conexión. Intente nuevamente.';
+                errorMessage.style.display = 'block';
+            } finally {
+                // Ocultar indicador de carga y habilitar botón
+                loadingIndicator.style.display = 'none';
+                loginButton.disabled = false;
             }
         });
+
+        // Función para obtener el token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
 
         // Animación de entrada
         window.addEventListener('load', () => {
@@ -567,6 +674,17 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
         });
+
+        // Agregar animación de sacudida
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

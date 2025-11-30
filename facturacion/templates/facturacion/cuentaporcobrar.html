@@ -316,88 +316,116 @@
             font-size: 0.9rem;
         }
 
-        /* Client row styling */
-        .table tbody tr.client-row {
+        /* Nuevos estilos para el sistema de colapsar */
+        .client-header {
+            cursor: pointer;
+            transition: all 0.3s ease;
             background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
             font-weight: 600;
         }
 
-        .table tbody tr.client-row:hover {
+        .client-header:hover {
             background: linear-gradient(135deg, #e8f5e8 0%, #fff4d1 100%);
-            transform: scale(1.01);
-            transition: all 0.3s ease;
         }
 
-        /* Invoice row styling */
-        .table tbody tr.invoice-row {
-            background: white;
-        }
-
-        .table tbody tr.invoice-row:hover {
+        .client-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
             background: #f8f9fa;
         }
 
-        /* Product row styling */
-        .table tbody tr.product-row {
-            background: #f0f9f0;
-            display: none;
+        .client-details.expanded {
+            max-height: 1000px;
         }
 
-        .table tbody tr.product-row.expanded {
-            display: table-row;
+        .collapse-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
         }
 
-        /* Payment row styling */
-        .table tbody tr.payment-row {
-            background: #fff8e1;
-            display: none;
+        .client-header.expanded .collapse-icon {
+            transform: rotate(180deg);
         }
 
-        .table tbody tr.payment-row.expanded {
-            display: table-row;
+        .invoice-row {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
         }
 
-        .product-list-cell, .payment-list-cell {
-            padding: 0 !important;
-        }
-
-        .product-list-cell > div, .payment-list-cell > div {
-            padding: 20px 30px;
-        }
-
-        .product-list-cell ul {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0 0 0;
-        }
-
-        .product-list-cell li {
-            padding: 8px 0;
-            border-bottom: 1px dashed #e1e8ed;
-        }
-
-        .product-list-cell li:last-child {
+        .invoice-row:last-child {
             border-bottom: none;
         }
 
-        /* Product toggle button */
-        .product-toggle-btn {
-            background: none;
-            border: none;
-            color: var(--color-primary);
+        .invoice-details {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
             cursor: pointer;
-            padding: 4px 8px;
-            margin-left: 10px;
-            border-radius: 4px;
-            transition: all 0.2s;
+            border-bottom: 1px solid #e1e8ed;
         }
 
-        .product-toggle-btn:hover {
-            background: var(--color-primary-light);
+        .invoice-header:hover {
+            background: #f0f9f0;
         }
 
-        .product-toggle-btn i {
-            font-size: 16px;
+        .invoice-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .invoice-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sub-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .sub-table th {
+            background: #3d6b1f;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.8rem;
+        }
+
+        .sub-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e1e8ed;
+            font-size: 0.8rem;
+        }
+
+        .payment-history {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .payment-item:last-child {
+            border-bottom: none;
         }
 
         .status-badge {
@@ -535,6 +563,19 @@
             box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
         }
 
+        .btn-details {
+            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-details:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(111, 66, 193, 0.4);
+        }
+
         .btn-danger:disabled {
             background: #6c757d;
             cursor: not-allowed;
@@ -571,6 +612,10 @@
             overflow-y: auto;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             animation: slideIn 0.3s ease;
+        }
+
+        .details-modal .modal-content {
+            max-width: 900px;
         }
 
         .modal-header {
@@ -658,11 +703,13 @@
         }
 
         /* Estilos para la barra de progreso */
-        .progress-bar {
+        .progress-container {
             background: #e9ecef;
             border-radius: 10px;
             height: 20px;
             overflow: hidden;
+            margin: 15px 0;
+            position: relative;
         }
 
         .progress-fill {
@@ -674,7 +721,16 @@
             color: white;
             font-size: 12px;
             font-weight: bold;
-            transition: width 0.3s ease;
+            transition: width 0.5s ease;
+            min-width: 30px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #6b7280;
         }
 
         /* Estilos para tablas internas */
@@ -698,6 +754,145 @@
         .internal-table tfoot tr {
             background: #f0f9f0;
             font-weight: bold;
+        }
+
+        /* Nuevos estilos para el modal de detalles */
+        .details-tabs {
+            display: flex;
+            border-bottom: 2px solid #e1e8ed;
+            margin-bottom: 20px;
+        }
+
+        .details-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+
+        .details-tab.active {
+            color: var(--color-primary);
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        .details-tab:hover {
+            color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .payment-option {
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .payment-option:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .payment-option.selected {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .payment-option i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quick-amount-btn {
+            padding: 10px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-amount-btn:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        .product-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .product-details-table th {
+            background: var(--color-primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .product-details-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .product-details-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Estilos para el resumen de pago */
+        .payment-summary {
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Estilos para el selector de facturas */
+        .invoice-option:hover {
+            background: linear-gradient(135deg, #f0f9f0 0%, #fff8e1 100%);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
         }
 
         @keyframes fadeIn {
@@ -744,6 +939,34 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+
+            .details-tabs {
+                flex-direction: column;
+            }
+
+            .details-tab {
+                text-align: center;
+            }
+
+            .invoice-info {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .invoice-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .invoice-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -757,38 +980,117 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-        <ul class="sidebar-menu">
-            <li>
-                <a href="inventario.html">
-                    <i class='bx bx-archive'></i>
-                    <span>Inventario</span>
+         <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'inventario' %}" class="">
+                        <i class='bx bx-package'></i>
+                        Inventario
+                    </a>
+                </li>
+                <li>
+                    <a href=" {% url 'facturacion' %}  ">
+                        <i class='bx bx-receipt'></i>
+                        Facturación
+                    </a>
+                </li>
+                <li>
+                   <a href=" {% url 'cuentaporcobrar' %}" class="active">
+                    <i class='bx bx-money'></i>
+                    <span>Cuentas por Cobrar</span>
                 </a>
-            </li>
-            <li>
-                <a href="entrada-productos.html">
+                </li>
+
+                 <li>
+                    <a href="{% url 'registrodeclientes' %}" class="">
+                        <i class='bx bx-user-plus'></i>
+                        <span>Registro de Clientes</span>
+                    </a>
+                </li>
+
+                 <li>
+                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-user-plus'></i>
+            <span>Registro Suplidores</span>
+        </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+            <i class='bx bx-buildings'></i>
+            <span>Gestión Suplidores</span>
+        </a>
+        </li>
+
+                <li>
+                    <a href=" {% url 'gestiondeclientes' %} ">
+                        <i class='bx bx-group'></i>
+                        Clientes
+                    </a>
+                </li>
+
+                 <li>
+                <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
-            <li>
-                <a href="registro-clientes.html">
-                    <i class='bx bx-user-plus'></i>
-                    <span>Registro de Clientes</span>
+
+             <li>
+                <a href="{% url 'estadodecuenta' %}" class="">
+                    <i class='bx bx-file-blank'></i>
+                    <span>Estado de Cuenta</span>
                 </a>
             </li>
-            <li>
-                <a href="gestion-clientes.html">
-                    <i class='bx bx-group'></i>
-                    <span>Gestión de Clientes</span>
+
+             <li>
+                <a href="{% url 'anulacionesdefactura' %}" class="">
+                    <i class='bx bx-x-circle'></i>
+                    <span>Anulación</span>
                 </a>
             </li>
-            <li>
-                <a href="cuentas-por-cobrar.html" class="active">
-                    <i class='bx bx-money'></i>
-                    <span>Cuentas por Cobrar</span>
+
+
+             <li>
+                <a href="{% url 'cuantaporpagar' %}" class="">
+                     <i class='bx bx-credit-card'></i>
+                    <span>Cuentas por Pagar</span>
                 </a>
             </li>
-        </ul>
+
+            <li>
+                <a href=" {% url 'compras' %} ">
+                    <i class='bx bx-store'></i>
+                    <span>Compras </span>
+                </a>
+            </li>
+
+             <li>
+                <a href="roles-usuarios.html">
+                    <i class='bx bx-user-circle'></i>
+                    <span>Roles y Usuarios</span>
+                </a>
+            </li>
+
+             <li>
+                <a href="{% url 'devoluciones' %}">
+                    <i class='bx bx-undo'></i>
+                    <span>Devoluciones</span>
+                </a>
+            </li>
+             <li>
+                <a href="{% url 'dashboard' %}">
+                    <i class='bx bx-grid-alt'></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+                
+                <li>
+                    <a href="#">
+                        <i class='bx bx-cog'></i>
+                        Configuración
+                    </a>
+                </li>
+            </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -884,6 +1186,7 @@
                     <table class="table" id="accountsTable">
                         <thead>
                             <tr>
+                                <th style="width: 40px;"></th>
                                 <th>Cliente</th>
                                 <th>Teléfono</th>
                                 <th>Facturas Pendientes</th>
@@ -905,6 +1208,92 @@
         </div>
     </div>
 
+    <!-- Modal para Detalles de Venta -->
+    <div class="modal details-modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <i class='bx bx-detail'></i>
+                    Detalles de la Venta
+                </h2>
+                <button class="close-btn" onclick="closeDetailsModal()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-info">
+                    <i class='bx bx-info-circle'></i>
+                    Cliente: <span id="detailsClientName">-</span> | 
+                    Factura: <span id="detailsInvoiceNumber">-</span> | 
+                    Total: <span id="detailsTotalAmount" class="currency">RD$ 0</span>
+                </div>
+
+                <div class="details-tabs">
+                    <button class="details-tab active" onclick="switchTab('productsTab')">Productos</button>
+                    <button class="details-tab" onclick="switchTab('paymentsTab')">Progreso de Pagos</button>
+                </div>
+
+                <div id="productsTab" class="tab-content active">
+                    <h4>Detalles de Productos</h4>
+                    <table class="product-details-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th style="text-align: center;">Cantidad</th>
+                                <th style="text-align: right;">Precio Unitario</th>
+                                <th style="text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #f8f9fa;">
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
+                                <td style="text-align: right; font-weight: bold;" id="productsTotal">RD$ 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div id="paymentsTab" class="tab-content">
+                    <h4>Progreso de Pagos</h4>
+                    <div class="payment-summary">
+                        <div class="summary-row">
+                            <span>Monto Total:</span>
+                            <span id="progressTotalAmount" class="currency">RD$ 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Pagado:</span>
+                            <span id="progressPaidAmount" class="currency" style="color: #28a745;">RD$ 0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Pendiente:</span>
+                            <span id="progressPendingAmount" class="currency" style="color: #dc3545;">RD$ 0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-fill" id="progressBarFill" style="width: 0%">
+                            0%
+                        </div>
+                    </div>
+                    <div class="progress-text">
+                        <span>RD$ 0</span>
+                        <span id="progressPercentage">0%</span>
+                        <span id="progressTotalText">RD$ 0</span>
+                    </div>
+
+                    <div id="paymentsHistory">
+                        <h5 style="margin: 20px 0 10px 0;">Historial de Pagos</h5>
+                        <div id="paymentsList">
+                            <!-- Los pagos se cargarán aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Registrar Pago -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
@@ -920,14 +1309,39 @@
             <div class="modal-body">
                 <div class="payment-info">
                     <i class='bx bx-info-circle'></i>
+                    Cliente: <span id="paymentClientName">-</span> | 
+                    Factura: <span id="paymentInvoiceNumber">-</span> | 
                     Saldo Pendiente: <span id="paymentModalPendingAmount" class="currency">RD$ 0</span>
                 </div>
+
+                <div class="payment-options">
+                    <div class="payment-option selected" data-type="partial" onclick="selectPaymentOption('partial', this)">
+                        <i class='bx bx-money'></i>
+                        <h4>Abono Parcial</h4>
+                        <p>Pagar una parte del saldo</p>
+                    </div>
+                    <div class="payment-option" data-type="full" onclick="selectPaymentOption('full', this)">
+                        <i class='bx bx-check-circle'></i>
+                        <h4>Pago Completo</h4>
+                        <p>Liquidar toda la deuda</p>
+                    </div>
+                </div>
+
                 <form id="paymentForm">
                     <input type="hidden" id="paymentAccountId">
+                    <input type="hidden" id="paymentType" value="partial">
+                    
                     <div class="payment-form-group">
                         <label for="paymentAmountInput">Monto a Pagar *</label>
                         <input type="number" id="paymentAmountInput" step="0.01" min="0" required>
                     </div>
+
+                    <div class="quick-amounts" id="quickAmounts">
+                        <button type="button" class="quick-amount-btn" onclick="setQuickAmount(0.25)">25%</button>
+                        <button type="button" class="quick-amount-btn" onclick="setQuickAmount(0.5)">50%</button>
+                        <button type="button" class="quick-amount-btn" onclick="setQuickAmount(0.75)">75%</button>
+                    </div>
+
                     <div class="payment-form-group">
                         <label for="paymentMethod">Método de Pago *</label>
                         <select id="paymentMethod" required>
@@ -935,6 +1349,7 @@
                             <option value="efectivo">Efectivo</option>
                             <option value="tarjeta">Tarjeta</option>
                             <option value="transferencia">Transferencia</option>
+                            <option value="cheque">Cheque</option>
                         </select>
                     </div>
                     <div class="payment-form-group">
@@ -956,10 +1371,13 @@
         </div>
     </div>
 
-    <script>
+<script>
+    // Variables globales
     let accounts = [];
     let filteredAccounts = [];
     let groupedClients = [];
+    let currentPaymentType = 'partial';
+    let expandedClients = new Set();
 
     // Función para cargar datos desde la API
     async function loadAccounts() {
@@ -986,10 +1404,13 @@
         const clientsMap = {};
         
         accountsData.forEach(account => {
-            const clientKey = `${account.clientName}-${account.clientPhone}`;
+            const clientKey = account.clientId ? 
+                `client-${account.clientId}` : 
+                `${account.clientName}-${account.clientPhone}`;
             
             if (!clientsMap[clientKey]) {
                 clientsMap[clientKey] = {
+                    clientId: account.clientId,
                     clientName: account.clientName,
                     clientPhone: account.clientPhone,
                     invoices: [],
@@ -1012,13 +1433,12 @@
                 pendingBalance: pendingBalance,
                 status: account.status,
                 observations: account.observations,
-                isExpanded: false,
-                isProductsExpanded: false,
-                isPaymentsExpanded: false
+                pagos: account.pagos || []
             });
             
             clientsMap[clientKey].totalPending += pendingBalance;
             
+            // Determinar el estado general del cliente
             if (account.status === 'vencida') {
                 clientsMap[clientKey].status = 'vencida';
             } else if (account.status === 'pendiente' && clientsMap[clientKey].status !== 'vencida') {
@@ -1102,11 +1522,19 @@
         let tableRowsHTML = '';
         
         groupedClients.forEach(client => {
-            const isClientExpanded = client.isExpanded;
+            const clientKey = client.clientId ? 
+                `client-${client.clientId}` : 
+                `${client.clientName}-${client.clientPhone}`;
+
+            const isExpanded = expandedClients.has(clientKey);
+            const todasPagadas = client.invoices.every(invoice => invoice.status === 'pagada');
             
-            // Fila del cliente
+            // Fila principal del cliente
             tableRowsHTML += `
-                <tr class="client-row" data-client-key="${client.clientName}-${client.clientPhone}">
+                <tr class="client-header ${isExpanded ? 'expanded' : ''}" data-client-key="${clientKey}" onclick="toggleClientDetails('${clientKey}')">
+                    <td>
+                        <i class='bx bx-chevron-down collapse-icon'></i>
+                    </td>
                     <td><strong>${client.clientName}</strong></td>
                     <td>${client.clientPhone}</td>
                     <td>${client.invoices.length} factura(s)</td>
@@ -1118,18 +1546,18 @@
                     </td>
                     <td>
                         <div class="actions">
-                            <button class="btn btn-info" onclick="toggleClientInvoices('${client.clientName}-${client.clientPhone}')" title="${isClientExpanded ? 'Ocultar' : 'Mostrar'} facturas">
-                                <i class='bx bx-${isClientExpanded ? 'minus' : 'plus'}'></i>
-                                ${isClientExpanded ? 'Ocultar' : 'Mostrar'}
+                            <button class="btn btn-details" onclick="event.stopPropagation(); openDetailsModal('${clientKey}')" title="Ver detalles">
+                                <i class='bx bx-show'></i>
+                                Detalles
                             </button>
                             ${client.totalPending > 0 ? `
-                            <button class="btn btn-success" onclick="payAllInvoices('${client.clientName}-${client.clientPhone}')" title="Pagar todas">
+                            <button class="btn btn-success" onclick="event.stopPropagation(); openPaymentModalForClient('${clientKey}')" title="Realizar pago">
                                 <i class='bx bx-dollar'></i>
-                                Pagar Todo
+                                Pagar
                             </button>
                             ` : ''}
-                            ${client.totalPending <= 0 ? `
-                            <button class="btn btn-danger" onclick="deletePaidAccounts('${client.clientName}-${client.clientPhone}')" title="Eliminar cuentas pagadas">
+                            ${todasPagadas ? `
+                            <button class="btn btn-danger" onclick="event.stopPropagation(); eliminarCuentaCliente('${clientKey}')" title="Eliminar facturas pagadas">
                                 <i class='bx bx-trash'></i>
                                 Eliminar
                             </button>
@@ -1137,467 +1565,486 @@
                         </div>
                     </td>
                 </tr>
+                <tr class="client-details-row">
+                    <td colspan="7">
+                        <div class="client-details ${isExpanded ? 'expanded' : ''}" id="details-${clientKey}">
+                            ${renderClientInvoices(client)}
+                        </div>
+                    </td>
+                </tr>
             `;
-            
-            // Filas de facturas (si está expandido)
-            if (isClientExpanded) {
-                client.invoices.forEach(invoice => {
-                    const hasMultipleProducts = invoice.products && invoice.products.length > 0;
-                    const progressPercentage = (invoice.paidAmount / invoice.totalAmount * 100).toFixed(1);
-                    
-                    tableRowsHTML += `
-                        <tr class="invoice-row" data-client-key="${client.clientName}-${client.clientPhone}" data-invoice-id="${invoice.id}">
-                            <td colspan="2"></td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <strong>Factura: ${invoice.invoiceNumber}</strong>
-                                    <div class="actions" style="margin-left: auto;">
-                                        ${hasMultipleProducts ? `
-                                        <button class="btn btn-info" onclick="toggleInvoiceProducts(${invoice.id}, '${client.clientName}-${client.clientPhone}')" title="${invoice.isProductsExpanded ? 'Ocultar' : 'Mostrar'} productos">
-                                            <i class='bx bx-${invoice.isProductsExpanded ? 'minus' : 'plus'}'></i>
-                                            Productos
-                                        </button>
-                                        ` : ''}
-                                        <button class="btn btn-warning" onclick="loadPaymentsHistory(${invoice.id})" title="Ver historial de pagos">
-                                            <i class='bx bx-history'></i>
-                                            Pagos
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="currency">RD$ ${invoice.pendingBalance.toLocaleString('es-DO')}</td>
-                            <td>
-                                <span class="status-badge ${getStatusClass(invoice.status)}">
-                                    ${getStatusName(invoice.status)}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="actions">
-                                    ${invoice.pendingBalance > 0 ? `
-                                    <button class="btn btn-success" onclick="openPaymentModal(${invoice.id})" title="Registrar Pago">
-                                        <i class='bx bx-dollar'></i>
-                                        Pagar
-                                    </button>
-                                    ` : ''}
-                                    ${invoice.pendingBalance <= 0 ? `
-                                    <button class="btn btn-danger" onclick="deleteAccount(${invoice.id})" title="Eliminar cuenta">
-                                        <i class='bx bx-trash'></i>
-                                        Eliminar
-                                    </button>
-                                    ` : ''}
-                                    ${invoice.pendingBalance <= 0 ? `
-                                    <button class="btn btn-info" onclick="generateReceiptForLastPayment(${invoice.id})" title="Generar Comprobante">
-                                        <i class='bx bx-receipt'></i>
-                                        Comprobante
-                                    </button>
-                                    ` : ''}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                    
-                    // Fila de productos (si está expandido)
-                    if (hasMultipleProducts && invoice.isProductsExpanded) {
-                        tableRowsHTML += `
-                            <tr class="product-row expanded" data-invoice-id="${invoice.id}">
-                                <td colspan="6" class="product-list-cell">
-                                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                                        <h4 style="margin-bottom: 15px; color: #2d5016;">
-                                            <i class='bx bx-package'></i>
-                                            Productos de la Factura ${invoice.invoiceNumber}
-                                        </h4>
-                                        <table class="internal-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Producto</th>
-                                                    <th style="text-align: center;">Cantidad</th>
-                                                    <th style="text-align: right;">Precio Unitario</th>
-                                                    <th style="text-align: right;">Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${invoice.products.map(p => `
-                                                    <tr>
-                                                        <td>${p.nombre}</td>
-                                                        <td style="text-align: center;">${p.cantidad}</td>
-                                                        <td style="text-align: right;">RD$ ${p.precio.toLocaleString('es-DO')}</td>
-                                                        <td style="text-align: right;">RD$ ${(p.cantidad * p.precio).toLocaleString('es-DO')}</td>
-                                                    </tr>
-                                                `).join('')}
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
-                                                    <td style="text-align: right;"><strong>RD$ ${invoice.totalAmount.toLocaleString('es-DO')}</strong></td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                        ${invoice.observations ? `
-                                        <div style="margin-top: 15px; padding: 10px; background: #fff8e1; border-radius: 5px;">
-                                            <strong>Observaciones:</strong> ${invoice.observations}
-                                        </div>
-                                        ` : ''}
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    }
-                    
-                    // Fila de pagos (se cargará dinámicamente)
-                    if (invoice.isPaymentsExpanded) {
-                        tableRowsHTML += `
-                            <tr class="payment-row expanded" data-invoice-id="${invoice.id}">
-                                <td colspan="6" class="payment-list-cell">
-                                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                                        <h4 style="margin-bottom: 15px; color: #2d5016;">
-                                            <i class='bx bx-money'></i>
-                                            Historial de Pagos - Factura ${invoice.invoiceNumber}
-                                        </h4>
-                                        <div id="payments-content-${invoice.id}">
-                                            <div style="text-align: center; padding: 20px;">
-                                                <i class='bx bx-loader-circle bx-spin' style="font-size: 2em;"></i>
-                                                <p>Cargando historial de pagos...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    }
-                });
-            }
         });
         
         tableBody.innerHTML = tableRowsHTML;
+    }
+
+    // Función para renderizar las facturas de un cliente
+    function renderClientInvoices(client) {
+        let invoicesHTML = '';
         
-        // Cargar los pagos para las facturas que están expandidas
-        groupedClients.forEach(client => {
-            if (client.isExpanded) {
-                client.invoices.forEach(invoice => {
-                    if (invoice.isPaymentsExpanded) {
-                        loadPaymentsHistory(invoice.id);
-                    }
-                });
-            }
-        });
-    }
-
-    // Función para expandir/colapsar facturas de un cliente
-    function toggleClientInvoices(clientKey) {
-        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
-        if (clientIndex !== -1) {
-            groupedClients[clientIndex].isExpanded = !groupedClients[clientIndex].isExpanded;
-            renderTable(filteredAccounts);
-        }
-    }
-
-    // Función para expandir/colapsar productos de una factura
-    function toggleInvoiceProducts(invoiceId, clientKey) {
-        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
-        if (clientIndex !== -1) {
-            const invoiceIndex = groupedClients[clientIndex].invoices.findIndex(i => i.id === invoiceId);
-            if (invoiceIndex !== -1) {
-                groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded = 
-                    !groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded;
-                // Cerrar pagos si se abren productos
-                if (groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded) {
-                    groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded = false;
-                }
-                renderTable(filteredAccounts);
-            }
-        }
-    }
-
-    // Función para expandir/colapsar pagos de una factura
-    function toggleInvoicePayments(invoiceId, clientKey) {
-        const clientIndex = groupedClients.findIndex(c => `${c.clientName}-${c.clientPhone}` === clientKey);
-        if (clientIndex !== -1) {
-            const invoiceIndex = groupedClients[clientIndex].invoices.findIndex(i => i.id === invoiceId);
-            if (invoiceIndex !== -1) {
-                groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded = 
-                    !groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded;
-                // Cerrar productos si se abren pagos
-                if (groupedClients[clientIndex].invoices[invoiceIndex].isPaymentsExpanded) {
-                    groupedClients[clientIndex].invoices[invoiceIndex].isProductsExpanded = false;
-                }
-                renderTable(filteredAccounts);
-            }
-        }
-    }
-
-    // Nueva función para cargar el historial de pagos
-    async function loadPaymentsHistory(accountId) {
-        try {
-            const response = await fetch(`/api/pagos-cuenta/${accountId}/`);
-            if (response.ok) {
-                const data = await response.json();
-                renderPaymentsContent(accountId, data);
-            } else {
-                const error = await response.json();
-                document.getElementById(`payments-content-${accountId}`).innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: #dc3545;">
-                        <i class='bx bx-error' style="font-size: 2em;"></i>
-                        <p>Error al cargar pagos: ${error.error}</p>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            document.getElementById(`payments-content-${accountId}`).innerHTML = `
-                <div style="text-align: center; padding: 20px; color: #dc3545;">
-                    <i class='bx bx-error' style="font-size: 2em;"></i>
-                    <p>Error de conexión: ${error.message}</p>
-                </div>
-            `;
-        }
-    }
-
-    // Función para renderizar el contenido de pagos
-    function renderPaymentsContent(accountId, data) {
-        const progressPercentage = (data.paid_amount / data.total_amount * 100).toFixed(1);
-        
-        let paymentsHTML = `
-            <div style="margin-bottom: 20px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #2d5016;">
-                        <strong>Total Factura:</strong>
-                        <div style="font-size: 1.2em; color: #2d5016;">RD$ ${data.total_amount.toLocaleString('es-DO')}</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
-                        <strong>Total Pagado:</strong>
-                        <div style="font-size: 1.2em; color: #28a745;">RD$ ${data.paid_amount.toLocaleString('es-DO')}</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
-                        <strong>Saldo Pendiente:</strong>
-                        <div style="font-size: 1.2em; color: #dc3545;">RD$ ${data.pending_balance.toLocaleString('es-DO')}</div>
-                    </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                        <strong>Progreso:</strong>
-                        <div style="font-size: 1.2em; color: #ffc107;">${progressPercentage}%</div>
-                    </div>
-                </div>
-                
-                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <strong>Progreso de Pago:</strong>
-                    <div style="margin-top: 10px;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercentage}%">
-                                ${progressPercentage}%
-                            </div>
+        client.invoices.forEach((invoice, index) => {
+            invoicesHTML += `
+                <div class="invoice-item">
+                    <div class="invoice-header" onclick="toggleInvoiceDetails('${client.clientId || client.clientName}', ${index})">
+                        <div class="invoice-info">
+                            <span><strong>${invoice.invoiceNumber}</strong></span>
+                            <span>Vence: ${invoice.dueDate}</span>
+                            <span>Total: <strong class="currency">RD$ ${invoice.totalAmount.toLocaleString('es-DO')}</strong></span>
+                            <span>Pagado: <strong class="currency">RD$ ${invoice.paidAmount.toLocaleString('es-DO')}</strong></span>
+                            <span>Pendiente: <strong class="currency">RD$ ${invoice.pendingBalance.toLocaleString('es-DO')}</strong></span>
+                            <span class="status-badge ${getStatusClass(invoice.status)}">
+                                ${getStatusName(invoice.status)}
+                            </span>
+                        </div>
+                        <div class="invoice-actions">
+                            ${invoice.pendingBalance > 0 ? `
+                            <button class="btn btn-success" onclick="event.stopPropagation(); openPaymentModal(${invoice.id})" title="Pagar esta factura">
+                                <i class='bx bx-dollar'></i>
+                                Pagar
+                            </button>
+                            ` : ''}
+                            <button class="btn btn-info" onclick="event.stopPropagation(); openInvoiceDetails('${client.clientId || client.clientName}', ${index})" title="Ver detalles">
+                                <i class='bx bx-show'></i>
+                                Detalles
+                            </button>
                         </div>
                     </div>
-                </div>
-        `;
-        
-        if (data.pagos && data.pagos.length > 0) {
-            paymentsHTML += `
-                <div style="margin-bottom: 20px;">
-                    <h5 style="margin-bottom: 15px; color: #2d5016;">
-                        <i class='bx bx-list-ul'></i>
-                        Detalle de Pagos Realizados
-                    </h5>
-                    <table class="internal-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Método</th>
-                                <th>Referencia</th>
-                                <th style="text-align: right;">Monto</th>
-                                <th style="text-align: center;">Comprobante</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.pagos.map(pago => `
+                    <div class="invoice-details" id="invoice-details-${client.clientId || client.clientName}-${index}" style="display: none;">
+                        <h5>Productos de la Factura</h5>
+                        <table class="sub-table">
+                            <thead>
                                 <tr>
-                                    <td>${pago.fecha_pago}</td>
-                                    <td>${pago.metodo_pago}</td>
-                                    <td>${pago.referencia}</td>
-                                    <td style="text-align: right; color: #28a745; font-weight: bold;">
-                                        RD$ ${pago.monto_pagado.toLocaleString('es-DO')}
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button class="btn btn-info" onclick="generateReceipt(${pago.id})" title="Descargar Comprobante">
-                                            <i class='bx bx-download'></i>
-                                        </button>
-                                    </td>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            paymentsHTML += `
-                <div style="text-align: center; padding: 30px; color: #6c757d;">
-                    <i class='bx bx-info-circle' style="font-size: 3em; margin-bottom: 10px;"></i>
-                    <p>No se han realizado pagos para esta factura</p>
-                </div>
-            `;
-        }
-        
-        if (data.pending_balance > 0) {
-            paymentsHTML += `
-                <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn btn-success" onclick="openPaymentModal(${accountId})">
-                        <i class='bx bx-dollar'></i>
-                        Registrar Nuevo Pago
-                    </button>
-                </div>
-            `;
-        }
-        
-        paymentsHTML += `</div>`;
-        
-        document.getElementById(`payments-content-${accountId}`).innerHTML = paymentsHTML;
-    }
-
-    // Función para pagar todas las facturas de un cliente
-    async function payAllInvoices(clientKey) {
-        const client = groupedClients.find(c => `${c.clientName}-${c.clientPhone}` === clientKey);
-        if (client && confirm(`¿Está seguro de que desea pagar todas las facturas de ${client.clientName} por un total de RD$ ${client.totalPending.toLocaleString('es-DO')}?`)) {
-            try {
-                let pagoIds = [];
-                
-                for (const invoice of client.invoices) {
-                    if (invoice.pendingBalance > 0) {
-                        const response = await fetch('/api/cuentas-por-cobrar/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': getCSRFToken()
-                            },
-                            body: JSON.stringify({
-                                cuenta_id: invoice.id,
-                                monto_pagado: invoice.pendingBalance,
-                                metodo_pago: 'efectivo',
-                                referencia: 'Pago completo de todas las facturas'
-                            })
-                        });
+                            </thead>
+                            <tbody>
+                                ${invoice.products.map(product => `
+                                    <tr>
+                                        <td>${product.nombre}</td>
+                                        <td style="text-align: center;">${product.cantidad}</td>
+                                        <td style="text-align: right;">RD$ ${product.precio.toLocaleString('es-DO')}</td>
+                                        <td style="text-align: right;">RD$ ${(product.cantidad * product.precio).toLocaleString('es-DO')}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f0f9f0;">
+                                    <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
+                                    <td style="text-align: right; font-weight: bold;">RD$ ${invoice.totalAmount.toLocaleString('es-DO')}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                         
-                        if (response.ok) {
-                            const result = await response.json();
-                            pagoIds.push(result.pago_id);
-                        } else {
-                            const error = await response.json();
-                            throw new Error(error.error);
-                        }
-                    }
-                }
-                
-                await loadAccounts();
-                
-                if (pagoIds.length > 0 && confirm('Todas las facturas han sido pagadas exitosamente. ¿Desea generar los comprobantes de pago?')) {
-                    // Generar comprobante para el último pago
-                    generateReceipt(pagoIds[pagoIds.length - 1]);
-                }
-            } catch (error) {
-                alert('Error al procesar los pagos: ' + error.message);
-            }
+                        ${invoice.pagos && invoice.pagos.length > 0 ? `
+                        <div class="payment-history">
+                            <h5>Historial de Pagos</h5>
+                            ${invoice.pagos.map(pago => `
+                                <div class="payment-item">
+                                    <div>
+                                        <strong>${pago.fecha_pago}</strong>
+                                        <div style="font-size: 0.8rem; color: #666;">
+                                            ${pago.metodo_pago} ${pago.referencia ? `- Ref: ${pago.referencia}` : ''}
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color: #28a745; font-weight: bold;">
+                                            RD$ ${pago.monto_pagado.toLocaleString('es-DO')}
+                                        </div>
+                                        <button class="btn btn-info" onclick="generateReceipt(${pago.id})" style="padding: 2px 6px; font-size: 0.7rem;">
+                                            <i class='bx bx-download'></i> Comprobante
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : `
+                        <div style="text-align: center; padding: 20px; color: #666;">
+                            <i class='bx bx-time'></i>
+                            <p>No se han realizado pagos para esta factura</p>
+                        </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        });
+        
+        return invoicesHTML;
+    }
+
+    // Función para toggle detalles del cliente
+    function toggleClientDetails(clientKey) {
+        if (expandedClients.has(clientKey)) {
+            expandedClients.delete(clientKey);
+        } else {
+            expandedClients.add(clientKey);
+        }
+        renderTable(filteredAccounts);
+    }
+
+    // Función para toggle detalles de factura individual
+    function toggleInvoiceDetails(clientId, invoiceIndex) {
+        const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
+        if (detailsElement.style.display === 'none') {
+            detailsElement.style.display = 'block';
+        } else {
+            detailsElement.style.display = 'none';
         }
     }
 
-    // Función para eliminar una cuenta pagada
-    async function deleteAccount(accountId) {
-        if (confirm('¿Está seguro de que desea eliminar esta cuenta pagada? Esta acción no se puede deshacer.')) {
-            try {
-                const response = await fetch(`/api/cuentas-por-cobrar/${accountId}/`, {
+    // Función para abrir detalles de factura individual
+    function openInvoiceDetails(clientId, invoiceIndex) {
+        const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
+        detailsElement.style.display = 'block';
+    }
+
+    // Función para eliminar cuentas de un cliente completamente pagado
+    async function eliminarCuentaCliente(clientKey) {
+        const client = groupedClients.find(c => {
+            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+            return key === clientKey;
+        });
+        
+        if (!client) return;
+        
+        // Confirmar eliminación
+        if (!confirm(`¿Está seguro de que desea eliminar todas las facturas de ${client.clientName}?\n\nEsta acción no se puede deshacer.`)) {
+            return;
+        }
+        
+        try {
+            // Eliminar cada cuenta individualmente
+            const deletePromises = client.invoices.map(async (invoice) => {
+                const response = await fetch(`/api/cuentas-por-cobrar/${invoice.id}/eliminar/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCSRFToken()
                     }
                 });
                 
-                if (response.ok) {
-                    await loadAccounts();
-                    alert('Cuenta eliminada exitosamente');
-                } else {
+                if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.error);
-                }
-            } catch (error) {
-                alert('Error al eliminar la cuenta: ' + error.message);
-            }
-        }
-    }
-
-    // Función para eliminar todas las cuentas pagadas de un cliente
-    async function deletePaidAccounts(clientKey) {
-        const client = groupedClients.find(c => `${c.clientName}-${c.clientPhone}` === clientKey);
-        if (client && confirm(`¿Está seguro de que desea eliminar todas las cuentas pagadas de ${client.clientName}?`)) {
-            try {
-                for (const invoice of client.invoices) {
-                    if (invoice.pendingBalance <= 0) {
-                        const response = await fetch(`/api/cuentas-por-cobrar/${invoice.id}/`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRFToken': getCSRFToken()
-                            }
-                        });
-                        
-                        if (!response.ok) {
-                            const error = await response.json();
-                            throw new Error(error.error);
-                        }
-                    }
+                    throw new Error(error.error || 'Error al eliminar la cuenta');
                 }
                 
-                await loadAccounts();
-                alert('Todas las cuentas pagadas han sido eliminadas exitosamente');
-            } catch (error) {
-                alert('Error al eliminar las cuentas: ' + error.message);
-            }
-        }
-    }
-
-    // Función para generar comprobante con ID de pago
-    function generateReceipt(pagoId) {
-        window.open(`/comprobante-pago/${pagoId}/`, '_blank');
-    }
-
-    // Función para generar comprobante del último pago de una cuenta
-    async function generateReceiptForLastPayment(accountId) {
-        try {
-            const response = await fetch(`/api/obtener-ultimo-pago/${accountId}/`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.pago_id) {
-                    window.open(`/comprobante-pago/${data.pago_id}/`, '_blank');
-                } else {
-                    alert('No se encontró un pago para generar el comprobante');
-                }
-            } else {
-                const error = await response.json();
-                alert('Error: ' + error.error);
-            }
+                return response.json();
+            });
+            
+            // Esperar a que todas las eliminaciones se completen
+            await Promise.all(deletePromises);
+            
+            // Recargar los datos
+            await loadAccounts();
+            
+            alert('Facturas eliminadas exitosamente');
+            
         } catch (error) {
-            console.error('Error al generar comprobante:', error);
-            alert('Error al generar el comprobante');
+            console.error('Error al eliminar cuentas:', error);
+            alert('Error al eliminar las facturas: ' + error.message);
         }
     }
 
-    // Función para aplicar filtros
-    function applyFilters() {
-        const searchTerm = document.getElementById('searchClient').value.toLowerCase().trim();
-        const statusFilter = document.getElementById('statusFilter').value;
-        
-        filteredAccounts = accounts.filter(account => {
-            const matchesSearch = !searchTerm ||
-                account.clientName.toLowerCase().includes(searchTerm) ||
-                account.invoiceNumber.toLowerCase().includes(searchTerm) ||
-                account.clientPhone.toLowerCase().includes(searchTerm);
-            
-            const matchesStatus = !statusFilter || account.status === statusFilter;
-            
-            return matchesSearch && matchesStatus;
+    // Función para abrir modal de detalles
+    function openDetailsModal(clientKey) {
+        const client = groupedClients.find(c => {
+            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+            return key === clientKey;
+        });
+        if (!client) return;
+
+        // Actualizar información general
+        document.getElementById('detailsClientName').textContent = client.clientName;
+        document.getElementById('detailsInvoiceNumber').textContent = `${client.invoices.length} factura(s)`;
+        document.getElementById('detailsTotalAmount').textContent = `RD$ ${client.totalPending.toLocaleString('es-DO')}`;
+
+        // Cargar productos de todas las facturas
+        loadProductsDetails(client);
+
+        // Cargar progreso de pagos
+        loadPaymentsProgress(client);
+
+        // Mostrar modal
+        document.getElementById('detailsModal').classList.add('active');
+    }
+
+    // Función para cargar detalles de productos
+    function loadProductsDetails(client) {
+        const productsTableBody = document.getElementById('productsTableBody');
+        let productsHTML = '';
+        let totalAmount = 0;
+
+        client.invoices.forEach(invoice => {
+            invoice.products.forEach(product => {
+                const subtotal = product.cantidad * product.precio;
+                totalAmount += subtotal;
+                productsHTML += `
+                    <tr>
+                        <td>${product.nombre}</td>
+                        <td style="text-align: center;">${product.cantidad}</td>
+                        <td style="text-align: right;">RD$ ${product.precio.toLocaleString('es-DO')}</td>
+                        <td style="text-align: right;">RD$ ${subtotal.toLocaleString('es-DO')}</td>
+                    </tr>
+                `;
+            });
+        });
+
+        productsTableBody.innerHTML = productsHTML;
+        document.getElementById('productsTotal').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+    }
+
+    // Función para cargar progreso de pagos
+    function loadPaymentsProgress(client) {
+        let totalAmount = 0;
+        let paidAmount = 0;
+        let pendingAmount = 0;
+
+        client.invoices.forEach(invoice => {
+            totalAmount += invoice.totalAmount;
+            paidAmount += invoice.paidAmount;
+            pendingAmount += invoice.pendingBalance;
+        });
+
+        const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount * 100) : 0;
+
+        // Actualizar resumen
+        document.getElementById('progressTotalAmount').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+        document.getElementById('progressPaidAmount').textContent = `RD$ ${paidAmount.toLocaleString('es-DO')}`;
+        document.getElementById('progressPendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
+
+        // Actualizar barra de progreso
+        document.getElementById('progressBarFill').style.width = `${progressPercentage}%`;
+        document.getElementById('progressBarFill').textContent = `${progressPercentage.toFixed(1)}%`;
+        document.getElementById('progressPercentage').textContent = `${progressPercentage.toFixed(1)}%`;
+        document.getElementById('progressTotalText').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+
+        // Cargar historial de pagos
+        loadPaymentsHistory(client);
+    }
+
+    // Función para cargar historial de pagos
+    function loadPaymentsHistory(client) {
+        const paymentsList = document.getElementById('paymentsList');
+        let paymentsHTML = '';
+
+        client.invoices.forEach(invoice => {
+            if (invoice.pagos && invoice.pagos.length > 0) {
+                invoice.pagos.forEach(pago => {
+                    paymentsHTML += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #28a745;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>Factura ${invoice.invoiceNumber}</strong>
+                                    <div style="font-size: 0.9rem; color: #6b7280;">
+                                        ${pago.fecha_pago} - ${pago.metodo_pago}
+                                        ${pago.referencia ? `- Ref: ${pago.referencia}` : ''}
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #28a745; font-weight: bold; font-size: 1.1rem;">
+                                        RD$ ${pago.monto_pagado.toLocaleString('es-DO')}
+                                    </div>
+                                    <button class="btn btn-info" onclick="generateReceipt(${pago.id})" style="padding: 4px 8px; font-size: 0.8rem;">
+                                        <i class='bx bx-download'></i> Comprobante
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        if (paymentsHTML === '') {
+            paymentsHTML = `
+                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                    <i class='bx bx-time' style="font-size: 3rem; margin-bottom: 10px;"></i>
+                    <p>No se han realizado pagos</p>
+                </div>
+            `;
+        }
+
+        paymentsList.innerHTML = paymentsHTML;
+    }
+
+    // Función para cambiar entre pestañas
+    function switchTab(tabName) {
+        // Ocultar todas las pestañas
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
         });
         
-        renderTable(filteredAccounts);
-        updateStats(filteredAccounts);
+        // Remover active de todos los botones
+        document.querySelectorAll('.details-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Activar la pestaña seleccionada
+        document.getElementById(tabName).classList.add('active');
+        
+        // Activar el botón correspondiente
+        event.target.classList.add('active');
+    }
+
+    // Función para cerrar modal de detalles
+    function closeDetailsModal() {
+        document.getElementById('detailsModal').classList.remove('active');
+    }
+
+    // Función para abrir modal de pago para un cliente
+    function openPaymentModalForClient(clientKey) {
+        const client = groupedClients.find(c => {
+            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+            return key === clientKey;
+        });
+        if (!client) {
+            console.error('Cliente no encontrado:', clientKey);
+            return;
+        }
+
+        // Filtrar facturas con saldo pendiente
+        const pendingInvoices = client.invoices.filter(invoice => invoice.pendingBalance > 0);
+        
+        if (pendingInvoices.length === 0) {
+            alert('Este cliente no tiene facturas pendientes de pago');
+            return;
+        }
+
+        // Si solo tiene una factura pendiente, abrir directamente
+        if (pendingInvoices.length === 1) {
+            openPaymentModal(pendingInvoices[0].id);
+        } else {
+            // Si tiene múltiples facturas, mostrar un selector mejorado
+            showInvoiceSelector(client, pendingInvoices);
+        }
+    }
+
+    // Función para mostrar selector de facturas
+    function showInvoiceSelector(client, pendingInvoices) {
+        // Crear modal de selección
+        const selectorHTML = `
+            <div class="modal active" id="invoiceSelectorModal">
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h2>
+                            <i class='bx bx-list-ul'></i>
+                            Seleccionar Factura para Pagar
+                        </h2>
+                        <button class="close-btn" onclick="closeInvoiceSelector()">
+                            <i class='bx bx-x'></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Cliente:</strong> ${client.clientName}</p>
+                        <p><strong>Facturas pendientes:</strong></p>
+                        <div style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+                            ${pendingInvoices.map(invoice => `
+                                <div class="invoice-option" 
+                                     style="padding: 12px; border: 1px solid #e1e8ed; border-radius: 8px; margin-bottom: 8px; cursor: pointer;"
+                                     onclick="selectInvoiceForPayment(${invoice.id})">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong>${invoice.invoiceNumber}</strong>
+                                            <div style="font-size: 0.9rem; color: #666;">
+                                                Vence: ${invoice.dueDate}
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color: #dc3545; font-weight: bold;">
+                                                RD$ ${invoice.pendingBalance.toLocaleString('es-DO')}
+                                            </div>
+                                            <span class="status-badge ${getStatusClass(invoice.status)}">
+                                                ${getStatusName(invoice.status)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="text-align: right; margin-top: 20px;">
+                            <button class="btn btn-danger" onclick="closeInvoiceSelector()">
+                                <i class='bx bx-x'></i>
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Agregar el modal al body
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = selectorHTML;
+        document.body.appendChild(modalContainer);
+    }
+
+    // Función para seleccionar factura
+    function selectInvoiceForPayment(invoiceId) {
+        closeInvoiceSelector();
+        openPaymentModal(invoiceId);
+    }
+
+    // Función para cerrar el selector de facturas
+    function closeInvoiceSelector() {
+        const modal = document.getElementById('invoiceSelectorModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    // Función para seleccionar tipo de pago
+    function selectPaymentOption(type, element = null) {
+        currentPaymentType = type;
+        
+        // Remover selección anterior
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // Agregar selección actual
+        if (element) {
+            element.classList.add('selected');
+        } else {
+            const optionToSelect = document.querySelector(`.payment-option[data-type="${type}"]`);
+            if (optionToSelect) {
+                optionToSelect.classList.add('selected');
+            }
+        }
+        
+        // Actualizar campo de tipo de pago
+        document.getElementById('paymentType').value = type;
+        
+        // Mostrar/ocultar opciones rápidas
+        const quickAmounts = document.getElementById('quickAmounts');
+        if (type === 'partial') {
+            quickAmounts.style.display = 'grid';
+        } else {
+            quickAmounts.style.display = 'none';
+        }
+        
+        // Actualizar monto si es pago completo
+        if (type === 'full') {
+            const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
+            document.getElementById('paymentAmountInput').value = pendingAmount.toFixed(2);
+        }
+    }
+
+    // Función para establecer monto rápido
+    function setQuickAmount(percentage) {
+        const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
+        const amount = pendingAmount * percentage;
+        document.getElementById('paymentAmountInput').value = amount.toFixed(2);
     }
 
     // Función para abrir modal de pago
     function openPaymentModal(id) {
         const account = accounts.find(acc => acc.id === id);
-        if (!account) return;
+        if (!account) {
+            console.error('Cuenta no encontrada con ID:', id);
+            alert('Error: No se encontró la cuenta');
+            return;
+        }
         
         const currentPendingBalance = account.totalAmount - account.paidAmount;
         
@@ -1606,9 +2053,14 @@
             return;
         }
         
+        document.getElementById('paymentClientName').textContent = account.clientName;
+        document.getElementById('paymentInvoiceNumber').textContent = account.invoiceNumber;
         document.getElementById('paymentModalPendingAmount').textContent = `RD$ ${currentPendingBalance.toLocaleString('es-DO')}`;
         document.getElementById('paymentAccountId').value = id;
-        document.getElementById('paymentAmountInput').value = currentPendingBalance.toFixed(2);
+        
+        // Resetear a pago parcial por defecto
+        selectPaymentOption('partial');
+        document.getElementById('paymentAmountInput').value = '';
         document.getElementById('paymentAmountInput').max = currentPendingBalance.toFixed(2);
         document.getElementById('paymentAmountInput').min = "0.01";
         
@@ -1638,14 +2090,17 @@
         return cookieValue;
     }
 
-    // Función para procesar pago
+    // Función para procesar pago - CORREGIDA
     document.getElementById('paymentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const accountId = parseInt(document.getElementById('paymentAccountId').value);
-        const amount = parseFloat(document.getElementById('paymentAmountInput').value);
+        let amount = parseFloat(document.getElementById('paymentAmountInput').value);
         const method = document.getElementById('paymentMethod').value;
         const reference = document.getElementById('paymentReference').value;
+        const paymentType = document.getElementById('paymentType').value;
+        
+        console.log('Datos del pago:', { accountId, amount, method, reference, paymentType });
         
         if (!amount || amount <= 0) {
             alert('Ingrese un monto válido mayor a 0');
@@ -1664,6 +2119,12 @@
         }
         
         const maxAmount = account.totalAmount - account.paidAmount;
+        
+        // Si es pago completo, usar el monto pendiente exacto
+        if (paymentType === 'full') {
+            amount = maxAmount;
+        }
+        
         if (amount > maxAmount) {
             alert(`El monto no puede exceder el saldo pendiente de RD$ ${maxAmount.toLocaleString('es-DO')}`);
             return;
@@ -1685,14 +2146,21 @@
             });
             
             const result = await response.json();
+            console.log('Respuesta completa del servidor:', result);
             
             if (response.ok) {
                 closePaymentModal();
                 await loadAccounts();
                 
-                // Preguntar si desea generar comprobante
-                if (confirm('Pago registrado exitosamente. ¿Desea generar el comprobante de pago?')) {
-                    generateReceipt(result.pago_id);
+                // CORRECCIÓN: Validar que el pago y su ID existan antes de generar comprobante
+                if (result.pago && result.pago.id) {
+                    if (confirm('Pago registrado exitosamente. ¿Desea generar el comprobante de pago?')) {
+                        console.log('Generando comprobante con ID:', result.pago.id);
+                        generateReceipt80mm(result.pago.id);
+                    }
+                } else {
+                    console.error('Respuesta del servidor incompleta:', result);
+                    alert('Pago registrado, pero no se pudo generar el comprobante. ID de pago no encontrado.');
                 }
             } else {
                 alert('Error: ' + result.error);
@@ -1701,6 +2169,80 @@
             alert('Error al registrar el pago: ' + error.message);
         }
     });
+
+    // Función para generar comprobante con formato de 80mm - CORREGIDA para descargar PDF
+    function generateReceipt80mm(pagoId) {
+        console.log('Generando comprobante 80mm, ID recibido:', pagoId);
+        
+        if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
+            console.error('ID de pago no válido:', pagoId);
+            alert('Error: No se pudo obtener el ID del pago.');
+            return;
+        }
+        
+        const idNumerico = parseInt(pagoId);
+        if (isNaN(idNumerico)) {
+            console.error('ID de pago no es numérico:', pagoId);
+            alert('Error: ID de pago inválido.');
+            return;
+        }
+        
+        // Crear un elemento <a> invisible para forzar la descarga
+        const link = document.createElement('a');
+        link.href = `/comprobante-pago-80mm/${idNumerico}/`;
+        link.target = '_blank'; // Abrir en nueva pestaña
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Función para generar comprobante normal - CORREGIDA para descargar PDF
+    function generateReceipt(pagoId) {
+        console.log('Generando comprobante normal, ID recibido:', pagoId);
+        
+        if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
+            console.error('ID de pago no válido:', pagoId);
+            alert('Error: No se pudo obtener el ID del pago.');
+            return;
+        }
+        
+        const idNumerico = parseInt(pagoId);
+        if (isNaN(idNumerico)) {
+            console.error('ID de pago no es numérico:', pagoId);
+            alert('Error: ID de pago inválido.');
+            return;
+        }
+        
+        // Crear un elemento <a> invisible para forzar la descarga
+        const link = document.createElement('a');
+        link.href = `/comprobante-pago/${idNumerico}/`;
+        link.target = '_blank'; // Abrir en nueva pestaña
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Función para aplicar filtros
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchClient').value.toLowerCase().trim();
+        const statusFilter = document.getElementById('statusFilter').value;
+        
+        filteredAccounts = accounts.filter(account => {
+            const matchesSearch = !searchTerm ||
+                account.clientName.toLowerCase().includes(searchTerm) ||
+                account.invoiceNumber.toLowerCase().includes(searchTerm) ||
+                account.clientPhone.toLowerCase().includes(searchTerm);
+            
+            const matchesStatus = !statusFilter || account.status === statusFilter;
+            
+            return matchesSearch && matchesStatus;
+        });
+        
+        renderTable(filteredAccounts);
+        updateStats(filteredAccounts);
+    }
 
     // Función para exportar datos
     function exportData() {
@@ -1771,17 +2313,25 @@
         document.getElementById('searchClient').addEventListener('input', applyFilters);
         document.getElementById('statusFilter').addEventListener('change', applyFilters);
         
-        // Event listener para cerrar modal con ESC
+        // Event listener para cerrar modales con ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                closePaymentModal();
+                closeDetailsModal();
+                closeInvoiceSelector();
+            }
+        });
+        
+        // Event listener para cerrar modales haciendo click fuera
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
                 closePaymentModal();
             }
         });
         
-        // Event listener para cerrar modal haciendo click fuera
-        document.getElementById('paymentModal').addEventListener('click', function(e) {
+        document.getElementById('detailsModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                closePaymentModal();
+                closeDetailsModal();
             }
         });
     });

@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Devoluciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .search-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+
+        .invoice-details {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .invoice-details.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .invoice-header h3 {
+            color: #4CAF50;
+            font-size: 1.8em;
+        }
+
+        .invoice-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .invoice-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .info-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-card p {
+            color: #666;
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .items-table th {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .items-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .items-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .return-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .return-section h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .return-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .return-form select, .return-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .return-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Estilos para validación visual */
+        select:invalid, textarea:invalid {
+            border-color: #dc3545 !important;
+        }
+
+        select:valid, textarea:valid {
+            border-color: #28a745 !important;
+        }
+
+        .input-valid {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+        }
+
+        .input-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .form-group {
+                min-width: 100%;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .invoice-info {
+                grid-template-columns: 1fr;
+            }
+
+            .items-table {
+                font-size: 14px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Devoluciones</h1>
+            <p>Gestión de devoluciones y reembolsos</p>
+        </div>
+
+        <div class="content">
+            <div class="search-section">
+                <h2>Buscar Factura para Devolución</h2>
+                <form class="search-form" id="searchForm">
+                    <div class="form-group">
+                        <label for="invoiceNumber">Número de Factura</label>
+                        <input type="text" id="invoiceNumber" name="invoiceNumber" placeholder="Ej: FAC-2024-001" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buscar Factura</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearSearch()">Limpiar</button>
+                </form>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Buscando factura...</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="invoice-details" id="invoiceDetails">
+                <div class="invoice-header">
+                    <h3 id="invoiceTitle">Factura #FAC-2024-001</h3>
+                    <span class="invoice-status status-paid" id="invoiceStatus">Pagada</span>
+                </div>
+
+                <div class="invoice-info">
+                    <div class="info-card">
+                        <h4>Información del Cliente</h4>
+                        <p><strong>Cliente:</strong> <span id="clientName">Juan Pérez García</span></p>
+                        <p><strong>Email:</strong> <span id="clientEmail">juan.perez@email.com</span></p>
+                        <p><strong>Teléfono:</strong> <span id="clientPhone">+34 612 345 678</span></p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Detalles de la Factura</h4>
+                        <p><strong>Fecha:</strong> <span id="invoiceDate">15/03/2024</span></p>
+                        <p><strong>Vencimiento:</strong> <span id="dueDate">30/03/2024</span></p>
+                        <p><strong>Método de Pago:</strong> <span id="paymentMethod">Tarjeta de Crédito</span></p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4>Importes</h4>
+                        <p><strong>Subtotal:</strong> <span id="subtotal">€850.00</span></p>
+                        <p><strong>IVA (21%):</strong> <span id="tax">€178.50</span></p>
+                        <p><strong>Total:</strong> <span id="total">€1,028.50</span></p>
+                    </div>
+                </div>
+
+                <h4>Artículos de la Factura</h4>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Total</th>
+                            <th>Devolver</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody">
+                        <!-- Los items se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+
+                <div class="return-section">
+                    <h4>Procesar Devolución</h4>
+                    <form class="return-form" id="returnForm">
+                        <div class="form-group">
+                            <label for="returnReason">Motivo de la Devolución</label>
+                            <select id="returnReason" name="returnReason" required>
+                                <option value="">Seleccionar motivo...</option>
+                                <option value="defective">Producto defectuoso</option>
+                                <option value="wrong_item">Artículo incorrecto</option>
+                                <option value="not_as_described">No coincide con la descripción</option>
+                                <option value="damaged">Producto dañado</option>
+                                <option value="customer_change">Cambio de opinión del cliente</option>
+                                <option value="other">Otro motivo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="returnComments">Comentarios Adicionales</label>
+                            <textarea id="returnComments" name="returnComments" placeholder="Descripción detallada del motivo de devolución..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Procesar Devolución</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+    // Variables globales
+    let selectedItems = [];
+    let currentInvoice = null;
+
+    // Función para mostrar alertas
+    function showAlert(message, type = 'error') {
+        const alertContainer = document.getElementById('alertContainer');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = message; // Usar innerHTML para permitir formato
+        
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alertDiv);
+        
+        // Auto-ocultar después de 5 segundos para errores, 7 para éxito
+        const timeout = type === 'success' ? 7000 : 5000;
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, timeout);
+    }
+
+    // Función para limpiar la búsqueda
+    function clearSearch() {
+        document.getElementById('invoiceNumber').value = '';
+        document.getElementById('invoiceDetails').classList.remove('show');
+        document.getElementById('alertContainer').innerHTML = '';
+        selectedItems = [];
+        currentInvoice = null;
+        // Limpiar también el resumen si existe
+        const summaryContainer = document.getElementById('returnSummary');
+        if (summaryContainer) {
+            summaryContainer.remove();
+        }
+    }
+
+    // Función para obtener el token CSRF
+    function getCSRFToken() {
+        // Método 1: Buscar en meta tags
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        if (csrfTokenMeta) {
+            return csrfTokenMeta.getAttribute('content');
+        }
+        
+        // Método 2: Buscar en cookies
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        
+        // Método 3: Buscar en el DOM
+        if (!cookieValue) {
+            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (csrfInput) {
+                cookieValue = csrfInput.value;
+            }
+        }
+        
+        console.log('CSRF Token encontrado:', cookieValue ? 'Sí' : 'No');
+        return cookieValue;
+    }
+
+    // Función para diagnosticar URLs
+    function diagnoseURLs() {
+        const currentPath = window.location.pathname;
+        const baseUrl = window.location.origin;
+        const searchUrl = '/buscar-factura-devolucion/';
+        const processUrl = '/procesar-devolucion/';
+        const fullSearchUrl = baseUrl + searchUrl;
+        const fullProcessUrl = baseUrl + processUrl;
+        
+        console.log('=== DIAGNÓSTICO DE URLs ===');
+        console.log('URL actual:', currentPath);
+        console.log('Base URL:', baseUrl);
+        console.log('URL de búsqueda relativa:', searchUrl);
+        console.log('URL de búsqueda completa:', fullSearchUrl);
+        console.log('URL de procesamiento relativa:', processUrl);
+        console.log('URL de procesamiento completa:', fullProcessUrl);
+        console.log('===========================');
+        
+        return {
+            currentPath,
+            baseUrl,
+            searchUrl,
+            processUrl,
+            fullSearchUrl,
+            fullProcessUrl
+        };
+    }
+
+    // Función para buscar factura
+    function searchInvoice(invoiceNumber) {
+        const loading = document.getElementById('loading');
+        const invoiceDetails = document.getElementById('invoiceDetails');
+        
+        // Mostrar loading
+        loading.style.display = 'block';
+        invoiceDetails.classList.remove('show');
+        
+        // Diagnosticar URLs
+        const urls = diagnoseURLs();
+        const searchUrl = urls.searchUrl;
+        
+        console.log('Buscando factura:', invoiceNumber);
+        console.log('URL de búsqueda:', searchUrl);
+        
+        const csrfToken = getCSRFToken();
+        if (!csrfToken) {
+            showAlert('Error de seguridad: No se pudo obtener el token CSRF');
+            loading.style.display = 'none';
+            return;
+        }
+        
+        // Hacer petición AJAX al servidor
+        fetch(searchUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ 
+                invoiceNumber: invoiceNumber,
+                timestamp: new Date().toISOString()
+            })
+        })
+        .then(response => {
+            console.log('Respuesta recibida. Status:', response.status, 'OK:', response.ok);
+            
+            if (!response.ok) {
+                // Obtener más detalles del error
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos recibidos:', data);
+            loading.style.display = 'none';
+            
+            if (data.success) {
+                displayInvoice(data.invoice);
+                showAlert('Factura encontrada correctamente', 'success');
+            } else {
+                showAlert(data.error || 'No se encontró ninguna factura con ese número');
+            }
+        })
+        .catch(error => {
+            loading.style.display = 'none';
+            console.error('Error completo:', error);
+            
+            // Mostrar error más específico
+            if (error.message.includes('404')) {
+                showAlert('Error 404: URL no encontrada. Verifica que la ruta esté correctamente configurada en Django.');
+            } else if (error.message.includes('403')) {
+                showAlert('Error 403: Problema de permisos o token CSRF.');
+            } else if (error.message.includes('500')) {
+                showAlert('Error 500: Error interno del servidor. Revisa la consola de Django.');
+            } else if (error.message.includes('Network Error')) {
+                showAlert('Error de red: No se pudo conectar al servidor.');
+            } else {
+                showAlert('Error: ' + error.message);
+            }
+        });
+    }
+
+    // Función para mostrar los detalles de la factura
+    function displayInvoice(invoice) {
+        currentInvoice = invoice;
+        
+        // Actualizar información básica
+        document.getElementById('invoiceTitle').textContent = `Factura #${invoice.number}`;
+        document.getElementById('clientName').textContent = invoice.client.name;
+        document.getElementById('clientEmail').textContent = invoice.client.email;
+        document.getElementById('clientPhone').textContent = invoice.client.phone;
+        document.getElementById('invoiceDate').textContent = invoice.date;
+        document.getElementById('dueDate').textContent = invoice.dueDate;
+        document.getElementById('paymentMethod').textContent = invoice.paymentMethod;
+        document.getElementById('subtotal').textContent = `€${invoice.subtotal.toFixed(2)}`;
+        document.getElementById('tax').textContent = `€${invoice.tax.toFixed(2)}`;
+        document.getElementById('total').textContent = `€${invoice.total.toFixed(2)}`;
+        
+        // Actualizar estado
+        const statusElement = document.getElementById('invoiceStatus');
+        statusElement.className = `invoice-status status-${invoice.status}`;
+        statusElement.textContent = invoice.status_text;
+        
+        // Actualizar tabla de items
+        const tbody = document.getElementById('itemsTableBody');
+        tbody.innerHTML = '';
+        
+        invoice.items.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.code}</td>
+                <td>${item.description}</td>
+                <td>${item.quantity}</td>
+                <td>€${item.unitPrice.toFixed(2)}</td>
+                <td>€${item.total.toFixed(2)}</td>
+                <td>
+                    <input type="number" 
+                           id="quantity-${index}" 
+                           min="0" 
+                           max="${item.max_quantity}" 
+                           step="0.01"
+                           value="0"
+                           style="width: 80px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;"
+                           onchange="updateItemSelection(${index}, this.value)"
+                           oninput="validateQuantity(${index}, this.value, ${item.max_quantity})">
+                    <br>
+                    <small style="color: #666;">Máx: ${item.max_quantity}</small>
+                    <div id="quantity-error-${index}" style="color: #dc3545; font-size: 12px; display: none;"></div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        // Mostrar detalles
+        document.getElementById('invoiceDetails').classList.add('show');
+        selectedItems = [];
+        
+        // Hacer scroll suave hacia los detalles
+        setTimeout(() => {
+            document.getElementById('invoiceDetails').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }, 300);
+    }
+
+    // Función para validar cantidad en tiempo real
+    function validateQuantity(itemIndex, quantity, maxQuantity) {
+        const errorElement = document.getElementById(`quantity-error-${itemIndex}`);
+        const inputElement = document.getElementById(`quantity-${itemIndex}`);
+        
+        quantity = parseFloat(quantity) || 0;
+        
+        if (quantity < 0) {
+            errorElement.textContent = 'La cantidad no puede ser negativa';
+            errorElement.style.display = 'block';
+            inputElement.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        if (quantity > maxQuantity) {
+            errorElement.textContent = `No puede devolver más de ${maxQuantity} unidades`;
+            errorElement.style.display = 'block';
+            inputElement.style.borderColor = '#dc3545';
+            return false;
+        }
+        
+        errorElement.style.display = 'none';
+        inputElement.style.borderColor = quantity > 0 ? '#28a745' : '#ddd';
+        return true;
+    }
+
+    // Función para manejar la selección de items con cantidad
+    function updateItemSelection(itemIndex, quantity) {
+        quantity = parseFloat(quantity) || 0;
+        const maxQuantity = currentInvoice.items[itemIndex].max_quantity;
+        
+        // Validar la cantidad
+        if (!validateQuantity(itemIndex, quantity, maxQuantity)) {
+            return;
+        }
+        
+        // Actualizar o eliminar el item seleccionado
+        const existingIndex = selectedItems.findIndex(item => item.index === itemIndex);
+        
+        if (quantity > 0) {
+            if (existingIndex >= 0) {
+                selectedItems[existingIndex].quantity = quantity;
+            } else {
+                selectedItems.push({
+                    index: itemIndex,
+                    quantity: quantity,
+                    code: currentInvoice.items[itemIndex].code,
+                    description: currentInvoice.items[itemIndex].description,
+                    unitPrice: currentInvoice.items[itemIndex].unitPrice,
+                    max_quantity: maxQuantity
+                });
+            }
+        } else {
+            if (existingIndex >= 0) {
+                selectedItems.splice(existingIndex, 1);
+            }
+        }
+        
+        updateReturnTotal();
+        updateReturnSummary();
+    }
+
+    // Función para actualizar el resumen de devolución
+    function updateReturnSummary() {
+        const summaryContainer = document.getElementById('returnSummary');
+        if (!summaryContainer) {
+            // Crear contenedor si no existe
+            const returnSection = document.querySelector('.return-section');
+            const summaryDiv = document.createElement('div');
+            summaryDiv.id = 'returnSummary';
+            summaryDiv.style.cssText = 'background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 15px;';
+            returnSection.insertBefore(summaryDiv, returnSection.querySelector('h4').nextSibling);
+        } else {
+            summaryContainer.innerHTML = '';
+        }
+        
+        if (selectedItems.length === 0) {
+            summaryContainer.innerHTML = '<p style="color: #6c757d; margin: 0;">No hay productos seleccionados para devolución</p>';
+            return;
+        }
+        
+        let summaryHTML = '<h5 style="margin-bottom: 10px;">Resumen de Devolución:</h5>';
+        selectedItems.forEach(item => {
+            summaryHTML += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="flex: 1;">${item.description}</span>
+                    <span style="width: 80px; text-align: right;">${item.quantity} und</span>
+                    <span style="width: 100px; text-align: right;">€${(item.quantity * item.unitPrice).toFixed(2)}</span>
+                </div>
+            `;
+        });
+        
+        const totalAmount = selectedItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+        summaryHTML += `
+            <div style="border-top: 1px solid #ccc; margin-top: 10px; padding-top: 10px; font-weight: bold;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Total a devolver:</span>
+                    <span>€${totalAmount.toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+        
+        summaryContainer.innerHTML = summaryHTML;
+    }
+
+    // Función para actualizar el total de devolución en tiempo real
+    function updateReturnTotal() {
+        const totalAmount = selectedItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+        
+        const returnSection = document.querySelector('.return-section h4');
+        if (returnSection) {
+            const existingTotal = returnSection.querySelector('.return-total');
+            if (existingTotal) {
+                existingTotal.remove();
+            }
+            
+            if (totalAmount > 0) {
+                const totalElement = document.createElement('span');
+                totalElement.className = 'return-total';
+                totalElement.style.cssText = 'color: #856404; font-weight: normal; margin-left: 10px;';
+                totalElement.textContent = `Total a devolver: €${totalAmount.toFixed(2)}`;
+                returnSection.appendChild(totalElement);
+            }
+        }
+    }
+
+    // Función para procesar la devolución
+    function processReturn(formData) {
+        console.log('Iniciando procesamiento de devolución...');
+        
+        // Validación de items seleccionados
+        if (selectedItems.length === 0) {
+            showAlert('❌ Debe seleccionar al menos un artículo para devolver');
+            return;
+        }
+        
+        const validItems = selectedItems.filter(item => item.quantity > 0);
+        if (validItems.length === 0) {
+            showAlert('❌ Debe especificar cantidades válidas para devolver');
+            return;
+        }
+        
+        // Verificar que no se excedan los límites
+        const itemsConProblemas = validItems.filter(item => item.quantity > item.max_quantity);
+        if (itemsConProblemas.length > 0) {
+            showAlert('❌ Algunos productos exceden la cantidad máxima permitida para devolución');
+            return;
+        }
+        
+        // Validación del motivo
+        const reasonSelect = document.getElementById('returnReason');
+        const reason = reasonSelect ? reasonSelect.value : '';
+        
+        console.log('Motivo seleccionado:', reason);
+        
+        if (!reason) {
+            showAlert('❌ Debe seleccionar un motivo para la devolución');
+            if (reasonSelect) {
+                reasonSelect.focus();
+                reasonSelect.style.borderColor = '#dc3545';
+                reasonSelect.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+            }
+            return;
+        }
+        
+        // Validación de comentarios si el motivo es "other"
+        const comments = document.getElementById('returnComments') ? document.getElementById('returnComments').value : '';
+        if (reason === 'other' && (!comments || comments.trim() === '')) {
+            showAlert('❌ Para el motivo "Otro", debe proporcionar una descripción en los comentarios');
+            const commentsTextarea = document.getElementById('returnComments');
+            if (commentsTextarea) {
+                commentsTextarea.focus();
+                commentsTextarea.style.borderColor = '#dc3545';
+                commentsTextarea.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+            }
+            return;
+        }
+        
+        // Mostrar confirmación antes de procesar
+        const totalAmount = validItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+        const confirmMessage = `¿Está seguro de que desea procesar la devolución por un total de €${totalAmount.toFixed(2)}?`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        // Preparar datos para enviar
+        const returnData = {
+            invoiceNumber: currentInvoice.number,
+            items: validItems,
+            reason: reason,
+            comments: comments,
+            clientName: currentInvoice.client.name,
+            clientEmail: currentInvoice.client.email,
+            clientPhone: currentInvoice.client.phone,
+            date: new Date().toLocaleDateString('es-ES'),
+            totalAmount: totalAmount
+        };
+        
+        console.log('Datos de devolución a enviar:', returnData);
+        
+        // Mostrar loading
+        const loading = document.getElementById('loading');
+        loading.style.display = 'block';
+        
+        const processUrl = '/procesar-devolucion/';
+        const csrfToken = getCSRFToken();
+        
+        if (!csrfToken) {
+            showAlert('❌ Error de seguridad: No se pudo obtener el token CSRF');
+            loading.style.display = 'none';
+            return;
+        }
+        
+        // Enviar datos al servidor
+        fetch(processUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(returnData)
+        })
+        .then(response => {
+            console.log('Respuesta de procesamiento. Status:', response.status);
+            
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            loading.style.display = 'none';
+            console.log('Respuesta de procesamiento:', data);
+            
+            if (data.success) {
+                showAlert(`✅ ${data.message}`, 'success');
+                
+                // Mostrar detalles de productos actualizados
+                if (data.productos_actualizados && data.productos_actualizados.length > 0) {
+                    let detalles = '<strong>Productos actualizados en inventario:</strong><br>';
+                    data.productos_actualizados.forEach(prod => {
+                        detalles += `• ${prod.producto}: +${prod.cantidad_agregada} (Nuevo total: ${prod.nueva_cantidad})<br>`;
+                    });
+                    showAlert(detalles, 'success');
+                }
+                
+                // Limpiar formulario y resetear estilos
+                resetReturnForm();
+                
+                // Ocultar detalles después de éxito
+                setTimeout(() => {
+                    document.getElementById('invoiceDetails').classList.remove('show');
+                    document.getElementById('invoiceNumber').value = '';
+                    document.getElementById('invoiceNumber').focus();
+                }, 5000);
+                
+            } else {
+                showAlert(`❌ ${data.error || 'Error al procesar la devolución'}`);
+            }
+        })
+        .catch(error => {
+            loading.style.display = 'none';
+            console.error('Error al procesar:', error);
+            
+            if (error.message.includes('404')) {
+                showAlert('❌ Error 404: URL de procesamiento no encontrada.');
+            } else if (error.message.includes('500')) {
+                showAlert('❌ Error 500: Error interno del servidor al procesar.');
+            } else {
+                showAlert('❌ Error al procesar la devolución: ' + error.message);
+            }
+        });
+    }
+
+    // Función para resetear el formulario de devolución
+    function resetReturnForm() {
+        // Resetear el formulario
+        document.getElementById('returnForm').reset();
+        
+        // Resetear estilos de los campos
+        const reasonSelect = document.getElementById('returnReason');
+        const commentsTextarea = document.getElementById('returnComments');
+        
+        if (reasonSelect) {
+            reasonSelect.style.borderColor = '';
+            reasonSelect.style.boxShadow = '';
+        }
+        
+        if (commentsTextarea) {
+            commentsTextarea.style.borderColor = '';
+            commentsTextarea.style.boxShadow = '';
+        }
+        
+        // Resetear items seleccionados
+        selectedItems.forEach(item => {
+            const quantityInput = document.getElementById(`quantity-${item.index}`);
+            if (quantityInput) {
+                quantityInput.value = 0;
+                quantityInput.style.borderColor = '';
+                quantityInput.style.boxShadow = '';
+            }
+        });
+        
+        selectedItems = [];
+        updateReturnTotal();
+        
+        // Eliminar el resumen
+        const summaryContainer = document.getElementById('returnSummary');
+        if (summaryContainer) {
+            summaryContainer.remove();
+        }
+    }
+
+    // Función para agregar validación visual en tiempo real
+    function addRealTimeValidation() {
+        const reasonSelect = document.getElementById('returnReason');
+        const commentsTextarea = document.getElementById('returnComments');
+        
+        if (reasonSelect) {
+            reasonSelect.addEventListener('change', function() {
+                if (this.value) {
+                    this.style.borderColor = '#28a745';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                } else {
+                    this.style.borderColor = '#dc3545';
+                    this.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                }
+            });
+        }
+        
+        if (commentsTextarea) {
+            commentsTextarea.addEventListener('input', function() {
+                const reason = document.getElementById('returnReason').value;
+                if (reason === 'other') {
+                    if (this.value.trim()) {
+                        this.style.borderColor = '#28a745';
+                        this.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                    } else {
+                        this.style.borderColor = '#dc3545';
+                        this.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                    }
+                }
+            });
+        }
+        
+        // Agregar validación visual a los campos de cantidad
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.type === 'number' && e.target.id.startsWith('quantity-')) {
+                const quantity = parseFloat(e.target.value) || 0;
+                const maxQuantity = parseFloat(e.target.max) || 0;
+                
+                if (quantity > 0 && quantity <= maxQuantity) {
+                    e.target.style.borderColor = '#28a745';
+                    e.target.style.boxShadow = '0 0 0 0.2rem rgba(40, 167, 69, 0.25)';
+                } else if (quantity > maxQuantity) {
+                    e.target.style.borderColor = '#dc3545';
+                    e.target.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                } else {
+                    e.target.style.borderColor = '';
+                    e.target.style.boxShadow = '';
+                }
+            }
+        });
+    }
+
+    // Función para testear la conexión con el servidor
+    function testServerConnection() {
+        console.log('=== TESTEO DE CONEXIÓN CON EL SERVIDOR ===');
+        
+        const testUrls = [
+            '/buscar-factura-devolucion/',
+            '/procesar-devolucion/'
+        ];
+        
+        testUrls.forEach(url => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ test: true })
+            })
+            .then(response => {
+                console.log(`✅ ${url}: Status ${response.status}`);
+            })
+            .catch(error => {
+                console.error(`❌ ${url}: ${error.message}`);
+            });
+        });
+    }
+
+    // Event Listeners
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const invoiceNumber = document.getElementById('invoiceNumber').value.trim();
+        
+        if (!invoiceNumber) {
+            showAlert('Por favor, ingrese un número de factura');
+            return;
+        }
+        
+        searchInvoice(invoiceNumber);
+    });
+
+    document.getElementById('returnForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        processReturn(formData);
+    });
+
+    document.getElementById('invoiceNumber').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('=== SISTEMA DE DEVOLUCIONES INICIADO ===');
+        diagnoseURLs();
+        
+        // Verificar elementos críticos
+        const criticalElements = [
+            'searchForm', 'returnForm', 'invoiceDetails', 
+            'loading', 'invoiceNumber', 'alertContainer',
+            'returnReason', 'returnComments'
+        ];
+        
+        criticalElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.error(`❌ Elemento crítico no encontrado: ${id}`);
+            } else {
+                console.log(`✅ Elemento encontrado: ${id}`);
+            }
+        });
+        
+        // Agregar validación en tiempo real
+        addRealTimeValidation();
+        
+        // Verificar CSRF token
+        const csrfToken = getCSRFToken();
+        console.log('CSRF Token disponible:', csrfToken ? '✅ Sí' : '❌ No');
+        
+        // Testear conexión con el servidor (opcional)
+        // testServerConnection();
+        
+        clearSearch();
+        document.getElementById('invoiceNumber').focus();
+        
+        // Mensaje de ayuda para el usuario
+        console.log('💡 CONSEJO: Use números de factura como "F-000001", "FAC-2024-001" o el ID directo');
+    });
+</script>
+</body>
+</html>
