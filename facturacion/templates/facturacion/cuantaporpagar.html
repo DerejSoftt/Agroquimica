@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +39,7 @@
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-            
+
             --sidebar-width: 280px;
         }
 
@@ -519,8 +520,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Estilos para la lista de productos */
@@ -558,6 +564,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
@@ -568,69 +575,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-          <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} ">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -638,9 +645,9 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="active">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
@@ -652,33 +659,33 @@
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'devoluciones' %}">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="{% url 'dashboard' %}">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -721,7 +728,7 @@
                         <i class='bx bx-search'></i>
                         <input type="text" id="searchInput" placeholder="Buscar por proveedor o número de factura...">
                     </div>
-                    
+
                     <div class="filter-controls">
                         <select id="estadoFilter" class="filter-select">
                             <option value="">Todos los Estados</option>
@@ -729,7 +736,7 @@
                             <option value="Pagado">Pagado</option>
                             <option value="Vencido">Vencido</option>
                         </select>
-                        
+
                         <select id="condicionFilter" class="filter-select">
                             <option value="">Todas las Condiciones</option>
                             <option value="Contado">Contado</option>
@@ -755,7 +762,8 @@
                             </thead>
                             <tbody id="accountsTableBody">
                                 <tr>
-                                    <td colspan="8" style="text-align: center; padding: 40px; color: var(--color-text-light);">
+                                    <td colspan="8"
+                                        style="text-align: center; padding: 40px; color: var(--color-text-light);">
                                         <div class="loading"></div> Cargando compras...
                                     </td>
                                 </tr>
@@ -836,15 +844,16 @@
                     <label>Notas</label>
                     <textarea id="editNotas" rows="3" placeholder="Notas adicionales..."></textarea>
                 </div>
-                
+
                 <!-- Sección de Productos (solo lectura para edición) -->
                 <div class="form-group">
                     <label>Productos en esta compra</label>
-                    <div id="editProductosList" class="products-list" style="max-height: 200px; background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                    <div id="editProductosList" class="products-list"
+                        style="max-height: 200px; background: #f8f9fa; padding: 10px; border-radius: 4px;">
                         <!-- Los productos se cargarán aquí -->
                     </div>
                 </div>
-                
+
                 <div class="form-actions">
                     <button class="btn-secondary" onclick="gestionManager.closeEditModal()">Cancelar</button>
                     <button class="btn-primary" onclick="gestionManager.updateCompra()" id="updateCompraBtn">
@@ -875,26 +884,26 @@
             async loadCompras() {
                 try {
                     console.log('📡 Cargando compras desde el servidor...');
-                    
+
                     const response = await fetch('/cuentas-por-pagar/datos/');
-                    
+
                     if (!response.ok) {
                         throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
                     }
-                    
+
                     const data = await response.json();
-                    
+
                     // 🔍 DEBUG CRÍTICO
                     console.log('=== RESPUESTA DEL SERVIDOR ===');
                     console.log('Tipo de datos:', Array.isArray(data) ? 'Array' : typeof data);
                     console.log('Total de compras:', data.length);
                     console.log('Primera compra:', data[0]);
-                    
+
                     if (data[0]) {
                         console.log('Productos primera compra:', data[0].productos);
                         console.log('Estado primera compra:', data[0].estado);
                     }
-                    
+
                     if (Array.isArray(data)) {
                         this.compras = data;
                         console.log(`✅ Se cargaron ${data.length} compras exitosamente`);
@@ -906,15 +915,15 @@
                             throw new Error('Formato de respuesta inválido - Se esperaba un array');
                         }
                     }
-                    
+
                     this.renderTable();
                     this.updateStats();
-                    
+
                 } catch (error) {
                     console.error('❌ ERROR COMPLETO:', error);
                     console.error('Stack:', error.stack);
                     this.showToast('Error al cargar las compras: ' + error.message, 'error');
-                    
+
                     // Mostrar tabla vacía con mensaje de error
                     const tbody = document.getElementById('accountsTableBody');
                     tbody.innerHTML = `
@@ -958,7 +967,7 @@
 
             renderTable(comprasToRender = this.compras) {
                 const tbody = document.getElementById('accountsTableBody');
-                
+
                 console.log('🎨 Renderizando tabla con', comprasToRender.length, 'compras');
 
                 if (!comprasToRender || comprasToRender.length === 0) {
@@ -982,23 +991,23 @@
                     const mostrarBotonPagar = (estadoReal === 'Pendiente' || estadoReal === 'Vencido' || estadoReal === 'pendiente' || estadoReal === 'vencido');
                     const puedeEditar = (estadoReal !== 'Pagado' && estadoReal !== 'pagado'); // No editar compras pagadas
                     const puedeEliminar = (estadoReal === 'Pagado' || estadoReal === 'pagado'); // Solo eliminar compras pagadas
-                    
+
                     if (mostrarBotonPagar) {
                         comprasConBotonPagar++;
                     }
-                    
+
                     // Debug por compra
                     console.log(`Compra ${compra.id}: Estado=${compra.estado}, EstadoReal=${estadoReal}, MostrarPagar=${mostrarBotonPagar}, Productos=${compra.productos?.length || 0}`);
 
                     // Crear lista de productos con validación
                     let productosHTML = '<div style="font-size: 12px; color: var(--color-text-light);">Sin productos</div>';
-                    
+
                     if (compra.productos && Array.isArray(compra.productos) && compra.productos.length > 0) {
                         productosHTML = compra.productos.map(p => {
                             const cantidad = parseFloat(p.cantidad || 0);
                             const costoUnitario = parseFloat(p.costo_unitario || 0);
                             const subtotal = parseFloat(p.subtotal || 0);
-                            
+
                             return `
                                 <div class="product-item">
                                     <strong>${p.nombre || 'Producto sin nombre'}</strong><br>
@@ -1012,7 +1021,7 @@
                     } else {
                         console.warn(`⚠️ Compra ${compra.id} no tiene productos o el formato es incorrecto`);
                     }
-                    
+
                     return `
                         <tr data-compra-id="${compra.id}">
                             <td><strong>${compra.numero_factura || 'N/A'}</strong></td>
@@ -1086,33 +1095,33 @@
                         </tr>
                     `;
                 }).join('');
-                
+
                 console.log(`✅ Tabla renderizada: ${comprasToRender.length} compras, ${comprasConBotonPagar} con botón pagar`);
             }
 
             determinarEstadoReal(compra) {
                 // CORRECCIÓN: Aceptar tanto mayúsculas como minúsculas
                 let estado = compra.estado || 'Pendiente';
-                
+
                 // Normalizar a formato con primera letra mayúscula
                 if (estado) {
                     estado = estado.charAt(0).toUpperCase() + estado.slice(1).toLowerCase();
                 }
-                
+
                 // Si está pendiente y tiene fecha de vencimiento, verificar si está vencido
                 if ((estado === 'Pendiente' || estado === 'pendiente') && compra.fecha_vencimiento) {
                     const fechaVencimiento = new Date(compra.fecha_vencimiento);
                     const hoy = new Date();
-                    
+
                     // Comparar sin la hora (solo fechas)
                     fechaVencimiento.setHours(0, 0, 0, 0);
                     hoy.setHours(0, 0, 0, 0);
-                    
+
                     if (fechaVencimiento < hoy) {
                         estado = 'Vencido';
                     }
                 }
-                
+
                 return estado;
             }
 
@@ -1155,7 +1164,7 @@
 
             updateStats(comprasToUse = null) {
                 const compras = comprasToUse || this.compras;
-                
+
                 console.log('📈 Actualizando estadísticas con', compras.length, 'compras');
 
                 if (!compras || compras.length === 0) {
@@ -1200,7 +1209,7 @@
 
             openPaymentModal(compraId) {
                 console.log('💳 Abriendo modal de pago para compra:', compraId);
-                
+
                 const compra = this.compras.find(c => c.id === compraId);
                 if (!compra) {
                     this.showToast('Compra no encontrada', 'error');
@@ -1214,7 +1223,7 @@
                 document.getElementById('paymentMethod').value = 'Efectivo';
                 document.getElementById('paymentReference').value = '';
                 document.getElementById('paymentModal').classList.add('active');
-                
+
                 console.log('✅ Modal de pago abierto');
             }
 
@@ -1287,25 +1296,25 @@
             // NUEVO MÉTODO: Abrir modal de edición
             async openEditModal(compraId) {
                 console.log('✏️ Abriendo modal de edición para compra:', compraId);
-                
+
                 try {
                     const response = await fetch(`/cuentas-por-pagar/obtener/${compraId}/`);
                     const result = await response.json();
-                    
+
                     if (result.success) {
                         const compra = result.compra;
                         this.currentEditId = compraId;
-                        
+
                         // Llenar formulario
                         document.getElementById('editNumeroFactura').value = compra.numero_factura || '';
                         document.getElementById('editFechaFactura').value = compra.fecha_factura || '';
                         document.getElementById('editFechaVencimiento').value = compra.fecha_vencimiento || '';
                         document.getElementById('editCondicion').value = compra.condicion || 'Contado';
                         document.getElementById('editNotas').value = compra.notas || '';
-                        
+
                         // Mostrar productos
                         this.renderEditProducts(compra.productos);
-                        
+
                         document.getElementById('editModal').classList.add('active');
                     } else {
                         this.showToast('Error al cargar datos: ' + result.error, 'error');
@@ -1319,12 +1328,12 @@
             // NUEVO MÉTODO: Renderizar productos en modal de edición
             renderEditProducts(productos) {
                 const container = document.getElementById('editProductosList');
-                
+
                 if (!productos || productos.length === 0) {
                     container.innerHTML = '<div style="color: var(--color-text-light); text-align: center;">No hay productos</div>';
                     return;
                 }
-                
+
                 container.innerHTML = productos.map(p => `
                     <div class="product-item" style="padding: 8px; margin-bottom: 8px; border: 1px solid var(--color-border); border-radius: 4px;">
                         <strong>${p.nombre || 'Producto sin nombre'}</strong><br>
@@ -1409,14 +1418,14 @@
 
             async deleteCompra(compraId) {
                 const compra = this.compras.find(c => c.id === compraId);
-                
+
                 if (!compra) {
                     this.showToast('Compra no encontrada', 'error');
                     return;
                 }
 
                 const estadoReal = this.determinarEstadoReal(compra);
-                
+
                 if (estadoReal !== 'Pagado') {
                     this.showToast('Solo se pueden eliminar compras pagadas', 'error');
                     return;
@@ -1482,11 +1491,11 @@
                 const toast = document.getElementById('toast');
                 toast.textContent = message;
                 toast.className = 'toast';
-                
+
                 if (type === 'error') {
                     toast.classList.add('error');
                 }
-                
+
                 toast.classList.add('show');
 
                 setTimeout(() => {
@@ -1499,4 +1508,5 @@
         const gestionManager = new GestionCuentasPorPagarManager();
     </script>
 </body>
+
 </html>

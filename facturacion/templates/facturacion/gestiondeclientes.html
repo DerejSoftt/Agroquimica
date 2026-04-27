@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-            
+
             --sidebar-width: 280px;
         }
 
@@ -503,6 +504,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar actualizado para coincidir con facturacion.html -->
     <nav class="sidebar" id="sidebar">
@@ -513,69 +515,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-         <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} " class="active">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} " class="active">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -583,9 +585,9 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
@@ -597,33 +599,33 @@
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href=" {% url 'devoluciones' %} ">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href=" {% url 'dashboard' %} " class="">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -683,33 +685,33 @@
                         <label for="clientCedula">Cédula *</label>
                         <input type="text" id="clientCedula" required placeholder="000-0000000-0">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="clientName">Nombre Completo *</label>
                         <input type="text" id="clientName" required placeholder="Nombre completo del cliente">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="clientPhone1">Número de Teléfono 1 *</label>
                         <input type="tel" id="clientPhone1" required placeholder="(809) 000-0000">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="clientPhone2">Número de Teléfono 2</label>
                         <input type="tel" id="clientPhone2" placeholder="(809) 000-0000">
                     </div>
-                    
+
                     <div class="form-group full-width">
                         <label for="clientAddress">Dirección *</label>
                         <textarea id="clientAddress" required placeholder="Dirección completa del cliente"></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="clientCreditLimit">Límite de Crédito ($) *</label>
                         <input type="number" id="clientCreditLimit" required min="0" step="0.01" placeholder="0.00">
                     </div>
                 </div>
-                
+
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" id="cancelBtn">Cancelar</button>
                     <button type="submit" class="btn-primary">Guardar Cambios</button>
@@ -721,110 +723,110 @@
     <div id="toast" class="toast"></div>
 
     <script>
-    class ClientManager {
-        constructor() {
-            this.clients = [];
-            this.currentEditId = null;
-            this.init();
-        }
+        class ClientManager {
+            constructor() {
+                this.clients = [];
+                this.currentEditId = null;
+                this.init();
+            }
 
-        async init() {
-            await this.loadClients();
-            this.attachEventListeners();
-            this.setupInputMasks();
-        }
+            async init() {
+                await this.loadClients();
+                this.attachEventListeners();
+                this.setupInputMasks();
+            }
 
-        setupInputMasks() {
-            // Máscara para cédula
-            const cedulaInput = document.getElementById('clientCedula');
-            cedulaInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 3) {
-                    value = value.substring(0, 3) + '-' + value.substring(3);
-                }
-                if (value.length > 11) {
-                    value = value.substring(0, 11) + '-' + value.substring(11, 12);
-                }
-                e.target.value = value;
-            });
-
-            // Máscara para teléfonos
-            const phoneInputs = document.querySelectorAll('input[type="tel"]');
-            phoneInputs.forEach(input => {
-                input.addEventListener('input', function(e) {
+            setupInputMasks() {
+                // Máscara para cédula
+                const cedulaInput = document.getElementById('clientCedula');
+                cedulaInput.addEventListener('input', function (e) {
                     let value = e.target.value.replace(/\D/g, '');
-                    if (value.length > 0) {
-                        value = '(' + value;
+                    if (value.length > 3) {
+                        value = value.substring(0, 3) + '-' + value.substring(3);
                     }
-                    if (value.length > 4) {
-                        value = value.substring(0, 4) + ') ' + value.substring(4);
-                    }
-                    if (value.length > 9) {
-                        value = value.substring(0, 9) + '-' + value.substring(9, 13);
+                    if (value.length > 11) {
+                        value = value.substring(0, 11) + '-' + value.substring(11, 12);
                     }
                     e.target.value = value;
                 });
-            });
-        }
 
-        async loadClients() {
-            try {
-                const response = await fetch('/obtener-clientes/');
-                const data = await response.json();
-
-                if (data.success) {
-                    this.clients = data.clientes;
-                    this.renderTable();
-                } else {
-                    this.showToast('Error al cargar clientes: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                this.showToast('Error de conexión al cargar clientes', 'error');
+                // Máscara para teléfonos
+                const phoneInputs = document.querySelectorAll('input[type="tel"]');
+                phoneInputs.forEach(input => {
+                    input.addEventListener('input', function (e) {
+                        let value = e.target.value.replace(/\D/g, '');
+                        if (value.length > 0) {
+                            value = '(' + value;
+                        }
+                        if (value.length > 4) {
+                            value = value.substring(0, 4) + ') ' + value.substring(4);
+                        }
+                        if (value.length > 9) {
+                            value = value.substring(0, 9) + '-' + value.substring(9, 13);
+                        }
+                        e.target.value = value;
+                    });
+                });
             }
-        }
 
-        attachEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', () => {
-                this.filterClients();
-            });
+            async loadClients() {
+                try {
+                    const response = await fetch('/obtener-clientes/');
+                    const data = await response.json();
 
-            document.getElementById('closeModal').addEventListener('click', () => {
-                this.closeModal();
-            });
-
-            document.getElementById('cancelBtn').addEventListener('click', () => {
-                this.closeModal();
-            });
-
-            document.getElementById('clientForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.saveClient();
-            });
-
-            document.getElementById('clientModal').addEventListener('click', (e) => {
-                if (e.target.id === 'clientModal') {
-                    this.closeModal();
+                    if (data.success) {
+                        this.clients = data.clientes;
+                        this.renderTable();
+                    } else {
+                        this.showToast('Error al cargar clientes: ' + data.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showToast('Error de conexión al cargar clientes', 'error');
                 }
-            });
-        }
+            }
 
-        renderTable(clientsToRender = this.clients) {
-            const tbody = document.getElementById('clientsTableBody');
+            attachEventListeners() {
+                document.getElementById('searchInput').addEventListener('input', () => {
+                    this.filterClients();
+                });
 
-            if (clientsToRender.length === 0) {
-                tbody.innerHTML = `
+                document.getElementById('closeModal').addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                document.getElementById('cancelBtn').addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                document.getElementById('clientForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveClient();
+                });
+
+                document.getElementById('clientModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'clientModal') {
+                        this.closeModal();
+                    }
+                });
+            }
+
+            renderTable(clientsToRender = this.clients) {
+                const tbody = document.getElementById('clientsTableBody');
+
+                if (clientsToRender.length === 0) {
+                    tbody.innerHTML = `
                     <tr>
                         <td colspan="7" style="text-align: center; padding: 40px; color: var(--color-text-light);">
                             No se encontraron clientes
                         </td>
                     </tr>
                 `;
-                return;
-            }
+                    return;
+                }
 
-            tbody.innerHTML = clientsToRender.map(client => {
-                return `
+                tbody.innerHTML = clientsToRender.map(client => {
+                    return `
                     <tr>
                         <td><span class="client-cedula">${client.cedula}</span></td>
                         <td><span class="client-name">${client.nombre}</span></td>
@@ -844,150 +846,79 @@
                         </td>
                     </tr>
                 `;
-            }).join('');
-        }
-
-        filterClients() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-
-            let filtered = this.clients;
-
-            if (searchTerm) {
-                filtered = filtered.filter(c => 
-                    c.nombre.toLowerCase().includes(searchTerm) ||
-                    c.cedula.toLowerCase().includes(searchTerm) ||
-                    c.telefono1.toLowerCase().includes(searchTerm) ||
-                    (c.telefono2 && c.telefono2.toLowerCase().includes(searchTerm)) ||
-                    c.direccion.toLowerCase().includes(searchTerm)
-                );
+                }).join('');
             }
 
-            this.renderTable(filtered);
-        }
+            filterClients() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
-        openModal(client) {
-            const modal = document.getElementById('clientModal');
-            const form = document.getElementById('clientForm');
+                let filtered = this.clients;
 
-            document.getElementById('clientCedula').value = client.cedula;
-            document.getElementById('clientName').value = client.nombre;
-            document.getElementById('clientPhone1').value = client.telefono1;
-            document.getElementById('clientPhone2').value = client.telefono2 || '';
-            document.getElementById('clientAddress').value = client.direccion;
-            document.getElementById('clientCreditLimit').value = client.limite_credito;
-            this.currentEditId = client.id;
-
-            modal.classList.add('active');
-        }
-
-        closeModal() {
-            const modal = document.getElementById('clientModal');
-            modal.classList.remove('active');
-            document.getElementById('clientForm').reset();
-            this.currentEditId = null;
-        }
-
-        async saveClient() {
-            const cedula = document.getElementById('clientCedula').value;
-            const nombre = document.getElementById('clientName').value;
-            const telefono1 = document.getElementById('clientPhone1').value;
-            const telefono2 = document.getElementById('clientPhone2').value;
-            const direccion = document.getElementById('clientAddress').value;
-            const limiteCredito = parseFloat(document.getElementById('clientCreditLimit').value);
-
-            // Validación básica
-            if (!this.validarFormulario(cedula, nombre, telefono1, direccion, limiteCredito)) {
-                return;
-            }
-
-            const clienteData = {
-                cedula: cedula,
-                nombre: nombre,
-                telefono1: telefono1,
-                telefono2: telefono2,
-                direccion: direccion,
-                limite_credito: limiteCredito
-            };
-
-            try {
-                const response = await fetch(`/actualizar-cliente/${this.currentEditId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': this.getCSRFToken()
-                    },
-                    body: JSON.stringify(clienteData)
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    this.showToast(data.message, 'success');
-                    await this.loadClients(); // Recargar la tabla desde la base de datos
-                    this.closeModal();
-                } else {
-                    this.showToast(data.message, 'error');
+                if (searchTerm) {
+                    filtered = filtered.filter(c =>
+                        c.nombre.toLowerCase().includes(searchTerm) ||
+                        c.cedula.toLowerCase().includes(searchTerm) ||
+                        c.telefono1.toLowerCase().includes(searchTerm) ||
+                        (c.telefono2 && c.telefono2.toLowerCase().includes(searchTerm)) ||
+                        c.direccion.toLowerCase().includes(searchTerm)
+                    );
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                this.showToast('Error de conexión', 'error');
-            }
-        }
 
-        validarFormulario(cedula, nombre, telefono1, direccion, limiteCredito) {
-            if (!cedula) {
-                this.showToast('La cédula es obligatoria', 'error');
-                return false;
+                this.renderTable(filtered);
             }
 
-            if (!this.validarCedula(cedula)) {
-                this.showToast('Formato de cédula inválido. Use: 000-0000000-0', 'error');
-                return false;
+            openModal(client) {
+                const modal = document.getElementById('clientModal');
+                const form = document.getElementById('clientForm');
+
+                document.getElementById('clientCedula').value = client.cedula;
+                document.getElementById('clientName').value = client.nombre;
+                document.getElementById('clientPhone1').value = client.telefono1;
+                document.getElementById('clientPhone2').value = client.telefono2 || '';
+                document.getElementById('clientAddress').value = client.direccion;
+                document.getElementById('clientCreditLimit').value = client.limite_credito;
+                this.currentEditId = client.id;
+
+                modal.classList.add('active');
             }
 
-            if (!nombre) {
-                this.showToast('El nombre es obligatorio', 'error');
-                return false;
+            closeModal() {
+                const modal = document.getElementById('clientModal');
+                modal.classList.remove('active');
+                document.getElementById('clientForm').reset();
+                this.currentEditId = null;
             }
 
-            if (!telefono1) {
-                this.showToast('El teléfono 1 es obligatorio', 'error');
-                return false;
-            }
+            async saveClient() {
+                const cedula = document.getElementById('clientCedula').value;
+                const nombre = document.getElementById('clientName').value;
+                const telefono1 = document.getElementById('clientPhone1').value;
+                const telefono2 = document.getElementById('clientPhone2').value;
+                const direccion = document.getElementById('clientAddress').value;
+                const limiteCredito = parseFloat(document.getElementById('clientCreditLimit').value);
 
-            if (!direccion) {
-                this.showToast('La dirección es obligatoria', 'error');
-                return false;
-            }
+                // Validación básica
+                if (!this.validarFormulario(cedula, nombre, telefono1, direccion, limiteCredito)) {
+                    return;
+                }
 
-            if (isNaN(limiteCredito) || limiteCredito < 0) {
-                this.showToast('El límite de crédito debe ser un número positivo', 'error');
-                return false;
-            }
+                const clienteData = {
+                    cedula: cedula,
+                    nombre: nombre,
+                    telefono1: telefono1,
+                    telefono2: telefono2,
+                    direccion: direccion,
+                    limite_credito: limiteCredito
+                };
 
-            return true;
-        }
-
-        validarCedula(cedula) {
-            const patron = /^\d{3}-\d{7}-\d{1}$/;
-            return patron.test(cedula);
-        }
-
-        editClient(id) {
-            const client = this.clients.find(c => c.id === id);
-            if (client) {
-                this.openModal(client);
-            }
-        }
-
-        async deleteClient(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
                 try {
-                    const response = await fetch(`/eliminar-cliente/${id}/`, {
-                        method: 'DELETE',
+                    const response = await fetch(`/actualizar-cliente/${this.currentEditId}/`, {
+                        method: 'POST',
                         headers: {
+                            'Content-Type': 'application/json',
                             'X-CSRFToken': this.getCSRFToken()
-                        }
+                        },
+                        body: JSON.stringify(clienteData)
                     });
 
                     const data = await response.json();
@@ -995,6 +926,7 @@
                     if (data.success) {
                         this.showToast(data.message, 'success');
                         await this.loadClients(); // Recargar la tabla desde la base de datos
+                        this.closeModal();
                     } else {
                         this.showToast(data.message, 'error');
                     }
@@ -1003,39 +935,110 @@
                     this.showToast('Error de conexión', 'error');
                 }
             }
-        }
 
-        getCSRFToken() {
-            const name = 'csrftoken';
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+            validarFormulario(cedula, nombre, telefono1, direccion, limiteCredito) {
+                if (!cedula) {
+                    this.showToast('La cédula es obligatoria', 'error');
+                    return false;
+                }
+
+                if (!this.validarCedula(cedula)) {
+                    this.showToast('Formato de cédula inválido. Use: 000-0000000-0', 'error');
+                    return false;
+                }
+
+                if (!nombre) {
+                    this.showToast('El nombre es obligatorio', 'error');
+                    return false;
+                }
+
+                if (!telefono1) {
+                    this.showToast('El teléfono 1 es obligatorio', 'error');
+                    return false;
+                }
+
+                if (!direccion) {
+                    this.showToast('La dirección es obligatoria', 'error');
+                    return false;
+                }
+
+                if (isNaN(limiteCredito) || limiteCredito < 0) {
+                    this.showToast('El límite de crédito debe ser un número positivo', 'error');
+                    return false;
+                }
+
+                return true;
+            }
+
+            validarCedula(cedula) {
+                const patron = /^\d{3}-\d{7}-\d{1}$/;
+                return patron.test(cedula);
+            }
+
+            editClient(id) {
+                const client = this.clients.find(c => c.id === id);
+                if (client) {
+                    this.openModal(client);
+                }
+            }
+
+            async deleteClient(id) {
+                if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+                    try {
+                        const response = await fetch(`/eliminar-cliente/${id}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': this.getCSRFToken()
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.showToast(data.message, 'success');
+                            await this.loadClients(); // Recargar la tabla desde la base de datos
+                        } else {
+                            this.showToast(data.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.showToast('Error de conexión', 'error');
                     }
                 }
             }
-            return cookieValue;
+
+            getCSRFToken() {
+                const name = 'csrftoken';
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast ${type} show`;
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
         }
 
-        showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type} show`;
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-    }
-
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        window.clientManager = new ClientManager();
-    });
-</script>
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function () {
+            window.clientManager = new ClientManager();
+        });
+    </script>
 </body>
+
 </html>

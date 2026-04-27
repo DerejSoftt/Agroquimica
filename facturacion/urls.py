@@ -59,8 +59,8 @@ urlpatterns = [
      path('facturacion/buscar-clientes-estado-cuenta/', views.buscar_clientes_estado_cuenta, name='buscar_clientes_estado_cuenta'),
     path('facturacion/cliente/<int:cliente_id>/datos-estado-cuenta/', views.obtener_datos_estado_cuenta, name='obtener_datos_estado_cuenta'),
     path('facturacion/cliente/<int:cliente_id>/pdf-estado-cuenta/', views.generar_pdf_estado_cuenta, name='generar_pdf_estado_cuenta'),
-
     path('dashboard', views.dashboard, name='dashboard'),
+    path('roles', views.roles, name='roles'),
 
 
     ]

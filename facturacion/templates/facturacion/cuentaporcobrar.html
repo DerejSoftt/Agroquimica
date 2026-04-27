@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -878,7 +879,7 @@
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .summary-row:last-child {
@@ -896,13 +897,25 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -970,6 +983,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
@@ -980,69 +994,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-         <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="active">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="active">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} ">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -1050,9 +1064,9 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
@@ -1064,33 +1078,33 @@
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'devoluciones' %}">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="{% url 'dashboard' %}">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -1223,8 +1237,8 @@
             <div class="modal-body">
                 <div class="payment-info">
                     <i class='bx bx-info-circle'></i>
-                    Cliente: <span id="detailsClientName">-</span> | 
-                    Factura: <span id="detailsInvoiceNumber">-</span> | 
+                    Cliente: <span id="detailsClientName">-</span> |
+                    Factura: <span id="detailsInvoiceNumber">-</span> |
                     Total: <span id="detailsTotalAmount" class="currency">RD$ 0</span>
                 </div>
 
@@ -1271,7 +1285,7 @@
                             <span id="progressPendingAmount" class="currency" style="color: #dc3545;">RD$ 0</span>
                         </div>
                     </div>
-                    
+
                     <div class="progress-container">
                         <div class="progress-fill" id="progressBarFill" style="width: 0%">
                             0%
@@ -1309,13 +1323,14 @@
             <div class="modal-body">
                 <div class="payment-info">
                     <i class='bx bx-info-circle'></i>
-                    Cliente: <span id="paymentClientName">-</span> | 
-                    Factura: <span id="paymentInvoiceNumber">-</span> | 
+                    Cliente: <span id="paymentClientName">-</span> |
+                    Factura: <span id="paymentInvoiceNumber">-</span> |
                     Saldo Pendiente: <span id="paymentModalPendingAmount" class="currency">RD$ 0</span>
                 </div>
 
                 <div class="payment-options">
-                    <div class="payment-option selected" data-type="partial" onclick="selectPaymentOption('partial', this)">
+                    <div class="payment-option selected" data-type="partial"
+                        onclick="selectPaymentOption('partial', this)">
                         <i class='bx bx-money'></i>
                         <h4>Abono Parcial</h4>
                         <p>Pagar una parte del saldo</p>
@@ -1330,7 +1345,7 @@
                 <form id="paymentForm">
                     <input type="hidden" id="paymentAccountId">
                     <input type="hidden" id="paymentType" value="partial">
-                    
+
                     <div class="payment-form-group">
                         <label for="paymentAmountInput">Monto a Pagar *</label>
                         <input type="number" id="paymentAmountInput" step="0.01" min="0" required>
@@ -1371,166 +1386,166 @@
         </div>
     </div>
 
-<script>
-    // Variables globales
-    let accounts = [];
-    let filteredAccounts = [];
-    let groupedClients = [];
-    let currentPaymentType = 'partial';
-    let expandedClients = new Set();
+    <script>
+        // Variables globales
+        let accounts = [];
+        let filteredAccounts = [];
+        let groupedClients = [];
+        let currentPaymentType = 'partial';
+        let expandedClients = new Set();
 
-    // Función para cargar datos desde la API
-    async function loadAccounts() {
-        try {
-            const response = await fetch('/api/cuentas-por-cobrar/');
-            if (response.ok) {
-                accounts = await response.json();
-                filteredAccounts = [...accounts];
-                renderTable();
-                updateStats();
-            } else {
-                console.error('Error al cargar las cuentas');
-                const error = await response.json();
-                alert('Error al cargar datos: ' + error.error);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error de conexión al cargar las cuentas');
-        }
-    }
-
-    // Función para agrupar cuentas por cliente
-    function groupAccountsByClient(accountsData) {
-        const clientsMap = {};
-        
-        accountsData.forEach(account => {
-            const clientKey = account.clientId ? 
-                `client-${account.clientId}` : 
-                `${account.clientName}-${account.clientPhone}`;
-            
-            if (!clientsMap[clientKey]) {
-                clientsMap[clientKey] = {
-                    clientId: account.clientId,
-                    clientName: account.clientName,
-                    clientPhone: account.clientPhone,
-                    invoices: [],
-                    totalPending: 0,
-                    status: 'pagada',
-                    isExpanded: false
-                };
-            }
-            
-            const pendingBalance = account.totalAmount - account.paidAmount;
-            
-            clientsMap[clientKey].invoices.push({
-                id: account.id,
-                invoiceNumber: account.invoiceNumber,
-                products: account.products,
-                saleDate: account.saleDate,
-                dueDate: account.dueDate,
-                totalAmount: account.totalAmount,
-                paidAmount: account.paidAmount,
-                pendingBalance: pendingBalance,
-                status: account.status,
-                observations: account.observations,
-                pagos: account.pagos || []
-            });
-            
-            clientsMap[clientKey].totalPending += pendingBalance;
-            
-            // Determinar el estado general del cliente
-            if (account.status === 'vencida') {
-                clientsMap[clientKey].status = 'vencida';
-            } else if (account.status === 'pendiente' && clientsMap[clientKey].status !== 'vencida') {
-                clientsMap[clientKey].status = 'pendiente';
-            } else if (account.status === 'parcial' && clientsMap[clientKey].status !== 'vencida' && clientsMap[clientKey].status !== 'pendiente') {
-                clientsMap[clientKey].status = 'parcial';
-            }
-        });
-        
-        return Object.values(clientsMap);
-    }
-
-    // Función para actualizar estadísticas
-    function updateStats(accountsData = accounts) {
-        let pendingAmount = 0;
-        let overdueAmount = 0;
-        let paidThisMonthAmount = 0;
-        let totalReceivableAmount = 0;
-        
-        accountsData.forEach(account => {
-            const pendingBalance = account.totalAmount - account.paidAmount;
-            totalReceivableAmount += pendingBalance;
-            
-            if (account.status === 'pendiente' || account.status === 'parcial') {
-                pendingAmount += pendingBalance;
-            } else if (account.status === 'vencida') {
-                overdueAmount += pendingBalance;
-            }
-            
-            if (account.status === 'pagada') {
-                const saleDate = new Date(account.saleDate);
-                const now = new Date();
-                if (saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear()) {
-                    paidThisMonthAmount += account.totalAmount;
+        // Función para cargar datos desde la API
+        async function loadAccounts() {
+            try {
+                const response = await fetch('/api/cuentas-por-cobrar/');
+                if (response.ok) {
+                    accounts = await response.json();
+                    filteredAccounts = [...accounts];
+                    renderTable();
+                    updateStats();
+                } else {
+                    console.error('Error al cargar las cuentas');
+                    const error = await response.json();
+                    alert('Error al cargar datos: ' + error.error);
                 }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión al cargar las cuentas');
             }
-        });
-        
-        document.getElementById('pendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
-        document.getElementById('overdueAmount').textContent = `RD$ ${overdueAmount.toLocaleString('es-DO')}`;
-        document.getElementById('paidThisMonthAmount').textContent = `RD$ ${paidThisMonthAmount.toLocaleString('es-DO')}`;
-        document.getElementById('totalReceivableAmount').textContent = `RD$ ${totalReceivableAmount.toLocaleString('es-DO')}`;
-    }
-
-    // Función para obtener clase de estado
-    function getStatusClass(status) {
-        const statusClasses = {
-            'pendiente': 'status-pending',
-            'parcial': 'status-pending',
-            'vencida': 'status-overdue',
-            'pagada': 'status-paid'
-        };
-        return statusClasses[status] || '';
-    }
-
-    // Función para obtener nombre de estado
-    function getStatusName(status) {
-        const statusNames = {
-            'pendiente': 'Pendiente',
-            'parcial': 'Parcial',
-            'vencida': 'Vencida',
-            'pagada': 'Pagada'
-        };
-        return statusNames[status] || status;
-    }
-
-    // Función para renderizar la tabla
-    function renderTable(data = accounts) {
-        const tableBody = document.getElementById('tableBody');
-        const noDataMessage = document.getElementById('noDataMessage');
-        
-        if (!data || data.length === 0) {
-            tableBody.innerHTML = '';
-            noDataMessage.style.display = 'block';
-            return;
         }
-        
-        noDataMessage.style.display = 'none';
-        groupedClients = groupAccountsByClient(data);
-        
-        let tableRowsHTML = '';
-        
-        groupedClients.forEach(client => {
-            const clientKey = client.clientId ? 
-                `client-${client.clientId}` : 
-                `${client.clientName}-${client.clientPhone}`;
 
-            const isExpanded = expandedClients.has(clientKey);
-            const todasPagadas = client.invoices.every(invoice => invoice.status === 'pagada');
-            
-            // Fila principal del cliente
-            tableRowsHTML += `
+        // Función para agrupar cuentas por cliente
+        function groupAccountsByClient(accountsData) {
+            const clientsMap = {};
+
+            accountsData.forEach(account => {
+                const clientKey = account.clientId ?
+                    `client-${account.clientId}` :
+                    `${account.clientName}-${account.clientPhone}`;
+
+                if (!clientsMap[clientKey]) {
+                    clientsMap[clientKey] = {
+                        clientId: account.clientId,
+                        clientName: account.clientName,
+                        clientPhone: account.clientPhone,
+                        invoices: [],
+                        totalPending: 0,
+                        status: 'pagada',
+                        isExpanded: false
+                    };
+                }
+
+                const pendingBalance = account.totalAmount - account.paidAmount;
+
+                clientsMap[clientKey].invoices.push({
+                    id: account.id,
+                    invoiceNumber: account.invoiceNumber,
+                    products: account.products,
+                    saleDate: account.saleDate,
+                    dueDate: account.dueDate,
+                    totalAmount: account.totalAmount,
+                    paidAmount: account.paidAmount,
+                    pendingBalance: pendingBalance,
+                    status: account.status,
+                    observations: account.observations,
+                    pagos: account.pagos || []
+                });
+
+                clientsMap[clientKey].totalPending += pendingBalance;
+
+                // Determinar el estado general del cliente
+                if (account.status === 'vencida') {
+                    clientsMap[clientKey].status = 'vencida';
+                } else if (account.status === 'pendiente' && clientsMap[clientKey].status !== 'vencida') {
+                    clientsMap[clientKey].status = 'pendiente';
+                } else if (account.status === 'parcial' && clientsMap[clientKey].status !== 'vencida' && clientsMap[clientKey].status !== 'pendiente') {
+                    clientsMap[clientKey].status = 'parcial';
+                }
+            });
+
+            return Object.values(clientsMap);
+        }
+
+        // Función para actualizar estadísticas
+        function updateStats(accountsData = accounts) {
+            let pendingAmount = 0;
+            let overdueAmount = 0;
+            let paidThisMonthAmount = 0;
+            let totalReceivableAmount = 0;
+
+            accountsData.forEach(account => {
+                const pendingBalance = account.totalAmount - account.paidAmount;
+                totalReceivableAmount += pendingBalance;
+
+                if (account.status === 'pendiente' || account.status === 'parcial') {
+                    pendingAmount += pendingBalance;
+                } else if (account.status === 'vencida') {
+                    overdueAmount += pendingBalance;
+                }
+
+                if (account.status === 'pagada') {
+                    const saleDate = new Date(account.saleDate);
+                    const now = new Date();
+                    if (saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear()) {
+                        paidThisMonthAmount += account.totalAmount;
+                    }
+                }
+            });
+
+            document.getElementById('pendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
+            document.getElementById('overdueAmount').textContent = `RD$ ${overdueAmount.toLocaleString('es-DO')}`;
+            document.getElementById('paidThisMonthAmount').textContent = `RD$ ${paidThisMonthAmount.toLocaleString('es-DO')}`;
+            document.getElementById('totalReceivableAmount').textContent = `RD$ ${totalReceivableAmount.toLocaleString('es-DO')}`;
+        }
+
+        // Función para obtener clase de estado
+        function getStatusClass(status) {
+            const statusClasses = {
+                'pendiente': 'status-pending',
+                'parcial': 'status-pending',
+                'vencida': 'status-overdue',
+                'pagada': 'status-paid'
+            };
+            return statusClasses[status] || '';
+        }
+
+        // Función para obtener nombre de estado
+        function getStatusName(status) {
+            const statusNames = {
+                'pendiente': 'Pendiente',
+                'parcial': 'Parcial',
+                'vencida': 'Vencida',
+                'pagada': 'Pagada'
+            };
+            return statusNames[status] || status;
+        }
+
+        // Función para renderizar la tabla
+        function renderTable(data = accounts) {
+            const tableBody = document.getElementById('tableBody');
+            const noDataMessage = document.getElementById('noDataMessage');
+
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = '';
+                noDataMessage.style.display = 'block';
+                return;
+            }
+
+            noDataMessage.style.display = 'none';
+            groupedClients = groupAccountsByClient(data);
+
+            let tableRowsHTML = '';
+
+            groupedClients.forEach(client => {
+                const clientKey = client.clientId ?
+                    `client-${client.clientId}` :
+                    `${client.clientName}-${client.clientPhone}`;
+
+                const isExpanded = expandedClients.has(clientKey);
+                const todasPagadas = client.invoices.every(invoice => invoice.status === 'pagada');
+
+                // Fila principal del cliente
+                tableRowsHTML += `
                 <tr class="client-header ${isExpanded ? 'expanded' : ''}" data-client-key="${clientKey}" onclick="toggleClientDetails('${clientKey}')">
                     <td>
                         <i class='bx bx-chevron-down collapse-icon'></i>
@@ -1573,17 +1588,17 @@
                     </td>
                 </tr>
             `;
-        });
-        
-        tableBody.innerHTML = tableRowsHTML;
-    }
+            });
 
-    // Función para renderizar las facturas de un cliente
-    function renderClientInvoices(client) {
-        let invoicesHTML = '';
-        
-        client.invoices.forEach((invoice, index) => {
-            invoicesHTML += `
+            tableBody.innerHTML = tableRowsHTML;
+        }
+
+        // Función para renderizar las facturas de un cliente
+        function renderClientInvoices(client) {
+            let invoicesHTML = '';
+
+            client.invoices.forEach((invoice, index) => {
+                invoicesHTML += `
                 <div class="invoice-item">
                     <div class="invoice-header" onclick="toggleInvoiceDetails('${client.clientId || client.clientName}', ${index})">
                         <div class="invoice-info">
@@ -1669,117 +1684,117 @@
                     </div>
                 </div>
             `;
-        });
-        
-        return invoicesHTML;
-    }
-
-    // Función para toggle detalles del cliente
-    function toggleClientDetails(clientKey) {
-        if (expandedClients.has(clientKey)) {
-            expandedClients.delete(clientKey);
-        } else {
-            expandedClients.add(clientKey);
-        }
-        renderTable(filteredAccounts);
-    }
-
-    // Función para toggle detalles de factura individual
-    function toggleInvoiceDetails(clientId, invoiceIndex) {
-        const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
-        if (detailsElement.style.display === 'none') {
-            detailsElement.style.display = 'block';
-        } else {
-            detailsElement.style.display = 'none';
-        }
-    }
-
-    // Función para abrir detalles de factura individual
-    function openInvoiceDetails(clientId, invoiceIndex) {
-        const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
-        detailsElement.style.display = 'block';
-    }
-
-    // Función para eliminar cuentas de un cliente completamente pagado
-    async function eliminarCuentaCliente(clientKey) {
-        const client = groupedClients.find(c => {
-            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
-            return key === clientKey;
-        });
-        
-        if (!client) return;
-        
-        // Confirmar eliminación
-        if (!confirm(`¿Está seguro de que desea eliminar todas las facturas de ${client.clientName}?\n\nEsta acción no se puede deshacer.`)) {
-            return;
-        }
-        
-        try {
-            // Eliminar cada cuenta individualmente
-            const deletePromises = client.invoices.map(async (invoice) => {
-                const response = await fetch(`/api/cuentas-por-cobrar/${invoice.id}/eliminar/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': getCSRFToken()
-                    }
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Error al eliminar la cuenta');
-                }
-                
-                return response.json();
             });
-            
-            // Esperar a que todas las eliminaciones se completen
-            await Promise.all(deletePromises);
-            
-            // Recargar los datos
-            await loadAccounts();
-            
-            alert('Facturas eliminadas exitosamente');
-            
-        } catch (error) {
-            console.error('Error al eliminar cuentas:', error);
-            alert('Error al eliminar las facturas: ' + error.message);
+
+            return invoicesHTML;
         }
-    }
 
-    // Función para abrir modal de detalles
-    function openDetailsModal(clientKey) {
-        const client = groupedClients.find(c => {
-            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
-            return key === clientKey;
-        });
-        if (!client) return;
+        // Función para toggle detalles del cliente
+        function toggleClientDetails(clientKey) {
+            if (expandedClients.has(clientKey)) {
+                expandedClients.delete(clientKey);
+            } else {
+                expandedClients.add(clientKey);
+            }
+            renderTable(filteredAccounts);
+        }
 
-        // Actualizar información general
-        document.getElementById('detailsClientName').textContent = client.clientName;
-        document.getElementById('detailsInvoiceNumber').textContent = `${client.invoices.length} factura(s)`;
-        document.getElementById('detailsTotalAmount').textContent = `RD$ ${client.totalPending.toLocaleString('es-DO')}`;
+        // Función para toggle detalles de factura individual
+        function toggleInvoiceDetails(clientId, invoiceIndex) {
+            const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
+            if (detailsElement.style.display === 'none') {
+                detailsElement.style.display = 'block';
+            } else {
+                detailsElement.style.display = 'none';
+            }
+        }
 
-        // Cargar productos de todas las facturas
-        loadProductsDetails(client);
+        // Función para abrir detalles de factura individual
+        function openInvoiceDetails(clientId, invoiceIndex) {
+            const detailsElement = document.getElementById(`invoice-details-${clientId}-${invoiceIndex}`);
+            detailsElement.style.display = 'block';
+        }
 
-        // Cargar progreso de pagos
-        loadPaymentsProgress(client);
+        // Función para eliminar cuentas de un cliente completamente pagado
+        async function eliminarCuentaCliente(clientKey) {
+            const client = groupedClients.find(c => {
+                const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+                return key === clientKey;
+            });
 
-        // Mostrar modal
-        document.getElementById('detailsModal').classList.add('active');
-    }
+            if (!client) return;
 
-    // Función para cargar detalles de productos
-    function loadProductsDetails(client) {
-        const productsTableBody = document.getElementById('productsTableBody');
-        let productsHTML = '';
-        let totalAmount = 0;
+            // Confirmar eliminación
+            if (!confirm(`¿Está seguro de que desea eliminar todas las facturas de ${client.clientName}?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
 
-        client.invoices.forEach(invoice => {
-            invoice.products.forEach(product => {
-                const subtotal = product.cantidad * product.precio;
-                totalAmount += subtotal;
-                productsHTML += `
+            try {
+                // Eliminar cada cuenta individualmente
+                const deletePromises = client.invoices.map(async (invoice) => {
+                    const response = await fetch(`/api/cuentas-por-cobrar/${invoice.id}/eliminar/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': getCSRFToken()
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Error al eliminar la cuenta');
+                    }
+
+                    return response.json();
+                });
+
+                // Esperar a que todas las eliminaciones se completen
+                await Promise.all(deletePromises);
+
+                // Recargar los datos
+                await loadAccounts();
+
+                alert('Facturas eliminadas exitosamente');
+
+            } catch (error) {
+                console.error('Error al eliminar cuentas:', error);
+                alert('Error al eliminar las facturas: ' + error.message);
+            }
+        }
+
+        // Función para abrir modal de detalles
+        function openDetailsModal(clientKey) {
+            const client = groupedClients.find(c => {
+                const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+                return key === clientKey;
+            });
+            if (!client) return;
+
+            // Actualizar información general
+            document.getElementById('detailsClientName').textContent = client.clientName;
+            document.getElementById('detailsInvoiceNumber').textContent = `${client.invoices.length} factura(s)`;
+            document.getElementById('detailsTotalAmount').textContent = `RD$ ${client.totalPending.toLocaleString('es-DO')}`;
+
+            // Cargar productos de todas las facturas
+            loadProductsDetails(client);
+
+            // Cargar progreso de pagos
+            loadPaymentsProgress(client);
+
+            // Mostrar modal
+            document.getElementById('detailsModal').classList.add('active');
+        }
+
+        // Función para cargar detalles de productos
+        function loadProductsDetails(client) {
+            const productsTableBody = document.getElementById('productsTableBody');
+            let productsHTML = '';
+            let totalAmount = 0;
+
+            client.invoices.forEach(invoice => {
+                invoice.products.forEach(product => {
+                    const subtotal = product.cantidad * product.precio;
+                    totalAmount += subtotal;
+                    productsHTML += `
                     <tr>
                         <td>${product.nombre}</td>
                         <td style="text-align: center;">${product.cantidad}</td>
@@ -1787,51 +1802,51 @@
                         <td style="text-align: right;">RD$ ${subtotal.toLocaleString('es-DO')}</td>
                     </tr>
                 `;
+                });
             });
-        });
 
-        productsTableBody.innerHTML = productsHTML;
-        document.getElementById('productsTotal').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
-    }
+            productsTableBody.innerHTML = productsHTML;
+            document.getElementById('productsTotal').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+        }
 
-    // Función para cargar progreso de pagos
-    function loadPaymentsProgress(client) {
-        let totalAmount = 0;
-        let paidAmount = 0;
-        let pendingAmount = 0;
+        // Función para cargar progreso de pagos
+        function loadPaymentsProgress(client) {
+            let totalAmount = 0;
+            let paidAmount = 0;
+            let pendingAmount = 0;
 
-        client.invoices.forEach(invoice => {
-            totalAmount += invoice.totalAmount;
-            paidAmount += invoice.paidAmount;
-            pendingAmount += invoice.pendingBalance;
-        });
+            client.invoices.forEach(invoice => {
+                totalAmount += invoice.totalAmount;
+                paidAmount += invoice.paidAmount;
+                pendingAmount += invoice.pendingBalance;
+            });
 
-        const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount * 100) : 0;
+            const progressPercentage = totalAmount > 0 ? (paidAmount / totalAmount * 100) : 0;
 
-        // Actualizar resumen
-        document.getElementById('progressTotalAmount').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
-        document.getElementById('progressPaidAmount').textContent = `RD$ ${paidAmount.toLocaleString('es-DO')}`;
-        document.getElementById('progressPendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
+            // Actualizar resumen
+            document.getElementById('progressTotalAmount').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+            document.getElementById('progressPaidAmount').textContent = `RD$ ${paidAmount.toLocaleString('es-DO')}`;
+            document.getElementById('progressPendingAmount').textContent = `RD$ ${pendingAmount.toLocaleString('es-DO')}`;
 
-        // Actualizar barra de progreso
-        document.getElementById('progressBarFill').style.width = `${progressPercentage}%`;
-        document.getElementById('progressBarFill').textContent = `${progressPercentage.toFixed(1)}%`;
-        document.getElementById('progressPercentage').textContent = `${progressPercentage.toFixed(1)}%`;
-        document.getElementById('progressTotalText').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
+            // Actualizar barra de progreso
+            document.getElementById('progressBarFill').style.width = `${progressPercentage}%`;
+            document.getElementById('progressBarFill').textContent = `${progressPercentage.toFixed(1)}%`;
+            document.getElementById('progressPercentage').textContent = `${progressPercentage.toFixed(1)}%`;
+            document.getElementById('progressTotalText').textContent = `RD$ ${totalAmount.toLocaleString('es-DO')}`;
 
-        // Cargar historial de pagos
-        loadPaymentsHistory(client);
-    }
+            // Cargar historial de pagos
+            loadPaymentsHistory(client);
+        }
 
-    // Función para cargar historial de pagos
-    function loadPaymentsHistory(client) {
-        const paymentsList = document.getElementById('paymentsList');
-        let paymentsHTML = '';
+        // Función para cargar historial de pagos
+        function loadPaymentsHistory(client) {
+            const paymentsList = document.getElementById('paymentsList');
+            let paymentsHTML = '';
 
-        client.invoices.forEach(invoice => {
-            if (invoice.pagos && invoice.pagos.length > 0) {
-                invoice.pagos.forEach(pago => {
-                    paymentsHTML += `
+            client.invoices.forEach(invoice => {
+                if (invoice.pagos && invoice.pagos.length > 0) {
+                    invoice.pagos.forEach(pago => {
+                        paymentsHTML += `
                         <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #28a745;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
@@ -1852,78 +1867,78 @@
                             </div>
                         </div>
                     `;
-                });
-            }
-        });
+                    });
+                }
+            });
 
-        if (paymentsHTML === '') {
-            paymentsHTML = `
+            if (paymentsHTML === '') {
+                paymentsHTML = `
                 <div style="text-align: center; padding: 40px; color: #6b7280;">
                     <i class='bx bx-time' style="font-size: 3rem; margin-bottom: 10px;"></i>
                     <p>No se han realizado pagos</p>
                 </div>
             `;
+            }
+
+            paymentsList.innerHTML = paymentsHTML;
         }
 
-        paymentsList.innerHTML = paymentsHTML;
-    }
+        // Función para cambiar entre pestañas
+        function switchTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-    // Función para cambiar entre pestañas
-    function switchTab(tabName) {
-        // Ocultar todas las pestañas
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // Remover active de todos los botones
-        document.querySelectorAll('.details-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // Activar la pestaña seleccionada
-        document.getElementById(tabName).classList.add('active');
-        
-        // Activar el botón correspondiente
-        event.target.classList.add('active');
-    }
+            // Remover active de todos los botones
+            document.querySelectorAll('.details-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-    // Función para cerrar modal de detalles
-    function closeDetailsModal() {
-        document.getElementById('detailsModal').classList.remove('active');
-    }
+            // Activar la pestaña seleccionada
+            document.getElementById(tabName).classList.add('active');
 
-    // Función para abrir modal de pago para un cliente
-    function openPaymentModalForClient(clientKey) {
-        const client = groupedClients.find(c => {
-            const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
-            return key === clientKey;
-        });
-        if (!client) {
-            console.error('Cliente no encontrado:', clientKey);
-            return;
+            // Activar el botón correspondiente
+            event.target.classList.add('active');
         }
 
-        // Filtrar facturas con saldo pendiente
-        const pendingInvoices = client.invoices.filter(invoice => invoice.pendingBalance > 0);
-        
-        if (pendingInvoices.length === 0) {
-            alert('Este cliente no tiene facturas pendientes de pago');
-            return;
+        // Función para cerrar modal de detalles
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').classList.remove('active');
         }
 
-        // Si solo tiene una factura pendiente, abrir directamente
-        if (pendingInvoices.length === 1) {
-            openPaymentModal(pendingInvoices[0].id);
-        } else {
-            // Si tiene múltiples facturas, mostrar un selector mejorado
-            showInvoiceSelector(client, pendingInvoices);
-        }
-    }
+        // Función para abrir modal de pago para un cliente
+        function openPaymentModalForClient(clientKey) {
+            const client = groupedClients.find(c => {
+                const key = c.clientId ? `client-${c.clientId}` : `${c.clientName}-${c.clientPhone}`;
+                return key === clientKey;
+            });
+            if (!client) {
+                console.error('Cliente no encontrado:', clientKey);
+                return;
+            }
 
-    // Función para mostrar selector de facturas
-    function showInvoiceSelector(client, pendingInvoices) {
-        // Crear modal de selección
-        const selectorHTML = `
+            // Filtrar facturas con saldo pendiente
+            const pendingInvoices = client.invoices.filter(invoice => invoice.pendingBalance > 0);
+
+            if (pendingInvoices.length === 0) {
+                alert('Este cliente no tiene facturas pendientes de pago');
+                return;
+            }
+
+            // Si solo tiene una factura pendiente, abrir directamente
+            if (pendingInvoices.length === 1) {
+                openPaymentModal(pendingInvoices[0].id);
+            } else {
+                // Si tiene múltiples facturas, mostrar un selector mejorado
+                showInvoiceSelector(client, pendingInvoices);
+            }
+        }
+
+        // Función para mostrar selector de facturas
+        function showInvoiceSelector(client, pendingInvoices) {
+            // Crear modal de selección
+            const selectorHTML = `
             <div class="modal active" id="invoiceSelectorModal">
                 <div class="modal-content" style="max-width: 500px;">
                     <div class="modal-header">
@@ -1972,369 +1987,370 @@
                 </div>
             </div>
         `;
-        
-        // Agregar el modal al body
-        const modalContainer = document.createElement('div');
-        modalContainer.innerHTML = selectorHTML;
-        document.body.appendChild(modalContainer);
-    }
 
-    // Función para seleccionar factura
-    function selectInvoiceForPayment(invoiceId) {
-        closeInvoiceSelector();
-        openPaymentModal(invoiceId);
-    }
-
-    // Función para cerrar el selector de facturas
-    function closeInvoiceSelector() {
-        const modal = document.getElementById('invoiceSelectorModal');
-        if (modal) {
-            modal.remove();
+            // Agregar el modal al body
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = selectorHTML;
+            document.body.appendChild(modalContainer);
         }
-    }
 
-    // Función para seleccionar tipo de pago
-    function selectPaymentOption(type, element = null) {
-        currentPaymentType = type;
-        
-        // Remover selección anterior
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.classList.remove('selected');
-        });
-        
-        // Agregar selección actual
-        if (element) {
-            element.classList.add('selected');
-        } else {
-            const optionToSelect = document.querySelector(`.payment-option[data-type="${type}"]`);
-            if (optionToSelect) {
-                optionToSelect.classList.add('selected');
+        // Función para seleccionar factura
+        function selectInvoiceForPayment(invoiceId) {
+            closeInvoiceSelector();
+            openPaymentModal(invoiceId);
+        }
+
+        // Función para cerrar el selector de facturas
+        function closeInvoiceSelector() {
+            const modal = document.getElementById('invoiceSelectorModal');
+            if (modal) {
+                modal.remove();
             }
         }
-        
-        // Actualizar campo de tipo de pago
-        document.getElementById('paymentType').value = type;
-        
-        // Mostrar/ocultar opciones rápidas
-        const quickAmounts = document.getElementById('quickAmounts');
-        if (type === 'partial') {
-            quickAmounts.style.display = 'grid';
-        } else {
-            quickAmounts.style.display = 'none';
-        }
-        
-        // Actualizar monto si es pago completo
-        if (type === 'full') {
-            const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
-            document.getElementById('paymentAmountInput').value = pendingAmount.toFixed(2);
-        }
-    }
 
-    // Función para establecer monto rápido
-    function setQuickAmount(percentage) {
-        const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
-        const amount = pendingAmount * percentage;
-        document.getElementById('paymentAmountInput').value = amount.toFixed(2);
-    }
+        // Función para seleccionar tipo de pago
+        function selectPaymentOption(type, element = null) {
+            currentPaymentType = type;
 
-    // Función para abrir modal de pago
-    function openPaymentModal(id) {
-        const account = accounts.find(acc => acc.id === id);
-        if (!account) {
-            console.error('Cuenta no encontrada con ID:', id);
-            alert('Error: No se encontró la cuenta');
-            return;
-        }
-        
-        const currentPendingBalance = account.totalAmount - account.paidAmount;
-        
-        if (currentPendingBalance <= 0) {
-            alert('Esta cuenta ya está completamente pagada');
-            return;
-        }
-        
-        document.getElementById('paymentClientName').textContent = account.clientName;
-        document.getElementById('paymentInvoiceNumber').textContent = account.invoiceNumber;
-        document.getElementById('paymentModalPendingAmount').textContent = `RD$ ${currentPendingBalance.toLocaleString('es-DO')}`;
-        document.getElementById('paymentAccountId').value = id;
-        
-        // Resetear a pago parcial por defecto
-        selectPaymentOption('partial');
-        document.getElementById('paymentAmountInput').value = '';
-        document.getElementById('paymentAmountInput').max = currentPendingBalance.toFixed(2);
-        document.getElementById('paymentAmountInput').min = "0.01";
-        
-        document.getElementById('paymentModal').classList.add('active');
-    }
+            // Remover selección anterior
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
 
-    // Función para cerrar modal de pago
-    function closePaymentModal() {
-        document.getElementById('paymentModal').classList.remove('active');
-        document.getElementById('paymentForm').reset();
-    }
-
-    // Función para obtener el token CSRF
-    function getCSRFToken() {
-        const name = 'csrftoken';
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+            // Agregar selección actual
+            if (element) {
+                element.classList.add('selected');
+            } else {
+                const optionToSelect = document.querySelector(`.payment-option[data-type="${type}"]`);
+                if (optionToSelect) {
+                    optionToSelect.classList.add('selected');
                 }
             }
-        }
-        return cookieValue;
-    }
 
-    // Función para procesar pago - CORREGIDA
-    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const accountId = parseInt(document.getElementById('paymentAccountId').value);
-        let amount = parseFloat(document.getElementById('paymentAmountInput').value);
-        const method = document.getElementById('paymentMethod').value;
-        const reference = document.getElementById('paymentReference').value;
-        const paymentType = document.getElementById('paymentType').value;
-        
-        console.log('Datos del pago:', { accountId, amount, method, reference, paymentType });
-        
-        if (!amount || amount <= 0) {
-            alert('Ingrese un monto válido mayor a 0');
-            return;
+            // Actualizar campo de tipo de pago
+            document.getElementById('paymentType').value = type;
+
+            // Mostrar/ocultar opciones rápidas
+            const quickAmounts = document.getElementById('quickAmounts');
+            if (type === 'partial') {
+                quickAmounts.style.display = 'grid';
+            } else {
+                quickAmounts.style.display = 'none';
+            }
+
+            // Actualizar monto si es pago completo
+            if (type === 'full') {
+                const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
+                document.getElementById('paymentAmountInput').value = pendingAmount.toFixed(2);
+            }
         }
-        
-        if (!method) {
-            alert('Seleccione un método de pago');
-            return;
+
+        // Función para establecer monto rápido
+        function setQuickAmount(percentage) {
+            const pendingAmount = parseFloat(document.getElementById('paymentModalPendingAmount').textContent.replace(/[RD$,]/g, ''));
+            const amount = pendingAmount * percentage;
+            document.getElementById('paymentAmountInput').value = amount.toFixed(2);
         }
-        
-        const account = accounts.find(acc => acc.id === accountId);
-        if (!account) {
-            alert('Error: Cuenta no encontrada');
-            return;
+
+        // Función para abrir modal de pago
+        function openPaymentModal(id) {
+            const account = accounts.find(acc => acc.id === id);
+            if (!account) {
+                console.error('Cuenta no encontrada con ID:', id);
+                alert('Error: No se encontró la cuenta');
+                return;
+            }
+
+            const currentPendingBalance = account.totalAmount - account.paidAmount;
+
+            if (currentPendingBalance <= 0) {
+                alert('Esta cuenta ya está completamente pagada');
+                return;
+            }
+
+            document.getElementById('paymentClientName').textContent = account.clientName;
+            document.getElementById('paymentInvoiceNumber').textContent = account.invoiceNumber;
+            document.getElementById('paymentModalPendingAmount').textContent = `RD$ ${currentPendingBalance.toLocaleString('es-DO')}`;
+            document.getElementById('paymentAccountId').value = id;
+
+            // Resetear a pago parcial por defecto
+            selectPaymentOption('partial');
+            document.getElementById('paymentAmountInput').value = '';
+            document.getElementById('paymentAmountInput').max = currentPendingBalance.toFixed(2);
+            document.getElementById('paymentAmountInput').min = "0.01";
+
+            document.getElementById('paymentModal').classList.add('active');
         }
-        
-        const maxAmount = account.totalAmount - account.paidAmount;
-        
-        // Si es pago completo, usar el monto pendiente exacto
-        if (paymentType === 'full') {
-            amount = maxAmount;
+
+        // Función para cerrar modal de pago
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('paymentForm').reset();
         }
-        
-        if (amount > maxAmount) {
-            alert(`El monto no puede exceder el saldo pendiente de RD$ ${maxAmount.toLocaleString('es-DO')}`);
-            return;
+
+        // Función para obtener el token CSRF
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
-        
-        try {
-            const response = await fetch('/api/cuentas-por-cobrar/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({
-                    cuenta_id: accountId,
-                    monto_pagado: amount,
-                    metodo_pago: method,
-                    referencia: reference
-                })
-            });
-            
-            const result = await response.json();
-            console.log('Respuesta completa del servidor:', result);
-            
-            if (response.ok) {
-                closePaymentModal();
-                await loadAccounts();
-                
-                // CORRECCIÓN: Validar que el pago y su ID existan antes de generar comprobante
-                if (result.pago && result.pago.id) {
-                    if (confirm('Pago registrado exitosamente. ¿Desea generar el comprobante de pago?')) {
-                        console.log('Generando comprobante con ID:', result.pago.id);
-                        generateReceipt80mm(result.pago.id);
+
+        // Función para procesar pago - CORREGIDA
+        document.getElementById('paymentForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const accountId = parseInt(document.getElementById('paymentAccountId').value);
+            let amount = parseFloat(document.getElementById('paymentAmountInput').value);
+            const method = document.getElementById('paymentMethod').value;
+            const reference = document.getElementById('paymentReference').value;
+            const paymentType = document.getElementById('paymentType').value;
+
+            console.log('Datos del pago:', { accountId, amount, method, reference, paymentType });
+
+            if (!amount || amount <= 0) {
+                alert('Ingrese un monto válido mayor a 0');
+                return;
+            }
+
+            if (!method) {
+                alert('Seleccione un método de pago');
+                return;
+            }
+
+            const account = accounts.find(acc => acc.id === accountId);
+            if (!account) {
+                alert('Error: Cuenta no encontrada');
+                return;
+            }
+
+            const maxAmount = account.totalAmount - account.paidAmount;
+
+            // Si es pago completo, usar el monto pendiente exacto
+            if (paymentType === 'full') {
+                amount = maxAmount;
+            }
+
+            if (amount > maxAmount) {
+                alert(`El monto no puede exceder el saldo pendiente de RD$ ${maxAmount.toLocaleString('es-DO')}`);
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/cuentas-por-cobrar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        cuenta_id: accountId,
+                        monto_pagado: amount,
+                        metodo_pago: method,
+                        referencia: reference
+                    })
+                });
+
+                const result = await response.json();
+                console.log('Respuesta completa del servidor:', result);
+
+                if (response.ok) {
+                    closePaymentModal();
+                    await loadAccounts();
+
+                    // CORRECCIÓN: Validar que el pago y su ID existan antes de generar comprobante
+                    if (result.pago && result.pago.id) {
+                        if (confirm('Pago registrado exitosamente. ¿Desea generar el comprobante de pago?')) {
+                            console.log('Generando comprobante con ID:', result.pago.id);
+                            generateReceipt80mm(result.pago.id);
+                        }
+                    } else {
+                        console.error('Respuesta del servidor incompleta:', result);
+                        alert('Pago registrado, pero no se pudo generar el comprobante. ID de pago no encontrado.');
                     }
                 } else {
-                    console.error('Respuesta del servidor incompleta:', result);
-                    alert('Pago registrado, pero no se pudo generar el comprobante. ID de pago no encontrado.');
+                    alert('Error: ' + result.error);
                 }
-            } else {
-                alert('Error: ' + result.error);
+            } catch (error) {
+                alert('Error al registrar el pago: ' + error.message);
             }
-        } catch (error) {
-            alert('Error al registrar el pago: ' + error.message);
-        }
-    });
-
-    // Función para generar comprobante con formato de 80mm - CORREGIDA para descargar PDF
-    function generateReceipt80mm(pagoId) {
-        console.log('Generando comprobante 80mm, ID recibido:', pagoId);
-        
-        if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
-            console.error('ID de pago no válido:', pagoId);
-            alert('Error: No se pudo obtener el ID del pago.');
-            return;
-        }
-        
-        const idNumerico = parseInt(pagoId);
-        if (isNaN(idNumerico)) {
-            console.error('ID de pago no es numérico:', pagoId);
-            alert('Error: ID de pago inválido.');
-            return;
-        }
-        
-        // Crear un elemento <a> invisible para forzar la descarga
-        const link = document.createElement('a');
-        link.href = `/comprobante-pago-80mm/${idNumerico}/`;
-        link.target = '_blank'; // Abrir en nueva pestaña
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Función para generar comprobante normal - CORREGIDA para descargar PDF
-    function generateReceipt(pagoId) {
-        console.log('Generando comprobante normal, ID recibido:', pagoId);
-        
-        if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
-            console.error('ID de pago no válido:', pagoId);
-            alert('Error: No se pudo obtener el ID del pago.');
-            return;
-        }
-        
-        const idNumerico = parseInt(pagoId);
-        if (isNaN(idNumerico)) {
-            console.error('ID de pago no es numérico:', pagoId);
-            alert('Error: ID de pago inválido.');
-            return;
-        }
-        
-        // Crear un elemento <a> invisible para forzar la descarga
-        const link = document.createElement('a');
-        link.href = `/comprobante-pago/${idNumerico}/`;
-        link.target = '_blank'; // Abrir en nueva pestaña
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    // Función para aplicar filtros
-    function applyFilters() {
-        const searchTerm = document.getElementById('searchClient').value.toLowerCase().trim();
-        const statusFilter = document.getElementById('statusFilter').value;
-        
-        filteredAccounts = accounts.filter(account => {
-            const matchesSearch = !searchTerm ||
-                account.clientName.toLowerCase().includes(searchTerm) ||
-                account.invoiceNumber.toLowerCase().includes(searchTerm) ||
-                account.clientPhone.toLowerCase().includes(searchTerm);
-            
-            const matchesStatus = !statusFilter || account.status === statusFilter;
-            
-            return matchesSearch && matchesStatus;
         });
-        
-        renderTable(filteredAccounts);
-        updateStats(filteredAccounts);
-    }
 
-    // Función para exportar datos
-    function exportData() {
-        // Crear datos para exportar
-        const exportData = [];
-        
-        groupedClients.forEach(client => {
-            client.invoices.forEach(invoice => {
-                exportData.push({
-                    'Cliente': client.clientName,
-                    'Teléfono': client.clientPhone,
-                    'Factura': invoice.invoiceNumber,
-                    'Fecha Venta': invoice.saleDate,
-                    'Fecha Vencimiento': invoice.dueDate,
-                    'Monto Total': invoice.totalAmount,
-                    'Monto Pagado': invoice.paidAmount,
-                    'Saldo Pendiente': invoice.pendingBalance,
-                    'Estado': getStatusName(invoice.status),
-                    'Observaciones': invoice.observations
+        // Función para generar comprobante con formato de 80mm - CORREGIDA para descargar PDF
+        function generateReceipt80mm(pagoId) {
+            console.log('Generando comprobante 80mm, ID recibido:', pagoId);
+
+            if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
+                console.error('ID de pago no válido:', pagoId);
+                alert('Error: No se pudo obtener el ID del pago.');
+                return;
+            }
+
+            const idNumerico = parseInt(pagoId);
+            if (isNaN(idNumerico)) {
+                console.error('ID de pago no es numérico:', pagoId);
+                alert('Error: ID de pago inválido.');
+                return;
+            }
+
+            // Crear un elemento <a> invisible para forzar la descarga
+            const link = document.createElement('a');
+            link.href = `/comprobante-pago-80mm/${idNumerico}/`;
+            link.target = '_blank'; // Abrir en nueva pestaña
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Función para generar comprobante normal - CORREGIDA para descargar PDF
+        function generateReceipt(pagoId) {
+            console.log('Generando comprobante normal, ID recibido:', pagoId);
+
+            if (!pagoId || pagoId === 'undefined' || pagoId === undefined) {
+                console.error('ID de pago no válido:', pagoId);
+                alert('Error: No se pudo obtener el ID del pago.');
+                return;
+            }
+
+            const idNumerico = parseInt(pagoId);
+            if (isNaN(idNumerico)) {
+                console.error('ID de pago no es numérico:', pagoId);
+                alert('Error: ID de pago inválido.');
+                return;
+            }
+
+            // Crear un elemento <a> invisible para forzar la descarga
+            const link = document.createElement('a');
+            link.href = `/comprobante-pago/${idNumerico}/`;
+            link.target = '_blank'; // Abrir en nueva pestaña
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Función para aplicar filtros
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchClient').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredAccounts = accounts.filter(account => {
+                const matchesSearch = !searchTerm ||
+                    account.clientName.toLowerCase().includes(searchTerm) ||
+                    account.invoiceNumber.toLowerCase().includes(searchTerm) ||
+                    account.clientPhone.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = !statusFilter || account.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderTable(filteredAccounts);
+            updateStats(filteredAccounts);
+        }
+
+        // Función para exportar datos
+        function exportData() {
+            // Crear datos para exportar
+            const exportData = [];
+
+            groupedClients.forEach(client => {
+                client.invoices.forEach(invoice => {
+                    exportData.push({
+                        'Cliente': client.clientName,
+                        'Teléfono': client.clientPhone,
+                        'Factura': invoice.invoiceNumber,
+                        'Fecha Venta': invoice.saleDate,
+                        'Fecha Vencimiento': invoice.dueDate,
+                        'Monto Total': invoice.totalAmount,
+                        'Monto Pagado': invoice.paidAmount,
+                        'Saldo Pendiente': invoice.pendingBalance,
+                        'Estado': getStatusName(invoice.status),
+                        'Observaciones': invoice.observations
+                    });
                 });
             });
-        });
-        
-        // Convertir a CSV
-        if (exportData.length === 0) {
-            alert('No hay datos para exportar');
-            return;
-        }
-        
-        const headers = Object.keys(exportData[0]);
-        const csvContent = [
-            headers.join(','),
-            ...exportData.map(row => 
-                headers.map(header => {
-                    const value = row[header] || '';
-                    return `"${value.toString().replace(/"/g, '""')}"`;
-                }).join(',')
-            )
-        ].join('\n');
-        
-        // Descargar archivo
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `cuentas_por_cobrar_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
-    // Event listener para el input de monto de pago
-    document.getElementById('paymentAmountInput').addEventListener('input', function() {
-        const amount = parseFloat(this.value) || 0;
-        const maxAmount = parseFloat(this.max) || 0;
-        
-        if (amount > maxAmount) {
-            this.value = maxAmount.toFixed(2);
-        }
-    });
+            // Convertir a CSV
+            if (exportData.length === 0) {
+                alert('No hay datos para exportar');
+                return;
+            }
 
-    // Inicializar al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        loadAccounts();
-        
-        // Event listener para búsqueda en tiempo real
-        document.getElementById('searchClient').addEventListener('input', applyFilters);
-        document.getElementById('statusFilter').addEventListener('change', applyFilters);
-        
-        // Event listener para cerrar modales con ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closePaymentModal();
-                closeDetailsModal();
-                closeInvoiceSelector();
+            const headers = Object.keys(exportData[0]);
+            const csvContent = [
+                headers.join(','),
+                ...exportData.map(row =>
+                    headers.map(header => {
+                        const value = row[header] || '';
+                        return `"${value.toString().replace(/"/g, '""')}"`;
+                    }).join(',')
+                )
+            ].join('\n');
+
+            // Descargar archivo
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `cuentas_por_cobrar_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listener para el input de monto de pago
+        document.getElementById('paymentAmountInput').addEventListener('input', function () {
+            const amount = parseFloat(this.value) || 0;
+            const maxAmount = parseFloat(this.max) || 0;
+
+            if (amount > maxAmount) {
+                this.value = maxAmount.toFixed(2);
             }
         });
-        
-        // Event listener para cerrar modales haciendo click fuera
-        document.getElementById('paymentModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePaymentModal();
-            }
+
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAccounts();
+
+            // Event listener para búsqueda en tiempo real
+            document.getElementById('searchClient').addEventListener('input', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+            // Event listener para cerrar modales con ESC
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closePaymentModal();
+                    closeDetailsModal();
+                    closeInvoiceSelector();
+                }
+            });
+
+            // Event listener para cerrar modales haciendo click fuera
+            document.getElementById('paymentModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closePaymentModal();
+                }
+            });
+
+            document.getElementById('detailsModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeDetailsModal();
+                }
+            });
         });
-        
-        document.getElementById('detailsModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDetailsModal();
-            }
-        });
-    });
-</script>
+    </script>
 </body>
+
 </html>

@@ -12,21 +12,21 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv()
+# load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-fjxzh8bgzt8h$q*(r3^3g1u0$dof@v^c@0g=75udjlh$)c=(02'
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-fjxzh8bgzt8h$q*(r3^3g1u0$dof@v^c@0g=75udjlh$)c=(02'
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+# DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # ALLOWED_HOSTS = ['']
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8003', 'http://localhost:8003']
@@ -81,23 +81,42 @@ WSGI_APPLICATION = 'sistema.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         # 'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('DB_NAME'),
+#         'USER': os.environ.get('DB_USER'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
+#         'PORT': os.environ.get('DB_PORT'),
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # esto es para mysql
+#             # 'sslmode': 'require',
+#             # 'options': '-c default_transaction_read_only=off'
+#         }
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        # 'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # esto es para mysql
-            # 'sslmode': 'require',
-            # 'options': '-c default_transaction_read_only=off'
-        }
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "agroquimica",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "3306",
+        "OPTIONS": {
+            # Usar offset numérico en lugar de nombre de zona
+            "init_command": "SET time_zone = '-04:00'",  # Para República Dominicana (UTC-4)
+            # Otras opciones importantes
+            "charset": "utf8mb4",
+            "use_unicode": True,
+        },
+        # Esto es crucial para MySQL con Django
+        
     }
 }
-
 
 
 # Password validation

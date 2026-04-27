@@ -45,6 +45,7 @@ import pandas as pd
 import numpy as np
 from django.utils import timezone
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.contrib.auth import logout
 #==============================================================
 #           Login 
 #==============================================================
@@ -2909,3 +2910,10 @@ def dashboard(request):
     }
     
     return render(request, "facturacion/dashboard.html", context)
+
+
+
+
+
+def roles(request):
+    return render(request, "facturacion/roles.html")

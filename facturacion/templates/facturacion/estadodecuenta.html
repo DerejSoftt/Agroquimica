@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -574,6 +575,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
@@ -584,69 +586,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-         <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} ">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="active">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -654,9 +656,9 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
@@ -668,33 +670,33 @@
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href=" {% url 'devoluciones' %} ">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href=" {% url 'dashboard' %} " class="">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -718,13 +720,8 @@
                     Buscar Cliente
                 </h3>
                 <div class="search-container">
-                    <input 
-                        type="text" 
-                        id="clientSearch" 
-                        class="form-input" 
-                        placeholder="Buscar por nombre o cédula..."
-                        autocomplete="off"
-                    >
+                    <input type="text" id="clientSearch" class="form-input" placeholder="Buscar por nombre o cédula..."
+                        autocomplete="off">
                     <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
                 </div>
             </div>
@@ -906,7 +903,7 @@
         const clientSearch = document.getElementById('clientSearch');
         const autocompleteDropdown = document.getElementById('autocompleteDropdown');
 
-        clientSearch.addEventListener('input', function() {
+        clientSearch.addEventListener('input', function () {
             const searchTerm = this.value.toLowerCase().trim();
 
             if (searchTerm.length === 0) {
@@ -943,7 +940,7 @@
         });
 
         // Cerrar dropdown al hacer clic fuera
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!e.target.closest('.search-container')) {
                 autocompleteDropdown.classList.remove('show');
             }
@@ -956,7 +953,7 @@
                 .then(response => response.json())
                 .then(data => {
                     selectedClient = data.cliente;
-                    
+
                     // Mostrar información del cliente
                     document.getElementById('clientCedula').textContent = selectedClient.cedula;
                     document.getElementById('clientNombre').textContent = selectedClient.nombre;
@@ -987,13 +984,13 @@
 
             // Actualizar resumen
             document.getElementById('totalFacturas').textContent = resumen.total_facturas;
-            document.getElementById('montoTotalFacturas').textContent = `RD$ ${resumen.monto_total.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
-            document.getElementById('montoPendiente').textContent = `RD$ ${resumen.saldo_pendiente.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
-            document.getElementById('montoPagado').textContent = `RD$ ${resumen.monto_pagado.toLocaleString('es-DO', {minimumFractionDigits: 2})}`;
+            document.getElementById('montoTotalFacturas').textContent = `RD$ ${resumen.monto_total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            document.getElementById('montoPendiente').textContent = `RD$ ${resumen.saldo_pendiente.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            document.getElementById('montoPagado').textContent = `RD$ ${resumen.monto_pagado.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
 
             // Renderizar tabla
             const tableContent = document.getElementById('facturasTableContent');
-            
+
             if (facturas.length === 0) {
                 tableContent.innerHTML = `
                     <div class="no-data">
@@ -1027,8 +1024,8 @@
                         <td><strong>${factura.numero_factura}</strong></td>
                         <td>${new Date(factura.fecha_emision).toLocaleDateString('es-DO')}</td>
                         <td>${new Date(factura.fecha_vencimiento).toLocaleDateString('es-DO')}</td>
-                        <td><strong>RD$ ${parseFloat(factura.monto_total).toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong></td>
-                        <td><strong>RD$ ${parseFloat(factura.saldo_pendiente).toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong></td>
+                        <td><strong>RD$ ${parseFloat(factura.monto_total).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</strong></td>
+                        <td><strong>RD$ ${parseFloat(factura.saldo_pendiente).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</strong></td>
                         <td><span class="status-badge ${factura.estado}">${factura.estado_display}</span></td>
                         <td>${factura.dias_vencimiento > 0 ? factura.dias_vencimiento : '-'}</td>
                     </tr>
@@ -1078,4 +1075,5 @@
         }
     </script>
 </body>
+
 </html>

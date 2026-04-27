@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +37,7 @@
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-            
+
             --sidebar-width: 280px;
         }
 
@@ -485,6 +486,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Botón de menú móvil -->
     <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -500,69 +502,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-         <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} ">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -570,47 +572,47 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
 
             <li>
-                <a href="#"  class="active">
+                <a href="#" class="active">
                     <i class='bx bx-store'></i>
                     <span>Compras </span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'devoluciones' %}">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="{% url 'dashboard' %}">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -647,14 +649,14 @@
                             <input type="date" id="fecha" required>
                         </div>
                         <div class="form-field">
-    <label for="proveedor">Proveedor *</label>
-    <select id="proveedor" required>
-        <option value="">Seleccionar proveedor...</option>
-        {% for suplidor in suplidores %}
-        <option value="{{ suplidor.id }}">{{ suplidor.nombre }} - {{ suplidor.rnc }}</option>
-        {% endfor %}
-    </select>
-</div>
+                            <label for="proveedor">Proveedor *</label>
+                            <select id="proveedor" required>
+                                <option value="">Seleccionar proveedor...</option>
+                                {% for suplidor in suplidores %}
+                                <option value="{{ suplidor.id }}">{{ suplidor.nombre }} - {{ suplidor.rnc }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
                     <div class="products-section">
@@ -666,7 +668,8 @@
                         <div class="product-search-bar">
                             <div class="search-input-wrapper">
                                 <i class='bx bx-search search-icon'></i>
-                                <input type="text" id="productSearch" class="search-input" placeholder="Buscar productos por nombre o código...">
+                                <input type="text" id="productSearch" class="search-input"
+                                    placeholder="Buscar productos por nombre o código...">
                                 <div id="productResults" class="product-results"></div>
                             </div>
                         </div>
@@ -690,63 +693,63 @@
 
     <div id="toast" class="toast"></div>
 
-  <script>
-    // Funcionalidad del menú móvil
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const sidebar = document.getElementById('sidebar');
-        
-        // Alternar el menú cuando se hace clic en el botón
-        mobileMenuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-        });
-        
-        // Cerrar el menú cuando se hace clic en un enlace (solo en móviles)
-        if (window.innerWidth <= 768) {
-            const menuLinks = document.querySelectorAll('.sidebar-menu a');
-            menuLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    sidebar.classList.remove('active');
-                });
+    <script>
+        // Funcionalidad del menú móvil
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            // Alternar el menú cuando se hace clic en el botón
+            mobileMenuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
             });
-        }
-        
-        // Cerrar el menú cuando se hace clic fuera de él (solo en móviles)
-        document.addEventListener('click', function(event) {
-            if (window.innerWidth <= 768 && 
-                !sidebar.contains(event.target) && 
-                !mobileMenuToggle.contains(event.target) &&
-                sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
+
+            // Cerrar el menú cuando se hace clic en un enlace (solo en móviles)
+            if (window.innerWidth <= 768) {
+                const menuLinks = document.querySelectorAll('.sidebar-menu a');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        sidebar.classList.remove('active');
+                    });
+                });
             }
+
+            // Cerrar el menú cuando se hace clic fuera de él (solo en móviles)
+            document.addEventListener('click', function (event) {
+                if (window.innerWidth <= 768 &&
+                    !sidebar.contains(event.target) &&
+                    !mobileMenuToggle.contains(event.target) &&
+                    sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
         });
-    });
 
-    class ComprasManager {
-        constructor() {
-            this.selectedProducts = [];
-            this.availableProducts = [];
-            this.init();
-        }
+        class ComprasManager {
+            constructor() {
+                this.selectedProducts = [];
+                this.availableProducts = [];
+                this.init();
+            }
 
-        init() {
-            this.setDefaultDate();
-            this.attachEventListeners();
-            this.loadProductsFromTemplate();
-        }
+            init() {
+                this.setDefaultDate();
+                this.attachEventListeners();
+                this.loadProductsFromTemplate();
+            }
 
-        loadProductsFromTemplate() {
-            // Los productos están disponibles desde el contexto de Django
-            this.availableProducts = [
-                {% for producto in productos %}
+            loadProductsFromTemplate() {
+                // Los productos están disponibles desde el contexto de Django
+                this.availableProducts = [
+                    {% for producto in productos %}
                 {
-                    id: {{ producto.id }},
-                    codigo: "{{ producto.codigo|default:'Sin código' }}",
-                    producto: "{{ producto.producto }}",
+            id: { { producto.id } },
+            codigo: "{{ producto.codigo|default:'Sin código' }}",
+                producto: "{{ producto.producto }}",
                     categoria: "{{ producto.categoria|default:'Sin categoría' }}",
-                    unidad: "{{ producto.unidad|default:'Unidad' }}"
-                }{% if not forloop.last %},{% endif %}
-                {% endfor %}
+                        unidad: "{{ producto.unidad|default:'Unidad' }}"
+        } {% if not forloop.last %}, {% endif %}
+        {% endfor %}
             ];
         }
 
@@ -785,13 +788,13 @@
 
         searchProducts(query) {
             const resultsContainer = document.getElementById('productResults');
-            
+
             if (!query.trim()) {
                 resultsContainer.classList.remove('show');
                 return;
             }
 
-            const filtered = this.availableProducts.filter(p => 
+            const filtered = this.availableProducts.filter(p =>
                 p.producto.toLowerCase().includes(query.toLowerCase()) ||
                 p.codigo.toLowerCase().includes(query.toLowerCase())
             );
@@ -816,7 +819,7 @@
 
         addProduct(productId) {
             const product = this.availableProducts.find(p => p.id === productId);
-            
+
             if (!product) return;
 
             const alreadyAdded = this.selectedProducts.find(p => p.id === productId);
@@ -860,7 +863,7 @@
 
         renderSelectedProducts() {
             const container = document.getElementById('selectedProducts');
-            
+
             if (this.selectedProducts.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: var(--color-text-light); padding: 20px;">No hay productos seleccionados</p>';
                 this.calculateTotal();
@@ -997,7 +1000,8 @@
         }
     }
 
-    const comprasManager = new ComprasManager();
-</script>
+        const comprasManager = new ComprasManager();
+    </script>
 </body>
+
 </html>

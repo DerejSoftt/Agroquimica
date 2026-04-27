@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
             min-height: 100vh;
         }
 
-         .sidebar {
+        .sidebar {
             position: fixed;
             left: 0;
             top: 0;
@@ -101,6 +102,7 @@
             font-size: 0.8rem;
             opacity: 0.7;
         }
+
         .logo {
             color: white;
             font-size: 24px;
@@ -117,7 +119,7 @@
         }
 
         .menu-item {
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             padding: 12px 15px;
             margin-bottom: 5px;
             border-radius: 8px;
@@ -130,7 +132,7 @@
         }
 
         .menu-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
         }
 
@@ -153,7 +155,7 @@
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
@@ -170,7 +172,7 @@
         }
 
         .header p {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 16px;
         }
 
@@ -178,7 +180,7 @@
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .form-section {
@@ -316,6 +318,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -360,8 +363,9 @@
         }
     </style>
 </head>
+
 <body>
-      <nav class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h2>
                 <i class='bx bxs-leaf'></i>
@@ -369,69 +373,69 @@
             </h2>
             <p>Sistema de Fertilizantes</p>
         </div>
-         <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
-                </li>
-                <li>
-                   <a href=" {% url 'cuentaporcobrar' %}" class="">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{% url 'inventario' %}" class="">
+                    <i class='bx bx-package'></i>
+                    Inventario
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'facturacion' %}  ">
+                    <i class='bx bx-receipt'></i>
+                    Facturación
+                </a>
+            </li>
+            <li>
+                <a href=" {% url 'cuentaporcobrar' %}" class="">
                     <i class='bx bx-money'></i>
                     <span>Cuentas por Cobrar</span>
                 </a>
-                </li>
+            </li>
 
-                 <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
+            <li>
+                <a href="{% url 'registrodeclientes' %}" class="">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro de Clientes</span>
+                </a>
+            </li>
 
-                 <li>
-                   <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item active">
-            <i class='bx bx-user-plus'></i>
-            <span>Registro Suplidores</span>
-        </a>
-                </li>
+            <li>
+                <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item active">
+                    <i class='bx bx-user-plus'></i>
+                    <span>Registro Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-            <i class='bx bx-buildings'></i>
-            <span>Gestión Suplidores</span>
-        </a>
-        </li>
+            <li>
+                <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
+                    <i class='bx bx-buildings'></i>
+                    <span>Gestión Suplidores</span>
+                </a>
+            </li>
 
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
+            <li>
+                <a href=" {% url 'gestiondeclientes' %} ">
+                    <i class='bx bx-group'></i>
+                    Clientes
+                </a>
+            </li>
 
-                 <li>
+            <li>
                 <a href=" {% url 'entrada' %}">
                     <i class='bx bx-package'></i>
                     <span>Entrada de Productos</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'estadodecuenta' %}" class="">
                     <i class='bx bx-file-blank'></i>
                     <span>Estado de Cuenta</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'anulacionesdefactura' %}" class="">
                     <i class='bx bx-x-circle'></i>
                     <span>Anulación</span>
@@ -439,9 +443,9 @@
             </li>
 
 
-             <li>
+            <li>
                 <a href="{% url 'cuantaporpagar' %}" class="">
-                     <i class='bx bx-credit-card'></i>
+                    <i class='bx bx-credit-card'></i>
                     <span>Cuentas por Pagar</span>
                 </a>
             </li>
@@ -453,33 +457,33 @@
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="roles-usuarios.html">
                     <i class='bx bx-user-circle'></i>
                     <span>Roles y Usuarios</span>
                 </a>
             </li>
 
-             <li>
+            <li>
                 <a href="{% url 'devoluciones' %}">
                     <i class='bx bx-undo'></i>
                     <span>Devoluciones</span>
                 </a>
             </li>
-             <li>
+            <li>
                 <a href="{% url 'dashboard' %}">
                     <i class='bx bx-grid-alt'></i>
                     <span>Dashboard</span>
                 </a>
             </li>
-                
-                <li>
-                    <a href="#">
-                        <i class='bx bx-cog'></i>
-                        Configuración
-                    </a>
-                </li>
-            </ul>
+
+            <li>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class='bx bx-log-out'></i>
+                    Cerrar Sesión
+                </a>
+            </li>
+        </ul>
         <div class="sidebar-footer">
             <p>© 2025 AgroInventario v1.0</p>
         </div>
@@ -540,7 +544,8 @@
                                 <i class='bx bx-map'></i>
                                 Dirección *
                             </label>
-                            <input type="text" id="direccion" required placeholder="Ej: Calle Principal #123, Santo Domingo">
+                            <input type="text" id="direccion" required
+                                placeholder="Ej: Calle Principal #123, Santo Domingo">
                         </div>
                     </div>
                 </div>
@@ -620,206 +625,207 @@
         </div>
     </div>
 
-  <script>
-    class SupplierRegistration {
-        constructor() {
-            this.init();
-        }
-
-        init() {
-            this.attachEventListeners();
-            this.setupInputMasks();
-        }
-
-        setupInputMasks() {
-            // Máscara para teléfono (opcional, puedes mantenerla o eliminar)
-            const telefonoInput = document.getElementById('telefono');
-            telefonoInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 0) {
-                    value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(6, 10);
-                }
-                e.target.value = value;
-            });
-        }
-
-        attachEventListeners() {
-            document.getElementById('supplierForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.saveSupplier();
-            });
-        }
-
-        async saveSupplier() {
-            const nombre = document.getElementById('nombre').value;
-            const rnc = document.getElementById('rnc').value;
-            const telefono = document.getElementById('telefono').value;
-            const email = document.getElementById('email').value;
-            const direccion = document.getElementById('direccion').value;
-            const contacto = document.getElementById('contacto').value;
-            const categoria = document.getElementById('categoria').value;
-            const terminos = document.getElementById('terminos').value;
-            const estado = document.getElementById('estado').value;
-            const notas = document.getElementById('notas').value;
-
-            // Validación básica
-            if (!this.validarFormulario(nombre, rnc, telefono, email, direccion, categoria)) {
-                return;
+    <script>
+        class SupplierRegistration {
+            constructor() {
+                this.init();
             }
 
-            const supplierData = {
-                nombre: nombre,
-                rnc: rnc,
-                telefono: telefono,
-                email: email,
-                direccion: direccion,
-                contacto: contacto,
-                categoria: categoria,
-                terminos_pago: terminos,
-                estado: estado,
-                notas: notas
-            };
+            init() {
+                this.attachEventListeners();
+                this.setupInputMasks();
+            }
 
-            try {
-                const response = await fetch('/guardar-suplidor/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': this.getCSRFToken()
-                    },
-                    body: JSON.stringify(supplierData)
+            setupInputMasks() {
+                // Máscara para teléfono (opcional, puedes mantenerla o eliminar)
+                const telefonoInput = document.getElementById('telefono');
+                telefonoInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 0) {
+                        value = value.substring(0, 3) + '-' + value.substring(3, 6) + '-' + value.substring(6, 10);
+                    }
+                    e.target.value = value;
                 });
+            }
 
-                const data = await response.json();
+            attachEventListeners() {
+                document.getElementById('supplierForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveSupplier();
+                });
+            }
 
-                if (data.success) {
-                    this.showSuccessMessage(data.message);
-                    this.resetForm();
-                } else {
-                    this.showErrorMessage(data.message);
+            async saveSupplier() {
+                const nombre = document.getElementById('nombre').value;
+                const rnc = document.getElementById('rnc').value;
+                const telefono = document.getElementById('telefono').value;
+                const email = document.getElementById('email').value;
+                const direccion = document.getElementById('direccion').value;
+                const contacto = document.getElementById('contacto').value;
+                const categoria = document.getElementById('categoria').value;
+                const terminos = document.getElementById('terminos').value;
+                const estado = document.getElementById('estado').value;
+                const notas = document.getElementById('notas').value;
+
+                // Validación básica
+                if (!this.validarFormulario(nombre, rnc, telefono, email, direccion, categoria)) {
+                    return;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                this.showErrorMessage('Error de conexión');
-            }
-        }
 
-        validarFormulario(nombre, rnc, telefono, email, direccion, categoria) {
-            if (!nombre) {
-                this.showErrorMessage('El nombre del suplidor es obligatorio');
-                return false;
-            }
+                const supplierData = {
+                    nombre: nombre,
+                    rnc: rnc,
+                    telefono: telefono,
+                    email: email,
+                    direccion: direccion,
+                    contacto: contacto,
+                    categoria: categoria,
+                    terminos_pago: terminos,
+                    estado: estado,
+                    notas: notas
+                };
 
-            if (!rnc) {
-                this.showErrorMessage('El RNC es obligatorio');
-                return false;
-            }
+                try {
+                    const response = await fetch('/guardar-suplidor/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.getCSRFToken()
+                        },
+                        body: JSON.stringify(supplierData)
+                    });
 
-            if (!telefono) {
-                this.showErrorMessage('El teléfono es obligatorio');
-                return false;
-            }
+                    const data = await response.json();
 
-            if (!email) {
-                this.showErrorMessage('El email es obligatorio');
-                return false;
-            }
-
-            if (!this.validarEmail(email)) {
-                this.showErrorMessage('Formato de email inválido');
-                return false;
-            }
-
-            if (!direccion) {
-                this.showErrorMessage('La dirección es obligatoria');
-                return false;
-            }
-
-            if (!categoria) {
-                this.showErrorMessage('La categoría es obligatoria');
-                return false;
+                    if (data.success) {
+                        this.showSuccessMessage(data.message);
+                        this.resetForm();
+                    } else {
+                        this.showErrorMessage(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showErrorMessage('Error de conexión');
+                }
             }
 
-            return true;
-        }
+            validarFormulario(nombre, rnc, telefono, email, direccion, categoria) {
+                if (!nombre) {
+                    this.showErrorMessage('El nombre del suplidor es obligatorio');
+                    return false;
+                }
 
-        validarEmail(email) {
-            const patron = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            return patron.test(email);
-        }
+                if (!rnc) {
+                    this.showErrorMessage('El RNC es obligatorio');
+                    return false;
+                }
 
-        getCSRFToken() {
-            const name = 'csrftoken';
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+                if (!telefono) {
+                    this.showErrorMessage('El teléfono es obligatorio');
+                    return false;
+                }
+
+                if (!email) {
+                    this.showErrorMessage('El email es obligatorio');
+                    return false;
+                }
+
+                if (!this.validarEmail(email)) {
+                    this.showErrorMessage('Formato de email inválido');
+                    return false;
+                }
+
+                if (!direccion) {
+                    this.showErrorMessage('La dirección es obligatoria');
+                    return false;
+                }
+
+                if (!categoria) {
+                    this.showErrorMessage('La categoría es obligatoria');
+                    return false;
+                }
+
+                return true;
+            }
+
+            validarEmail(email) {
+                const patron = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return patron.test(email);
+            }
+
+            getCSRFToken() {
+                const name = 'csrftoken';
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
-        resetForm() {
-            document.getElementById('supplierForm').reset();
-        }
+            resetForm() {
+                document.getElementById('supplierForm').reset();
+            }
 
-        showSuccessMessage(message) {
-            const successMsg = document.getElementById('successMessage');
-            successMsg.querySelector('span').textContent = message;
-            successMsg.classList.add('show');
-            
-            setTimeout(() => {
-                successMsg.classList.remove('show');
-            }, 5000);
-        }
+            showSuccessMessage(message) {
+                const successMsg = document.getElementById('successMessage');
+                successMsg.querySelector('span').textContent = message;
+                successMsg.classList.add('show');
 
-        showErrorMessage(message) {
-            // Crear elemento de error si no existe
-            let errorMsg = document.getElementById('errorMessage');
-            if (!errorMsg) {
-                errorMsg = document.createElement('div');
-                errorMsg.id = 'errorMessage';
-                errorMsg.className = 'error-message';
-                errorMsg.innerHTML = `
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 5000);
+            }
+
+            showErrorMessage(message) {
+                // Crear elemento de error si no existe
+                let errorMsg = document.getElementById('errorMessage');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.id = 'errorMessage';
+                    errorMsg.className = 'error-message';
+                    errorMsg.innerHTML = `
                     <i class='bx bx-error-circle' style="font-size: 24px;"></i>
                     <span></span>
                 `;
-                errorMsg.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
-                errorMsg.style.color = 'white';
-                errorMsg.style.padding = '15px 20px';
-                errorMsg.style.borderRadius = '8px';
-                errorMsg.style.marginBottom = '20px';
-                errorMsg.style.display = 'none';
-                errorMsg.style.alignItems = 'center';
-                errorMsg.style.gap = '10px';
-                errorMsg.style.animation = 'slideDown 0.3s ease';
-                
-                const formContainer = document.querySelector('.form-container');
-                formContainer.insertBefore(errorMsg, formContainer.firstChild);
+                    errorMsg.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    errorMsg.style.color = 'white';
+                    errorMsg.style.padding = '15px 20px';
+                    errorMsg.style.borderRadius = '8px';
+                    errorMsg.style.marginBottom = '20px';
+                    errorMsg.style.display = 'none';
+                    errorMsg.style.alignItems = 'center';
+                    errorMsg.style.gap = '10px';
+                    errorMsg.style.animation = 'slideDown 0.3s ease';
+
+                    const formContainer = document.querySelector('.form-container');
+                    formContainer.insertBefore(errorMsg, formContainer.firstChild);
+                }
+
+                errorMsg.querySelector('span').textContent = message;
+                errorMsg.style.display = 'flex';
+
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 5000);
             }
-
-            errorMsg.querySelector('span').textContent = message;
-            errorMsg.style.display = 'flex';
-            
-            setTimeout(() => {
-                errorMsg.style.display = 'none';
-            }, 5000);
         }
-    }
 
-    function resetForm() {
-        document.getElementById('supplierForm').reset();
-    }
+        function resetForm() {
+            document.getElementById('supplierForm').reset();
+        }
 
-    // Inicializar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        new SupplierRegistration();
-    });
-</script>
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function () {
+            new SupplierRegistration();
+        });
+    </script>
 </body>
+
 </html>
