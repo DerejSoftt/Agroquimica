@@ -24,12 +24,8 @@ load_dotenv()
 # SECRET_KEY = 'django-insecure-fjxzh8bgzt8h$q*(r3^3g1u0$dof@v^c@0g=75udjlh$)c=(02'
 SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-
-# ALLOWED_HOSTS = ['']
-# CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8003', 'http://localhost:8003']
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Application definition
@@ -92,31 +88,11 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # esto es para mysql
-            # 'sslmode': 'require',
-            # 'options': '-c default_transaction_read_only=off'
         }
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "agroquimica",
-#         "USER": "root",
-#         "PASSWORD": "",
-#         "HOST": "localhost",
-#         "PORT": "3306",
-#         "OPTIONS": {
-#             # Usar offset numérico en lugar de nombre de zona
-#             "init_command": "SET time_zone = '-04:00'",  # Para República Dominicana (UTC-4)
-#             # Otras opciones importantes
-#             "charset": "utf8mb4",
-#             "use_unicode": True,
-#         },
-#         # Esto es crucial para MySQL con Django
-        
-#     }
-# }
+
 
 
 # Password validation
