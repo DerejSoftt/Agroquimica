@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 import json
+import pytz
 from .models import Cliente, Suplidor, EntradaProducto, Compra, DetalleCompra, Venta, DetalleVenta, CuentaPorCobrar, PagoCuentaCobrar, Devolucion, ItemDevolucion
 import re
 from django.utils.decorators import method_decorator
@@ -1055,6 +1056,9 @@ def procesar_venta(request):
                     subtotal=float(data['subtotal']),
                     descuento=float(data['descuento']),
                     total=float(data['total']),
+                    subtotal_usd=float(data.get('subtotal_usd', 0)),
+                    descuento_usd=float(data.get('descuento_usd', 0)),
+                    total_usd=float(data.get('total_usd', 0)),
                     observacion=data.get('observacion', '')
                 )
                 venta.save()
@@ -1131,20 +1135,28 @@ def factura_detalle(request, venta_id):
         venta = Venta.objects.get(id=venta_id)
         detalles = venta.detalles.select_related('producto').all()
 
-        # Enriquecer detalles con precios USD si el producto tiene ese campo
+        # Enriquecer detalles con precios USD
         for detalle in detalles:
-            # Asumiendo que tu modelo EntradaProducto tiene 'precio_usd'
             detalle.precio_usd = detalle.producto.precio_usd or 0.0
-            detalle.subtotal_usd = detalle.cantidad * detalle.precio_usd
+            
+        # Determinar si se deben mostrar las columnas USD
+        show_usd = any(d.producto.precio_usd != 0 for d in detalles)
+        
+        # Obtener fecha en zona horaria de RD
+        dr_tz = pytz.timezone('America/Santo_Domingo')
+        if venta.fecha:
+            if timezone.is_aware(venta.fecha):
+                fecha_local = venta.fecha.astimezone(dr_tz)
+            else:
+                fecha_local = dr_tz.localize(venta.fecha)
+        else:
+            fecha_local = timezone.now().astimezone(dr_tz)
 
-        # Calcular total_usd de la venta (si no está guardado)
-        total_usd = sum(d.subtotal_usd for d in detalles) - (venta.descuento / 1)  # ajusta si descuento es en DOP
-        # Para mantener la lógica del descuento en USD, usa la misma proporción que en el HTML de facturación.
-        # También puedes simplemente enviar venta.total_usd si ya existe.
         context = {
             'venta': venta,
             'detalles': detalles,
-            'total_usd': total_usd,  # opcional
+            'show_usd': show_usd,
+            'fecha_local': fecha_local,
         }
         return render(request, "facturacion/factura_detalle.html", context)
     except Venta.DoesNotExist:
