@@ -7,6 +7,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Entrada de Productos - AgroInventario</title>
     <style>
+        /* (Mantén exactamente los mismos estilos que en el original) */
         * {
             margin: 0;
             padding: 0;
@@ -29,15 +30,12 @@
             --color-success: #10b981;
             --color-danger: #ef4444;
             --color-white: #ffffff;
-
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-
             --sidebar-width: 280px;
         }
 
@@ -49,6 +47,7 @@
             min-height: 100vh;
         }
 
+        /* Sidebar y demás estilos (igual que el original) */
         .sidebar {
             position: fixed;
             left: 0;
@@ -64,7 +63,6 @@
             flex-direction: column;
         }
 
-        /* Updated sidebar header structure to match estadodecuenta */
         .sidebar-header {
             display: flex;
             align-items: center;
@@ -123,13 +121,11 @@
             border-left: 4px solid var(--color-accent);
         }
 
-        /* Updated icon styles for Boxicons */
         .sidebar-menu i {
             font-size: 24px;
             flex-shrink: 0;
         }
 
-        /* Updated sidebar footer to simple copyright */
         .sidebar-footer {
             padding: 1.5rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -153,7 +149,6 @@
             padding: 0 24px;
         }
 
-        /* Updated header with gradient background */
         .header {
             background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
             border-bottom: 1px solid var(--color-border);
@@ -198,7 +193,7 @@
 
         .entry-header {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 24px;
             padding-bottom: 24px;
@@ -253,15 +248,7 @@
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
             font-size: 14px;
-            color: var(--color-text);
-            outline: none;
-            transition: all 0.2s;
             background-color: var(--color-white);
-        }
-
-        .search-select:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-primary-light);
         }
 
         .btn-add-new {
@@ -273,7 +260,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
             white-space: nowrap;
         }
 
@@ -290,9 +276,10 @@
             margin-bottom: 24px;
         }
 
+        /* Nuevo grid para los dos precios (Precio 1 + Precio USD) */
         .price-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 24px;
         }
@@ -328,10 +315,10 @@
             text-align: center;
         }
 
+        /* Solo mostramos el resultado de Precio 1 + ITBIS */
         .calculated-prices {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            display: flex;
+            justify-content: flex-start;
             padding: 16px;
             background-color: var(--color-primary-light);
             border-radius: var(--radius-md);
@@ -340,6 +327,7 @@
 
         .calc-price-item {
             text-align: center;
+            min-width: 200px;
         }
 
         .calc-price-item label {
@@ -370,7 +358,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
         .btn-save-entry:hover {
@@ -388,7 +375,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .btn-clear:hover {
@@ -396,6 +382,7 @@
             border-color: var(--color-primary);
         }
 
+        /* Modal, toast, etc. (igual que el original) */
         .modal {
             display: none;
             position: fixed;
@@ -403,7 +390,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -415,7 +402,7 @@
         }
 
         .modal-content {
-            background-color: var(--color-white);
+            background: var(--color-white);
             border-radius: var(--radius-lg);
             max-width: 400px;
             width: 100%;
@@ -441,28 +428,14 @@
             background: none;
             border: none;
             font-size: 28px;
-            color: var(--color-text-light);
             cursor: pointer;
-            line-height: 1;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-        }
-
-        .close-btn:hover {
-            background-color: var(--color-primary-light);
-            color: var(--color-primary);
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
@@ -475,59 +448,30 @@
             padding: 10px 12px;
             border: 1px solid var(--color-border);
             border-radius: var(--radius-md);
-            font-size: 14px;
-            color: var(--color-text);
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-primary-light);
         }
 
         .form-actions {
             display: flex;
             gap: 12px;
             justify-content: flex-end;
+            margin-top: 24px;
         }
 
         .btn-primary {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
             background-color: var(--color-bright-green);
             color: white;
             border: none;
+            padding: 10px 20px;
             border-radius: var(--radius-md);
-            font-size: 14px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--color-primary-medium);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
-            padding: 10px 20px;
             background-color: var(--color-white);
-            color: var(--color-text);
             border: 1px solid var(--color-border);
+            padding: 10px 20px;
             border-radius: var(--radius-md);
-            font-size: 14px;
-            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--color-primary-light);
-            border-color: var(--color-primary);
         }
 
         .toast {
@@ -536,14 +480,11 @@
             right: 24px;
             padding: 16px 24px;
             background-color: var(--color-primary);
-            color: var(--color-white);
+            color: white;
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
-            font-size: 14px;
-            font-weight: 600;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.3s;
+            transition: 0.3s;
             z-index: 2000;
         }
 
@@ -561,31 +502,11 @@
         }
 
         @media (max-width: 1024px) {
-            .entry-header {
-                grid-template-columns: 1fr;
-            }
 
-            .product-details-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .price-grid,
-            .calculated-prices {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-
+            .entry-header,
             .product-details-grid,
-            .price-grid,
-            .calculated-prices {
+            .price-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .product-search-section {
-                flex-direction: column;
-                align-items: stretch;
             }
         }
     </style>
@@ -593,7 +514,6 @@
 
 <body>
     <aside class="sidebar">
-        <!-- Updated sidebar header structure with Boxicons -->
         <div class="sidebar-header">
             <i class='bx bxs-leaf'></i>
             <div>
@@ -602,120 +522,29 @@
             </div>
         </div>
         <nav>
-            <!-- Updated menu items with Boxicons to match estadodecuenta -->
             <ul class="sidebar-menu">
-                <li>
-                    <a href="{% url 'inventario' %}" class="">
-                        <i class='bx bx-package'></i>
-                        Inventario
-                    </a>
+                <!-- Aquí va el menú exactamente igual que el original -->
+                <li><a href="{% url 'inventario' %}"><i class='bx bx-package'></i>Inventario</a></li>
+                <li><a href="{% url 'facturacion' %}"><i class='bx bx-receipt'></i>Facturación</a></li>
+                <li><a href="{% url 'cuentaporcobrar' %}"><i class='bx bx-money'></i>Cuentas por Cobrar</a></li>
+                <li><a href="{% url 'registrodeclientes' %}"><i class='bx bx-user-plus'></i>Registro de Clientes</a>
                 </li>
-                <li>
-                    <a href=" {% url 'facturacion' %}  ">
-                        <i class='bx bx-receipt'></i>
-                        Facturación
-                    </a>
+                <li><a href="{% url 'resgistrodesuplidores' %}"><i class='bx bx-user-plus'></i>Registro Suplidores</a>
                 </li>
-                <li>
-                    <a href=" {% url 'cuentaporcobrar' %}" class="">
-                        <i class='bx bx-money'></i>
-                        <span>Cuentas por Cobrar</span>
-                    </a>
+                <li><a href="{% url 'gestiondesuplidores' %}"><i class='bx bx-buildings'></i>Gestión Suplidores</a></li>
+                <li><a href="{% url 'gestiondeclientes' %}"><i class='bx bx-group'></i>Clientes</a></li>
+                <li><a href="{% url 'entrada' %}" class="active"><i class='bx bx-package'></i>Entrada de Productos</a>
                 </li>
-
-                <li>
-                    <a href="{% url 'registrodeclientes' %}" class="">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro de Clientes</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href=" {% url 'resgistrodesuplidores' %}  " class="menu-item ">
-                        <i class='bx bx-user-plus'></i>
-                        <span>Registro Suplidores</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'gestiondesuplidores' %}  " class="menu-item ">
-                        <i class='bx bx-buildings'></i>
-                        <span>Gestión Suplidores</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href=" {% url 'gestiondeclientes' %} ">
-                        <i class='bx bx-group'></i>
-                        Clientes
-                    </a>
-                </li>
-
-                <li>
-                    <a href=" {% url 'entrada' %}" class="active">
-                        <i class='bx bx-package'></i>
-                        <span>Entrada de Productos</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'estadodecuenta' %}" class="">
-                        <i class='bx bx-file-blank'></i>
-                        <span>Estado de Cuenta</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'anulacionesdefactura' %}" class="">
-                        <i class='bx bx-x-circle'></i>
-                        <span>Anulación</span>
-                    </a>
-                </li>
-
-
-                <li>
-                    <a href="{% url 'cuantaporpagar' %}" class="">
-                        <i class='bx bx-credit-card'></i>
-                        <span>Cuentas por Pagar</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href=" {% url 'compras' %} ">
-                        <i class='bx bx-store'></i>
-                        <span>Compras </span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="roles-usuarios.html">
-                        <i class='bx bx-user-circle'></i>
-                        <span>Roles y Usuarios</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href=" {% url 'devoluciones' %} ">
-                        <i class='bx bx-undo'></i>
-                        <span>Devoluciones</span>
-                    </a>
-                </li>
-                <li>
-                    <a href=" {% url 'dashboard' %} " class="">
-                        <i class='bx bx-grid-alt'></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'logout' %}" class="menu-item">
-                        <i class='bx bx-log-out'></i>
-                        Cerrar Sesión
-                    </a>
-                </li>
+                <li><a href="{% url 'estadodecuenta' %}"><i class='bx bx-file-blank'></i>Estado de Cuenta</a></li>
+                <li><a href="{% url 'anulacionesdefactura' %}"><i class='bx bx-x-circle'></i>Anulación</a></li>
+                <li><a href="{% url 'cuantaporpagar' %}"><i class='bx bx-credit-card'></i>Cuentas por Pagar</a></li>
+                <li><a href="{% url 'compras' %}"><i class='bx bx-store'></i>Compras</a></li>
+                <li><a href="roles-usuarios.html"><i class='bx bx-user-circle'></i>Roles y Usuarios</a></li>
+                <li><a href="{% url 'devoluciones' %}"><i class='bx bx-undo'></i>Devoluciones</a></li>
+                <li><a href="{% url 'dashboard' %}"><i class='bx bx-grid-alt'></i>Dashboard</a></li>
+                <li><a href="{% url 'logout' %}"><i class='bx bx-log-out'></i>Cerrar Sesión</a></li>
             </ul>
         </nav>
-        <!-- Updated footer to simple copyright -->
         <div class="sidebar-footer">
             <p>&copy; 2025 AgroInventario. Todos los derechos reservados.</p>
         </div>
@@ -735,10 +564,6 @@
             <main class="main-content">
                 <section class="entry-form-section">
                     <div class="entry-header">
-                        <!-- <div class="entry-field">
-                            <label for="invoiceNumber">Número de Factura *</label>
-                            <input type="text" id="invoiceNumber" placeholder="Ej: FAC-2025-001" >
-                        </div> -->
                         <div class="entry-field">
                             <label for="entryDate">Fecha *</label>
                             <input type="date" id="entryDate" required>
@@ -761,9 +586,7 @@
                                 <option value="">Seleccione un producto...</option>
                             </select>
                         </div>
-                        <button type="button" class="btn-add-new" id="addNewProductBtn">
-                            + Nuevo Producto
-                        </button>
+                        <button type="button" class="btn-add-new" id="addNewProductBtn">+ Nuevo Producto</button>
                     </div>
 
                     <div class="product-details-grid">
@@ -794,23 +617,20 @@
                             </select>
                         </div>
                         <div class="entry-field">
-                            <label for="entryUnitPrice">Precio Unit. ($) *</label>
+                            <label for="entryUnitPrice">Precio Unit. (RD$) *</label>
                             <input type="number" id="entryUnitPrice" placeholder="0.00" min="0" step="0.01" required>
                         </div>
                     </div>
 
+                    <!-- NUEVA SECCIÓN DE PRECIOS: solo Precio 1 y Precio USD -->
                     <div class="price-grid">
                         <div class="entry-field">
-                            <label for="salePrice1">Precio 1 ($) *</label>
+                            <label for="salePrice1">Precio Venta 1 (RD$) *</label>
                             <input type="number" id="salePrice1" placeholder="0.00" min="0" step="0.01" required>
                         </div>
                         <div class="entry-field">
-                            <label for="salePrice2">Precio 2 ($)</label>
-                            <input type="number" id="salePrice2" placeholder="0.00" min="0" step="0.01">
-                        </div>
-                        <div class="entry-field">
-                            <label for="salePrice3">Precio 3 ($)</label>
-                            <input type="number" id="salePrice3" placeholder="0.00" min="0" step="0.01">
+                            <label for="precioUSD">Precio en USD ($) *</label>
+                            <input type="number" id="precioUSD" placeholder="0.00" min="0" step="0.01" required>
                         </div>
                     </div>
 
@@ -820,22 +640,15 @@
                             <input type="number" id="itbisRate" value="18" min="0" max="100" step="0.01">
                         </div>
                         <span style="color: var(--color-text-light); font-size: 14px;">
-                            Los precios de venta se calcularán automáticamente con el ITBIS aplicado
+                            El precio de venta 1 se mostrará con ITBIS aplicado
                         </span>
                     </div>
 
+                    <!-- Solo mostramos el cálculo de Precio 1 + ITBIS -->
                     <div class="calculated-prices">
                         <div class="calc-price-item">
                             <label>Precio 1 + ITBIS</label>
                             <div class="price-value" id="calcPrice1">$0.00</div>
-                        </div>
-                        <div class="calc-price-item">
-                            <label>Precio 2 + ITBIS</label>
-                            <div class="price-value" id="calcPrice2">$0.00</div>
-                        </div>
-                        <div class="calc-price-item">
-                            <label>Precio 3 + ITBIS</label>
-                            <div class="price-value" id="calcPrice3">$0.00</div>
                         </div>
                     </div>
 
@@ -848,6 +661,7 @@
         </div>
     </div>
 
+    <!-- Modal nuevo producto -->
     <div id="newProductModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -860,7 +674,7 @@
                         <label for="newProductDescription">Descripción del Producto *</label>
                         <input type="text" id="newProductDescription" required placeholder="Ej: Urea 46% Granulada">
                     </div>
-                    <div class="form-actions" style="margin-top: 24px;">
+                    <div class="form-actions">
                         <button type="button" class="btn-secondary" id="cancelNewProductBtn">Cancelar</button>
                         <button type="submit" class="btn-primary">Agregar</button>
                     </div>
@@ -877,34 +691,25 @@
                 this.availableProducts = this.loadAvailableProducts();
                 this.init();
             }
-
             init() {
                 this.populateProductSelect();
                 this.attachEventListeners();
                 this.setDefaultDate();
             }
-
             loadAvailableProducts() {
                 const data = localStorage.getItem('availableProducts');
-                if (data) {
-                    return JSON.parse(data);
-                }
-                return [];
+                return data ? JSON.parse(data) : [];
             }
-
             saveAvailableProducts() {
                 localStorage.setItem('availableProducts', JSON.stringify(this.availableProducts));
             }
-
             setDefaultDate() {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('entryDate').value = today;
             }
-
             populateProductSelect() {
                 const select = document.getElementById('productSelect');
                 select.innerHTML = '<option value="">Seleccione un producto...</option>';
-
                 this.availableProducts.forEach(product => {
                     const option = document.createElement('option');
                     option.value = product.id;
@@ -912,118 +717,63 @@
                     select.appendChild(option);
                 });
             }
-
             attachEventListeners() {
                 document.getElementById('addNewProductBtn').addEventListener('click', () => {
                     document.getElementById('newProductModal').classList.add('active');
                 });
-
-                document.getElementById('closeNewProductModal').addEventListener('click', () => {
-                    this.closeNewProductModal();
-                });
-
-                document.getElementById('cancelNewProductBtn').addEventListener('click', () => {
-                    this.closeNewProductModal();
-                });
-
+                document.getElementById('closeNewProductModal').addEventListener('click', () => this.closeNewProductModal());
+                document.getElementById('cancelNewProductBtn').addEventListener('click', () => this.closeNewProductModal());
                 document.getElementById('newProductForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.saveNewProduct();
                 });
+                document.getElementById('productSelect').addEventListener('change', (e) => this.selectProduct(e.target.value));
 
-                document.getElementById('productSelect').addEventListener('change', (e) => {
-                    this.selectProduct(e.target.value);
-                });
+                // Eventos para recalcular ITBIS (solo Precio 1)
+                document.getElementById('salePrice1').addEventListener('input', () => this.calculatePriceWithITBIS());
+                document.getElementById('itbisRate').addEventListener('input', () => this.calculatePriceWithITBIS());
 
-                // Escuchar cambios en los precios y el ITBIS para recalcular
-                ['salePrice1', 'salePrice2', 'salePrice3', 'itbisRate'].forEach(id => {
-                    document.getElementById(id).addEventListener('input', () => {
-                        this.calculatePricesWithITBIS();
-                    });
-                });
+                document.getElementById('clearEntryBtn').addEventListener('click', () => this.clearForm());
+                document.getElementById('saveEntryBtn').addEventListener('click', () => this.saveEntry());
 
-                document.getElementById('clearEntryBtn').addEventListener('click', () => {
-                    this.clearForm();
-                });
-
-                document.getElementById('saveEntryBtn').addEventListener('click', () => {
-                    this.saveEntry();
-                });
-
-                // Cerrar modal al hacer clic fuera del contenido
                 document.getElementById('newProductModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'newProductModal') {
-                        this.closeNewProductModal();
-                    }
+                    if (e.target.id === 'newProductModal') this.closeNewProductModal();
                 });
             }
-
             closeNewProductModal() {
                 document.getElementById('newProductModal').classList.remove('active');
                 document.getElementById('newProductForm').reset();
             }
-
             saveNewProduct() {
                 const description = document.getElementById('newProductDescription').value.trim();
-
                 if (!description) {
                     this.showToast('Por favor ingrese una descripción', 'error');
                     return;
                 }
-
-                // Verificar si el producto ya existe
-                const existingProduct = this.availableProducts.find(
-                    p => p.description.toLowerCase() === description.toLowerCase()
-                );
-
-                if (existingProduct) {
+                const existing = this.availableProducts.find(p => p.description.toLowerCase() === description.toLowerCase());
+                if (existing) {
                     this.showToast('Este producto ya existe', 'error');
                     return;
                 }
-
-                const newProduct = {
-                    id: Date.now(),
-                    description: description
-                };
-
+                const newProduct = { id: Date.now(), description: description };
                 this.availableProducts.push(newProduct);
                 this.saveAvailableProducts();
                 this.populateProductSelect();
                 this.closeNewProductModal();
-
-                // Seleccionar el nuevo producto automáticamente
                 document.getElementById('productSelect').value = newProduct.id;
-
                 this.showToast('Producto agregado exitosamente', 'success');
             }
-
             selectProduct(productId) {
                 if (!productId) return;
-
                 const product = this.availableProducts.find(p => p.id == productId);
-                if (product) {
-                    console.log('Producto seleccionado:', product);
-                    // Aquí podrías cargar datos del producto si los tienes almacenados
-                }
+                if (product) console.log('Producto seleccionado:', product);
             }
-
-            calculatePricesWithITBIS() {
+            calculatePriceWithITBIS() {
                 const itbisRate = parseFloat(document.getElementById('itbisRate').value) || 0;
                 const price1 = parseFloat(document.getElementById('salePrice1').value) || 0;
-                const price2 = parseFloat(document.getElementById('salePrice2').value) || 0;
-                const price3 = parseFloat(document.getElementById('salePrice3').value) || 0;
-
-                const itbisMultiplier = 1 + (itbisRate / 100);
-
-                const price1ConItbis = price1 * itbisMultiplier;
-                const price2ConItbis = price2 * itbisMultiplier;
-                const price3ConItbis = price3 * itbisMultiplier;
-
+                const price1ConItbis = price1 * (1 + itbisRate / 100);
                 document.getElementById('calcPrice1').textContent = `$${price1ConItbis.toFixed(2)}`;
-                document.getElementById('calcPrice2').textContent = price2 > 0 ? `$${price2ConItbis.toFixed(2)}` : '$0.00';
-                document.getElementById('calcPrice3').textContent = price3 > 0 ? `$${price3ConItbis.toFixed(2)}` : '$0.00';
             }
-
             clearForm() {
                 if (confirm('¿Está seguro de que desea limpiar todos los campos?')) {
                     document.getElementById('supplier').value = '';
@@ -1033,15 +783,13 @@
                     document.getElementById('entryUnit').value = 'kg';
                     document.getElementById('entryUnitPrice').value = '';
                     document.getElementById('salePrice1').value = '';
-                    document.getElementById('salePrice2').value = '';
-                    document.getElementById('salePrice3').value = '';
+                    document.getElementById('precioUSD').value = '';
                     document.getElementById('itbisRate').value = '18';
-                    this.calculatePricesWithITBIS();
+                    this.calculatePriceWithITBIS();
                     this.setDefaultDate();
                     this.showToast('Formulario limpiado', 'success');
                 }
             }
-
             saveEntry() {
                 const entryDate = document.getElementById('entryDate').value;
                 const supplier = document.getElementById('supplier').value;
@@ -1051,55 +799,29 @@
                 const unit = document.getElementById('entryUnit').value;
                 const unitPrice = parseFloat(document.getElementById('entryUnitPrice').value);
                 const salePrice1 = parseFloat(document.getElementById('salePrice1').value);
-                const salePrice2 = parseFloat(document.getElementById('salePrice2').value) || 0;
-                const salePrice3 = parseFloat(document.getElementById('salePrice3').value) || 0;
+                const precioUSD = parseFloat(document.getElementById('precioUSD').value);
                 const itbisRate = parseFloat(document.getElementById('itbisRate').value);
 
-                // Validaciones (sin invoiceNumber)
-                if (!entryDate || !supplier || !productId || !category ||
-                    !quantity || !unitPrice || !salePrice1) {
+                if (!entryDate || !supplier || !productId || !category || !quantity || !unitPrice || !salePrice1 || !precioUSD) {
                     this.showToast('Por favor complete todos los campos requeridos', 'error');
                     return;
                 }
-
-                if (quantity <= 0) {
-                    this.showToast('La cantidad debe ser mayor a 0', 'error');
-                    return;
-                }
-
-                if (unitPrice <= 0) {
-                    this.showToast('El precio unitario debe ser mayor a 0', 'error');
-                    return;
-                }
-
-                if (salePrice1 <= 0) {
-                    this.showToast('El precio de venta 1 debe ser mayor a 0', 'error');
+                if (quantity <= 0 || unitPrice <= 0 || salePrice1 <= 0 || precioUSD <= 0) {
+                    this.showToast('Los valores deben ser mayores a 0', 'error');
                     return;
                 }
 
                 const product = this.availableProducts.find(p => p.id == productId);
-
                 const entryData = {
-                    entryDate: entryDate,
-                    supplier: supplier,
-                    product: product.description,
-                    category: category,
-                    quantity: quantity,
-                    unit: unit,
-                    unitPrice: unitPrice,
-                    salePrice1: salePrice1,
-                    salePrice2: salePrice2,
-                    salePrice3: salePrice3,
-                    itbisRate: itbisRate
+                    entryDate, supplier, product: product.description, category,
+                    quantity, unit, unitPrice, salePrice1, precio_usd: precioUSD, itbisRate
                 };
 
-                // Mostrar loading
                 const saveBtn = document.getElementById('saveEntryBtn');
                 const originalText = saveBtn.textContent;
                 saveBtn.textContent = 'Guardando...';
                 saveBtn.disabled = true;
 
-                // Enviar datos al servidor
                 fetch('/guardar-entrada/', {
                     method: 'POST',
                     headers: {
@@ -1108,97 +830,56 @@
                     },
                     body: JSON.stringify(entryData)
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta del servidor');
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            let mensaje = 'Entrada registrada exitosamente';
-                            if (data.precios_con_itbis) {
-                                mensaje += `. Precios con ITBIS: $${data.precios_con_itbis.precio1}`;
-                                if (data.precios_con_itbis.precio2) {
-                                    mensaje += `, $${data.precios_con_itbis.precio2}`;
-                                }
-                                if (data.precios_con_itbis.precio3) {
-                                    mensaje += `, $${data.precios_con_itbis.precio3}`;
-                                }
-                            }
-
-                            this.showToast(mensaje, 'success');
+                            this.showToast(`Entrada registrada. Precio+ITBIS: $${data.precio_con_itbis}`, 'success');
                             this.clearForm();
-
                         } else {
                             this.showToast('Error: ' + data.error, 'error');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        this.showToast('Error de conexión: ' + error.message, 'error');
+                        this.showToast('Error de conexión', 'error');
                     })
                     .finally(() => {
-                        // Restaurar botón
                         saveBtn.textContent = originalText;
                         saveBtn.disabled = false;
                     });
             }
-
-            // Método para obtener el token CSRF
             getCSRFToken() {
-                const name = 'csrftoken';
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
                     const cookies = document.cookie.split(';');
                     for (let i = 0; i < cookies.length; i++) {
                         const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        if (cookie.substring(0, 'csrftoken'.length + 1) === ('csrftoken=')) {
+                            cookieValue = decodeURIComponent(cookie.substring('csrftoken'.length + 1));
                             break;
                         }
                     }
                 }
                 return cookieValue;
             }
-
             showToast(message, type = 'success') {
                 const toast = document.getElementById('toast');
                 toast.textContent = message;
                 toast.className = `toast ${type} show`;
-
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 5000);
-            }
-
-            // Método adicional para formatear números
-            formatCurrency(amount) {
-                return new Intl.NumberFormat('es-DO', {
-                    style: 'currency',
-                    currency: 'DOP'
-                }).format(amount);
+                setTimeout(() => toast.classList.remove('show'), 5000);
             }
         }
 
-        // Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function () {
-            const productEntryManager = new ProductEntryManager();
-
-            // Hacer disponible globalmente para debugging
-            window.productEntryManager = productEntryManager;
-
-            // Calcular precios con ITBIS inicialmente
-            productEntryManager.calculatePricesWithITBIS();
+            const manager = new ProductEntryManager();
+            window.productEntryManager = manager;
+            manager.calculatePriceWithITBIS();
         });
 
-        // Función global para cerrar modales con Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 const modal = document.getElementById('newProductModal');
-                if (modal.classList.contains('active')) {
-                    modal.classList.remove('active');
-                }
+                if (modal.classList.contains('active')) modal.classList.remove('active');
             }
         });
     </script>

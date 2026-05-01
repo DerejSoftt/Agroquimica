@@ -1,158 +1,469 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factura {{ venta.numero_factura }} - AgroInventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Factura {{ venta.numero_factura }} – AgroInventario</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
-            line-height: 1.6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .header { 
-            text-align: center; 
-            margin-bottom: 30px; 
-            border-bottom: 2px solid #2d5016;
-            padding-bottom: 20px;
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #e9ecef;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .company-info { 
-            margin-bottom: 20px; 
+
+        /* Contenedor principal de la factura */
+        .invoice {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* Encabezado con dos columnas */
+        .invoice-header {
+            background: linear-gradient(135deg, #1e3c0c 0%, #2d5016 100%);
+            color: white;
+            padding: 30px 35px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 40px;
+        }
+
+        .invoice-title .factura-num {
+            font-size: 1.1rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Información compañía / cliente */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            padding: 30px 35px;
+            background: #fefdf8;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .company-details,
+        .client-details {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            border: 1px solid #edf2f7;
+        }
+
+        .company-details h3,
+        .client-details h3 {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2d5016;
+            margin-bottom: 12px;
+            border-left: 3px solid #ffd700;
+            padding-left: 10px;
+        }
+
+        .company-details p,
+        .client-details p {
+            font-size: 0.9rem;
+            margin: 6px 0;
+            color: #2d3e2a;
+            line-height: 1.4;
+        }
+
+        .client-details .highlight {
+            background: #f0f9e8;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+
+        /* Datos de la venta (fecha, tipo, pago) */
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 15px;
+            background: white;
+            padding: 15px 35px;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .meta-item {
+            background: #f8fafc;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .meta-item strong {
+            color: #2d5016;
+        }
+
+        /* Tabla de productos */
+        .products-section {
+            padding: 0 35px 20px 35px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        .invoice-table th {
+            background: #f1f5f0;
+            color: #1e3c0c;
+            font-weight: 600;
+            padding: 14px 10px;
+            text-align: left;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .invoice-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e9edf2;
+            vertical-align: top;
+        }
+
+        .invoice-table tbody tr:hover {
+            background: #fefce8;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* Totales profesionales */
+        .totals-card {
+            background: #f9fafb;
+            margin: 10px 35px 30px 35px;
+            padding: 20px 25px;
+            border-radius: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .totals-box {
+            min-width: 260px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .totals-box p {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed #e2edda;
+            padding-bottom: 6px;
+        }
+
+        .totals-box .grand-total {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2d5016;
+            border-top: 2px solid #ffd700;
+            margin-top: 8px;
+            padding-top: 10px;
+            border-bottom: none;
+        }
+
+        .usd-total {
+            background: #fef3c7;
+            border-radius: 16px;
+            margin-top: 8px;
+            padding: 8px 12px;
             text-align: center;
         }
-        .invoice-info { 
-            margin-bottom: 30px; 
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-bottom: 20px; 
-        }
-        .table th, .table td { 
-            border: 1px solid #ddd; 
-            padding: 12px; 
-            text-align: left; 
-        }
-        .table th { 
-            background-color: #2d5016; 
-            color: white;
-        }
-        .totals { 
-            float: right; 
-            width: 300px; 
-            background: #f0f9f0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        .footer { 
-            margin-top: 50px; 
-            text-align: center; 
-            border-top: 1px solid #ddd;
-            padding-top: 20px;
-            clear: both;
-        }
+
+        /* Observaciones */
         .observations {
-            margin-top: 20px;
-            padding: 15px;
-            background: #fff8e1;
-            border-radius: 8px;
-            border-left: 4px solid #ffd700;
+            margin: 0 35px 25px 35px;
+            background: #fffae6;
+            border-left: 5px solid #ffb300;
+            padding: 15px 20px;
+            border-radius: 16px;
+            font-size: 0.85rem;
         }
-        .client-info {
-            background: #e8f5e8;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+
+        /* Footer */
+        .invoice-footer {
+            background: #f6f9f2;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: #4a5b3e;
+            border-top: 1px solid #dee4d4;
         }
+
+        .print-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .print-button:hover {
+            background: #1e3c0c;
+            transform: scale(1.02);
+        }
+
+        /* Estilos para impresión */
         @media print {
-            body { margin: 0; }
-            .no-print { display: none; }
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .invoice {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+            .info-grid,
+            .totals-card,
+            .observations,
+            .meta-row {
+                break-inside: avoid;
+            }
+
+            .invoice-table th,
+            .invoice-table td {
+                border-color: #ccc;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .invoice-title {
+                text-align: center;
+            }
+
+            .totals-card {
+                justify-content: center;
+            }
+
+            .products-section,
+            .totals-card,
+            .observations {
+                padding-left: 20px;
+                padding-right: 20px;
+                margin-left: 0;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="header">
-        <h1>AgroInventario</h1>
-        <p>Sistema de Fertilizantes</p>
-    </div>
-
-    <div class="company-info">
-        <p><strong>Dirección:</strong> Tu dirección aquí</p>
-        <p><strong>Teléfono:</strong> Tu teléfono aquí</p>
-        <p><strong>RNC:</strong> Tu RNC aquí</p>
-    </div>
-
-    <div class="invoice-info">
-        <h2>FACTURA: {{ venta.numero_factura }}</h2>
-        <p><strong>Fecha:</strong> {{ venta.fecha|date:"d/m/Y H:i" }}</p>
-        
-        <div class="client-info">
-            {% if venta.cliente %}
-                <p><strong>Cliente:</strong> {{ venta.cliente.nombre }}</p>
-                <p><strong>Cédula/RNC:</strong> {{ venta.cliente.cedula }}</p>
-                <p><strong>Teléfono:</strong> {{ venta.cliente.telefono1 }}</p>
-            {% elif venta.cliente_nombre %}
-                <p><strong>Cliente:</strong> {{ venta.cliente_nombre }}</p>
-            {% else %}
-                <p><strong>Cliente:</strong> CONSUMIDOR FINAL</p>
-            {% endif %}
+    <div class="invoice">
+        <!-- ENCABEZADO PRINCIPAL -->
+        <div class="invoice-header">
+            <div class="brand">
+                <h1>
+                    🌱 AgroInventario
+                </h1>
+                <p>Sistema integral de fertilizantes y agroinsumos</p>
+            </div>
+            <div class="invoice-title">
+                <h2>FACTURA</h2>
+                <div class="factura-num">Nº {{ venta.numero_factura }}</div>
+            </div>
         </div>
-        
-        <p><strong>Tipo de Venta:</strong> {{ venta.get_tipo_venta_display }}</p>
-        <p><strong>Método de Pago:</strong> {{ venta.get_metodo_pago_display }}</p>
+
+        <!-- INFORMACIÓN EMPRESA / CLIENTE -->
+        <div class="info-grid">
+            <div class="company-details">
+                <h3>DATOS DEL NEGOCIO</h3>
+                <p><strong>AgroInventario SRL</strong></p>
+                <p>Calle Principal #45, Santo Domingo, R.D.</p>
+                <p>📞 (809) 555-1234 ✉️ ventas@agroinventario.com</p>
+                <p>RNC: 1-31-12345-6</p>
+            </div>
+            <div class="client-details">
+                <h3>DATOS DEL CLIENTE</h3>
+                {% if venta.cliente %}
+                <p><strong>{{ venta.cliente.nombre }}</strong></p>
+                <p>Cédula / RNC: {{ venta.cliente.cedula }}</p>
+                <p>Teléfono: {{ venta.cliente.telefono1 }}</p>
+                {% if venta.cliente.email %}
+                <p>Email: {{ venta.cliente.email }}</p>
+                {% endif %}
+                {% elif venta.cliente_nombre %}
+                <div class="highlight">
+                    <p><strong>{{ venta.cliente_nombre }}</strong></p>
+                    <p>Consumidor final / venta al contado</p>
+                </div>
+                {% else %}
+                <p><strong>CONSUMIDOR FINAL</strong></p>
+                <p>Venta sin identificación fiscal</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- METADATOS DE LA VENTA -->
+        <div class="meta-row">
+            <div class="meta-item"><strong>📅 Fecha emisión:</strong> {{ venta.fecha|date:"d/m/Y h:i A" }}</div>
+            <div class="meta-item"><strong>🧾 Tipo de venta:</strong> {{ venta.get_tipo_venta_display }}</div>
+            <div class="meta-item"><strong>💳 Método de pago:</strong> {{ venta.get_metodo_pago_display }}</div>
+        </div>
+
+        <!-- TABLA DE PRODUCTOS -->
+        <div class="products-section">
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Producto / Descripción</th>
+                        <th class="text-right">Cantidad</th>
+                        <th class="text-right">Precio Unit. (RD$)</th>
+                        {% if detalles.0.precio_usd %}
+                        <th class="text-right">Precio Unit. (USD)</th>
+                        {% endif %}
+                        <th class="text-right">Subtotal (RD$)</th>
+                        {% if detalles.0.precio_usd %}
+                        <th class="text-right">Subtotal (USD)</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <td><strong>{{ detalle.producto.producto }}</strong><br>{% if detalle.producto.codigo %}Código:
+                            {{ detalle.producto.codigo }}{% endif %}</td>
+                        <td class="text-right">{{ detalle.cantidad|floatformat:2 }} {{ detalle.producto.unidad }}</td>
+                        <td class="text-right">RD$ {{ detalle.precio_unitario|floatformat:2 }}</td>
+                        {% if detalle.precio_usd %}
+                        <td class="text-right">$ {{ detalle.precio_usd|floatformat:2 }}</td>
+                        {% endif %}
+                        <td class="text-right">RD$ {{ detalle.subtotal|floatformat:2 }}</td>
+                        {% if detalle.subtotal_usd %}
+                        <td class="text-right">$ {{ detalle.subtotal_usd|floatformat:2 }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- BLOQUE DE TOTALES (DOP + USD si existen) -->
+        <div class="totals-card">
+            <div class="totals-box">
+                <p><span>📊 Subtotal (RD$)</span><span>RD$ {{ venta.subtotal|floatformat:2 }}</span></p>
+                <p><span>🏷️ Descuento (RD$)</span><span>RD$ {{ venta.descuento|floatformat:2 }}</span></p>
+                <p class="grand-total"><span>💰 TOTAL (RD$)</span><span>RD$ {{ venta.total|floatformat:2 }}</span></p>
+
+                {% if venta.total_usd %}
+                <div class="usd-total">
+                    <p><span>💵 Total en USD</span><span><strong>$ {{ venta.total_usd|floatformat:2 }}</strong></span>
+                    </p>
+                </div>
+                {% elif detalles.0.precio_usd %}
+                {# Si no existe total_usd en venta pero sí precios en USD, lo calculamos de los detalles #}
+                {% with total_usd_calc=0 %}
+                {% for d in detalles %}
+                {% if d.subtotal_usd %}{% else %}{% endif %}
+                {% endfor %}
+                {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- OBSERVACIONES -->
+        {% if venta.observacion %}
+        <div class="observations">
+            <strong>📌 Observaciones:</strong> {{ venta.observacion }}
+        </div>
+        {% endif %}
+
+        <!-- PIE DE PÁGINA -->
+        <div class="invoice-footer">
+            <button class="print-button no-print" onclick="window.print();">
+                🖨️ Imprimir / Descargar PDF
+            </button>
+            <p>✔️ Factura generada electrónicamente – Gracias por confiar en AgroInventario</p>
+            <p>Para cualquier consulta, contáctenos al (809) 555-1234 | ventas@agroinventario.com</p>
+            <p><i>Documento válido como comprobante fiscal</i></p>
+        </div>
     </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for detalle in detalles %}
-            <tr>
-                <td>{{ detalle.producto.producto }}</td>
-                <td>{{ detalle.cantidad }}</td>
-                <td>RD$ {{ detalle.precio_unitario|floatformat:2 }}</td>
-                <td>RD$ {{ detalle.subtotal|floatformat:2 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="totals">
-        <p><strong>Subtotal:</strong> RD$ {{ venta.subtotal|floatformat:2 }}</p>
-        <p><strong>Descuento:</strong> RD$ {{ venta.descuento|floatformat:2 }}</p>
-        <p><strong>TOTAL:</strong> RD$ {{ venta.total|floatformat:2 }}</p>
-    </div>
-
-    {% if venta.observacion %}
-    <div class="observations">
-        <h3>Observaciones:</h3>
-        <p>{{ venta.observacion }}</p>
-    </div>
-    {% endif %}
-
-    <div class="footer">
-        <p>¡Gracias por su compra!</p>
-        <p>Factura generada el: {% now "d/m/Y H:i" %}</p>
-        <button class="no-print" onclick="window.print()" style="padding: 10px 20px; margin-top: 10px; background: #2d5016; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Imprimir Factura
-        </button>
-    </div>
-
-    <script>
-        // Imprimir automáticamente al cargar la página (opcional)
-        // window.onload = function() {
-        //     window.print();
-        // }
-    </script>
 </body>
+
 </html>

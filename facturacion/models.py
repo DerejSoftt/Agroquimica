@@ -86,16 +86,14 @@ class EntradaProducto(models.Model):
     cantidad = models.DecimalField(max_digits=10, decimal_places=2)
     unidad = models.CharField(max_length=20, choices=UNIDAD_CHOICES)
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    
+    precio_usd = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     # Precios de venta sin ITBIS
     precio_venta1 = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_venta2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    precio_venta3 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+   
     
     # Precios de venta con ITBIS
     precio_venta1_con_itbis = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_venta2_con_itbis = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    precio_venta3_con_itbis = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
     
     itbis_porcentaje = models.DecimalField(max_digits=5, decimal_places=2, default=18.00)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
